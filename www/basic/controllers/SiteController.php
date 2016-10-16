@@ -60,7 +60,12 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        //return $this->render('index');
+        if (!Yii::$app->user->isGuest) {
+             return $this->redirect('main/index',302);
+        } else {     
+             return $this->redirect('site/login',302);
+        }
     }
 
     /**
@@ -78,7 +83,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
-        return $this->render('login', [
+        return $this->renderPartial('login', [
             'model' => $model,
         ]);
     }
@@ -100,26 +105,18 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionContact()
+    public function actionMain()
     {
+        /*
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
 
             return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
+        } */
+        return $this->render('main');
+       
+        
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
 }

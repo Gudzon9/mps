@@ -38,14 +38,51 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
+        
+    ],
+    'controllerMap' => [
+        'elfinder' => [
+            'class' => 'mihaildev\elfinder\PathController',
+            'access' => ['@'], //глобальный доступ к фаил менеджеру @ - для авторизорованных , ? - для гостей , чтоб открыть всем ['@', '?']
+            'disabledCommands' => ['netmount'], //отключение ненужных команд https://github.com/Studio-42/elFinder/wiki/Client-configuration-options#commands
+            'root' => 
+                [
+                    'baseUrl'=>'@web/files',
+                    'basePath'=>'@webroot/files',
+                    'access' => ['read' => '*', 'write' => '*'],
+                    'name' => 'files'
+                ],
+        ],
+        'elfinderm' => [
+            'class' => 'mihaildev\elfinder\PathController',
+            'access' => ['@'], //глобальный доступ к фаил менеджеру @ - для авторизорованных , ? - для гостей , чтоб открыть всем ['@', '?']
+            'disabledCommands' => ['netmount'], //отключение ненужных команд https://github.com/Studio-42/elFinder/wiki/Client-configuration-options#commands
+            'root' => 
+                [
+                    'baseUrl'=>'@web/managers',
+                    'basePath'=>'@webroot/managers',
+                    'access' => ['read' => '*', 'write' => '*'],
+                    'name' => 'managers'
+                ],
+        ],    
+        'elfindert' => [
+            'class' => 'mihaildev\elfinder\PathController',
+            'access' => ['@'], //глобальный доступ к фаил менеджеру @ - для авторизорованных , ? - для гостей , чтоб открыть всем ['@', '?']
+            'disabledCommands' => ['netmount'], //отключение ненужных команд https://github.com/Studio-42/elFinder/wiki/Client-configuration-options#commands
+            'root' => 
+                [
+                    'baseUrl'=>'@web/temp',
+                    'basePath'=>'@webroot/temp',
+                    'access' => ['read' => '*', 'write' => '*'],
+                    'name' => 'temp'
+                ],
+        ],    
     ],
     'params' => $params,
 ];

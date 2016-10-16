@@ -3,6 +3,8 @@
 /* @var $this yii\web\View */
 
 $this->title = 'My Yii Application';
+//$this->curmenu = 3;
+$this->params['curmenu'] = 3;
 ?>
 <div class="site-index">
 

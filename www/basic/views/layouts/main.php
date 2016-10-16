@@ -2,11 +2,11 @@
 
 /* @var $this \yii\web\View */
 /* @var $content string */
-
+ /* Html::img('@web/img/exit.png', ['alt' => 'exit','height'=>'46','width'=>'46'])*/
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
 AppAsset::register($this);
@@ -24,53 +24,95 @@ AppAsset::register($this);
 <body>
 <?php $this->beginBody() ?>
 
-<div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => 'My Company',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post', ['class' => 'navbar-form'])
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
-    ]);
-    NavBar::end();
-    ?>
-
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= $content ?>
-    </div>
+<div class="header">
+      <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-3" >
+             <?=Html::a('Project name',['main/index'],['class'=>'navbar-brand','style' => ['padding-top'=>'15px','font-size'=>'30px']]);?>      
+            </div>
+            <div class="col-xs-9">
+                <ul class="nav navbar-nav navbar-left">
+                    <li>
+                    <?=Html::a('',['empl/index'],['class'=>'i-employees i-menu']);?>          
+                    <?=Html::tag('p','Сотрудники',['class'=>'p-menu text-center']);?>    
+                    </li>
+                    <li>
+                    <?=Html::a('',['cale/index'],['class'=>'i-todos i-menu']);?>          
+                    <?=Html::tag('p','Дела',['class'=>'p-menu text-center']);?>    
+                    </li>
+                    <li>
+                    <?=Html::a('',['crm/index'],['class'=>'i-crm i-menu']);?>          
+                    <?=Html::tag('p','Клиенты',['class'=>'p-menu text-center']);?>    
+                    </li>
+                    <li>
+                    <?=Html::a('',['docs/index'],['class'=>'i-docs i-menu']);?>          
+                    <?=Html::tag('p','Документы',['class'=>'p-menu text-center']);?>    
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                    <?=Html::a(Html::img('@web/img/exit.png', ['alt' => 'exit','height'=>'46','width'=>'46']).'<br>Выход', ['site/logout'], ['data' => ['method' => 'post'],'class' => 'white text-center','style' => 'padding-top: 10px;',]); ?>
+                    </li>
+                </ul>
+            </div>
+	</div>
+    </div>	
 </div>
-
-<footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
+<hr > 
+<input type="hidden" id="curmenu" value=<?php echo $this->params['curmenu'];?>>
+       
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-3" style="height: 38px">
+            <div style="padding-top: 6px; padding-left: 2px;">
+		<?php if(isset($this->params['leftmenu'])) {
+                //$pm = array(2,3,4,5); //if(in_array($this->params['curmenu'],$pm)){
+                ?>
+		<input type="checkbox" id="show-sidebar" data-size="mini" data-on-text="Включено" data-off-text="Выключено" toglemenu data-label-text="меню" class="form-control s-flip" checked>
+		<?php }?>
+            </div>
+        </div>
+        <div class="col-xs-9">
+            <?php if($this->params['curmenu']==2) {?>
+            <ul class="nav navbar-nav navbar-left">
+                <li>
+                    <?=Html::a(Html::tag('i','',['class'=>'i-emp k-menu']).'Сотрудники',['empl/index'],['class'=>'k-href']);?>
+		</li>
+                <li>
+                    <?=Html::a(Html::tag('i','',['class'=>'i-sal k-menu']).'Зарплата',['empl/sal'],['class'=>'k-href']);?>
+		</li>
+                <li>
+                    <?=Html::a(Html::tag('i','',['class'=>'i-moff k-menu']).'Отпуска',['empl/moff'],['class'=>'k-href']);?>
+		</li>
+            </ul>
+            <?php }?> 
+            <?php if($this->params['curmenu']==4) {?>
+            <ul class="nav navbar-nav navbar-left">
+                <li>
+                    <?=Html::a(Html::tag('i','',['class'=>'k-crm k-menu']).'Клиенты',['crm/index'],['class'=>'k-href']);?>
+		</li>
+                <li>
+                    <?=Html::a(Html::tag('i','',['class'=>'k-comm k-menu']).'Коммуникации',['crm/comm'],['class'=>'k-href']);?>
+		</li>
+                <li>
+                    <?=Html::a(Html::tag('i','',['class'=>'k-sends k-menu']).'Рассылки',['crm/sends'],['class'=>'k-href']);?>
+		</li>
+            </ul>
+            <?}?> 
+        </div>
     </div>
-</footer>
+</div>	
+	
+<div id="main" class="container-fluid sidebar-show">
+    <div class="row">
+        <div id="sidebar-left" class="col-xs-3">
+            <?php echo isset($this->params['leftmenu']) ? $this->params['leftmenu'] : '';?>
+        </div>
+        <div  id="content" class="col-xs-12">
+            <?php echo $content ;?>
+        </div>
+    </div>
+</div>    
 
 <?php $this->endBody() ?>
 </body>

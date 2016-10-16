@@ -15,13 +15,28 @@ use yii\web\AssetBundle;
  */
 class AppAsset extends AssetBundle
 {
+    /*
+        'css/jquery-ui.css'
+        'js/jquery-ui.js',
+
+*/
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
+        'css/style_bs.css',
+        'css/fullcalendar.css',
+        'css/bootstrap-switch.css',
+        'css/jquery-ui.css'
+
     ];
     public $js = [
-    ];
+        'js/jquery-ui.js',
+        'js/bootstrap.min.js',
+        'js/bootstrap-switch.js',
+        'js/moment.min.js',
+        'js/fullcalendar.min.js',
+        'js/script.js'    ];
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',

@@ -36,7 +36,8 @@ class AppAsset extends AssetBundle
         'js/bootstrap-switch.js',
         'js/moment.min.js',
         'js/fullcalendar.min.js',
-        'js/script.js'    ];
+        'js/script.js',
+		'js/ex.gridView.js',];
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',

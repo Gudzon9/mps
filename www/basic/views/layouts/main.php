@@ -29,6 +29,13 @@ AppAsset::register($this);
         <div class="row">
             <div class="col-xs-3" >
              <?=Html::a('Project name',['main/index'],['class'=>'navbar-brand','style' => ['padding-top'=>'15px','font-size'=>'30px']]);?>      
+			<? //$user = Yii::$app->user->findIdentity(Yii::$app->user->id);?>
+			<?
+				if (Yii::$app->session->get('isDirector')==null){
+					Yii::$app->session->set('isDirector',(Yii::$app->user->identity->posada==1));
+				}
+			?>
+			 <? var_dump(Yii::$app->session->get('isDirector'));?>
             </div>
             <div class="col-xs-9">
                 <ul class="nav navbar-nav navbar-left">

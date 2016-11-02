@@ -18,6 +18,10 @@ class AppAsset extends AssetBundle
     /*
         'css/jquery-ui.css'
         'js/jquery-ui.js',
+     
+        'css/fullcalendar.css',
+        'js/moment.min.js',
+        'js/fullcalendar.min.js',
 
 */
     public $basePath = '@webroot';
@@ -25,7 +29,7 @@ class AppAsset extends AssetBundle
     public $css = [
         'css/site.css',
         'css/style_bs.css',
-        'css/fullcalendar.css',
+
         'css/bootstrap-switch.css',
         'css/jquery-ui.css'
 
@@ -34,8 +38,6 @@ class AppAsset extends AssetBundle
         'js/jquery-ui.js',
         'js/bootstrap.min.js',
         'js/bootstrap-switch.js',
-        'js/moment.min.js',
-        'js/fullcalendar.min.js',
         'js/script.js',
 		'js/ex.gridView.js',];
     public $depends = [

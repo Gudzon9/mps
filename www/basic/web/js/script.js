@@ -21,21 +21,6 @@ jQuery(document).ready(function () {
 		$this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
 	}
 	});        
-	
-	$('#external-events a.external-event').each(function() { 
-		var eventObject = {title: $.trim($(this).text()) };
-		//$(this).data('eventObject', eventObject);
-		$(this).data('event', {
-			title: $.trim($(this).text()), 
-			color:  $(this).data('color')
-			});
-
-		$(this).draggable({
-			zIndex: 999,
-			revert: true, 
-			revertDuration: 0 
-		});
-	});
 
 });
 

@@ -8,8 +8,10 @@ use yii\helpers\Url;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use app\assets\AppAsset;
+use app\assets\CaleAsset;
 
 AppAsset::register($this);
+if($this->params['curmenu']==3) CaleAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>

@@ -51,6 +51,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['password'], 'string', 'max' => 20],
             [['birthday', 'dateEmp', 'dateDis', 'tin'], 'string', 'max' => 10],
             [['passport'], 'string', 'max' => 80],
+            [['passport'], 'match', 'pattern' => '/^[А-Я]{2}[0-9]{6}$/u'],
+            [['emailLogin'], 'email'],
         ];
     }
 
@@ -115,5 +117,15 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
     public function validatePassword($password){
         return $this->password === $password;
+    }
+    
+    public function getAddAtr($atrKod=0)
+    {
+        $relAddAtr = $this->hasMany(Addatr::className(),['tableId'=>'id'])
+                ->andOnCondition(['tableKod'=>1]);
+        if ($atrKod!=0){
+            $relAddAtr->andOnCondition(['atrKod'=>$atrKod]);
+        }
+        return $relAddAtr;
     }
 }

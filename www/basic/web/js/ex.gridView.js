@@ -113,7 +113,9 @@
             var $form = dlg.find('form');
             $form.yiiActiveForm('data').submitting = true;
             $form.yiiActiveForm('validate');
+            var disabled = $form.find(':input:disabled').removeAttr('disabled');
             var msg = $form.serialize();
+            disabled.attr('disabled','disabled');
             var url = options.URL + (isNew?'/create':'/update'+data_key);
             $.ajax({
                 type:'post',

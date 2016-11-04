@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
+use app\models;
 
 class CaleController extends Controller
 {
@@ -15,7 +16,18 @@ class CaleController extends Controller
             ],
         ];
     }
-
+    
+    public function beforeAction($action)
+    {
+        if (Yii::$app->user->isGuest){
+            return $this->goHome();
+        }
+        if ($action->actionMethod!='actionIndex' && !Yii::$app->request->isAjax){
+            return $this->goHome();
+        }
+        return parent::beforeAction($action);
+    }
+    
     public function actionIndex()
     {
         return $this->render('index');
@@ -23,6 +35,39 @@ class CaleController extends Controller
 
     public function actionGetevents()
     {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                
+        $post = Yii::$app->request->post();        
+        $status = $post['fltstatus'];
+        $event = \app\models\Event::find()
+                ->Where(['between','start',$post['start'],$post['end']]);
+        switch ($status){
+            case 'act':
+                $event->andWhere(['status'=>0]);
+                break;
+            case 'close':
+                $event->andWhere(['status'=>1]);
+                break;
+            case 'overdue':
+                $event->andWhere(['status'=>0])->andWhere('start>=:curDate',[':curDate' => date('Y-m-D')]);
+                break;
+        };
+        $aTypes = explode(',', $post['flttypes']);
+        $event->andWhere(['id_type'=>$aTypes]);
+        if (intval($post['fltklient'])==0){
+            $isDirector = Yii::$app->session->get('isDirector');
+            $idEmpl = ($isDirector && intval($post['fltempl'])!=0) ? intval($post['fltempl']) : ((!$isDirector) ? Yii::$app->user->id : 0);
+            if ($idEmpl!=0){
+                $event->leftJoin('kagent','kagent.id=event.id_klient')
+                    ->andFilterWhere(['kagent.userId'=>$idEmpl])
+                    ->with('kagent');
+            }
+        }else{
+            $event->andWhere(['id_klient'=>$post['fltklient']]);
+        }
+        
+        return $event->asArray()->all();
+                
         /*  Список событий по фильтрам
          *  $_POST['start'], $_POST['end'] - диапазон для поля 'start'
          *  $_POST['fltempl'] - id менеджера (устан.на клиенте)
@@ -36,6 +81,7 @@ class CaleController extends Controller
          *       - overdue => Просроченные (status = 0 AND start >= текущий момент)
          *  $_POST['flttypes'] - строка типа "1,3,4" - надо распарсить в массив 
          *                      допустимых значений для поля 'id_type' 
+         * 
          * 
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return [
@@ -59,6 +105,15 @@ class CaleController extends Controller
     }
     public function actionSearchempl()
     {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        $get = Yii::$app->request->get();
+        $aEmpl = \app\models\User::find()->Where(['like','fio',$get['term']])->limit(20)->all();
+        foreach ( $aEmpl as $oEmpl){
+            $aRet[] = array('id'=>$oEmpl->id,'value'=>$oEmpl->fio);
+        }
+        return $aRet;
+        
         /* поиск по менеджерам (по назв)
          * в $_GET['term'] - набранные символы
          * 
@@ -73,6 +128,14 @@ class CaleController extends Controller
     }
     public function actionSearchklient()
     {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        $get = Yii::$app->request->get();
+        $aKagent = \app\models\Kagent::find()->Where(['like','name',$get['term']])->limit(20)->all();
+        foreach ( $aKagent as $oKagent){
+            $aRet[] = array('id'=>$oKagent->id,'value'=>$oKagent->fio);
+        }
+        return $aRet;        
         /* поиск по клиентам (по назв)
          * в $_GET['term'] - набранные символы
          * 
@@ -87,18 +150,25 @@ class CaleController extends Controller
     }
     public function actionAddevent()
     {
+        $model = new \app\models\Event();
+        $aRec['Event']=Yii::$app->request->post();
+        if ($model->load($aRec)) {
+            if (!$model->save()){
+                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return $model->getErrors();
+            }
+        }
+    }
         /*  По $_POST[] переменные :
          *  id = 0,start,end,color,allDay,type,id_type,klient,id_klient,prim,status
          *  поле title = type + klient + prim 
          * 
          * ответ значение id  (если неусп.добавлен. -  id = 0)
          */
-    }
     public function actionEditevent()
     {
         /*
          * аналогично  actionAddevent - только id != 0  
          */
-    }
-        
+    }        
 }

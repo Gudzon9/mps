@@ -107,7 +107,7 @@ if($this->params['curmenu']==3) CaleAsset::register($this);
                     <?=Html::a(Html::tag('i','',['class'=>'k-sends k-menu']).'Рассылки',['crm/sends'],['class'=>'k-href']);?>
 		</li>
             </ul>
-            <?}?> 
+            <?php }?> 
         </div>
     </div>
 </div>	

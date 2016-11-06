@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
+use app\models\Event;
 
 class CaleController extends Controller
 {
@@ -23,6 +24,49 @@ class CaleController extends Controller
 
     public function actionGetevents()
     {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        //return 'ss5566';
+        //Yii::$app->response->format = Response::FORMAT_JSON;
+        
+        //if (!Yii::$app->request->isAjax || Yii::$app->user->isGuest){
+            //return $this->goHome();
+        //}
+        //$event = Yii::$app->db->createCommand('SELECT * FROM event')->queryAll();
+        //$event = Event::find();
+        //$event = $event->andWhere(['status'=>1]);
+        //return $event->asArray()->all();
+        
+        $status = Yii::$app->request->post('fltstatus');
+        $post = Yii::$app->request->post();
+        $event = Event::find()
+                ->andWhere(['between','start',Yii::$app->request->post('start'),Yii::$app->request->post('end')])
+                ->andFilterWhere(['id_klient'=>Yii::$app->request->post('fltklient')])
+                ;
+        /*
+        switch ($status){
+            case 'act':
+                $event = $event->andWhere(['status'=>0]);
+                break;
+            case 'close':
+                $event = $event->andWhere(['status'=>1]);
+                break;
+            case 'overdue':
+                $event = $event->andWhere(['status'=>0])->andWhere('start>=:curDate',[':curDate' => date('Y-m-D')]);
+                break;
+        };
+        */
+        $aTypes = explode(',', Yii::$app->request->post('flttypes'));
+        $event->andWhere(['id_type'=>$aTypes]) ;
+        $fltempl = Yii::$app->request->post('fltempl');
+        if(!empty($fltempl)){
+        $event = $event->with('kagent')
+                ->leftJoin('kagent','kagent.id=event.id_klient')
+                ->andFilterWhere(['kagent.userId'=>$fltempl]);
+        }
+        return $event->asArray()->all();
+        
+        
+        
         /*  Список событий по фильтрам
          *  $_POST['start'], $_POST['end'] - диапазон для поля 'start'
          *  $_POST['fltempl'] - id менеджера (устан.на клиенте)
@@ -36,7 +80,8 @@ class CaleController extends Controller
          *       - overdue => Просроченные (status = 0 AND start >= текущий момент)
          *  $_POST['flttypes'] - строка типа "1,3,4" - надо распарсить в массив 
          *                      допустимых значений для поля 'id_type' 
-         * 
+         *
+        
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return [
             [    
@@ -54,8 +99,8 @@ class CaleController extends Controller
                 'status' => '0',
             ],    
         ];        
-         * 
-         */
+           */ 
+        
     }
     public function actionSearchempl()
     {

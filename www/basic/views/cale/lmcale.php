@@ -78,7 +78,7 @@ $fltstatus = [
                         </li>
                         <?php } ?>
                     </ul>
-        <button type="button" class="btn btn-primary btn-block btn-sm" onclick="calendar.fullCalendar('refetchEvents');">Go!</button>
+        <button type="button" class="btn btn-primary btn-block btn-sm refech" >Go!</button>
     </div>
 
 </div>

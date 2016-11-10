@@ -63,14 +63,18 @@ $(document).ready(function() {
                 type: "POST",
                 url: url,
                 data: data,    
+                error:function(data){
+                    alert(JSON.stringify(data));
+                },
                 success: function(id){
+                    alert(JSON.stringify(id));
                     calendar.fullCalendar('refetchEvents');
                 }
             });
     }
-    $('.refech').on('click',function(){
-        calendar.fullCalendar('refetchEvents');
-    });
+     $( ".refevent" ).on("click",function(){
+	calendar.fullCalendar('refetchEvents');
+      });
     /* инициализируем Datetimepicker   datetimepicker*/
     event_start.datetimepicker({hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','οюнь','οюль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
     event_end.datetimepicker({hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','οюнь','οюль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
@@ -108,7 +112,7 @@ $(document).ready(function() {
             event_type.css('background-color',EventObject.color);
             //console.log(EventObject.color);
             //console.log($('#event_type').css('background-color'));
-            event_status.bootstrapSwitch('toggleDisabled',true);
+            //event_status.bootstrapSwitch('toggleDisabled',true);
             
             //calendar.fullCalendar('renderEvent', EventObject, true);
             formOpen('add');
@@ -170,13 +174,13 @@ $(document).ready(function() {
         eventSources: [{
             url: 'getevents',
             type: 'POST',
-            data: function(ddd){ 
+            data: function(){
                 var flttypes = '', i=0;
                 $('input[name=flttypes]:checkbox:checked').each(function(){
                     flttypes = flttypes + ((i==0)? '' : ',') + $(this).val();
                     i++;
                 });
-                
+                //console.log(flttypes);
                 return {
                     fltempl: $('#fltemplid').val(),
                     fltklient: $('#fltklientid').val(),
@@ -184,7 +188,8 @@ $(document).ready(function() {
                     flttypes: flttypes,
                 };    
             },
-            error: function() {
+            error: function(data) {
+                alert(JSON.stringify(data));
                 alert('Ошибка соединения с источником данных!');
             }
         }]
@@ -204,8 +209,8 @@ $(document).ready(function() {
                 class: 'btn btn-primary',
                 text: 'Добавить',
                 click: function() {
-                /*
-                    var url = 'add',
+             
+                    var url = 'addevent',
                         data = {
                             id: 0,
                             start: event_start.val(),
@@ -217,19 +222,19 @@ $(document).ready(function() {
                             klient: event_klient.val(),
                             id_klient: event_id_klient.val(),
                             prim: event_prim.val(),
-                            status: event_status.val()
+                            status: 0
                         };
                     ajaxEvent(url,data);
-                */    
+   /*                  
                     calendar.fullCalendar('renderEvent', {
-                            /* id: id, */
+                             id: id, 
                             title: event_type.val(),
                             start: event_start.val(),
                             end: event_end.val(),
                             color: event_color.val(),
                             
                         });
-
+  */
                     $(this).dialog('close');        
                     emptyForm();
                 }

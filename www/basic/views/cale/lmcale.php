@@ -27,7 +27,7 @@ $fltstatus = [
             <input type="text" class="form-control" id="fltemplname">
             <input type="hidden" id="fltemplid">
             <span class="input-group-btn">
-                <button class="btn btn-default" type="button">Go!</button>
+                <button class="btn btn-primary refevent" type="button" >Go!</button>
             </span>
         </div>
 
@@ -43,7 +43,7 @@ $fltstatus = [
             <input type="text" class="form-control"  id="fltklientname">
             <input type="hidden" id="fltklientid">
             <span class="input-group-btn">
-                <button class="btn btn-default" type="button">Go!</button>
+                <button class="btn btn-primary refevent" type="button">Go!</button>
             </span>
         </div>
 
@@ -78,7 +78,7 @@ $fltstatus = [
                         </li>
                         <?php } ?>
                     </ul>
-        <button type="button" class="btn btn-primary btn-block btn-sm refech" >Go!</button>
+        <button type="button" class="btn btn-primary btn-block btn-sm refevent">Go!</button>
     </div>
 
 </div>

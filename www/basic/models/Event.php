@@ -33,10 +33,11 @@ class Event extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    
     public function rules()
     {
         return [
-            [['id_klient', 'id_type', 'start', 'end', 'prim', 'klient', 'type', 'color', 'title'], 'required'],
+            //[['id_klient', 'id_type', 'start', 'end', 'prim', 'klient', 'type', 'color', 'title'], 'required'],
             [['id_klient', 'id_type', 'status'], 'integer'],
             [['start', 'end'], 'safe'],
             [['allDay'], 'string', 'max' => 5],
@@ -67,5 +68,9 @@ class Event extends \yii\db\ActiveRecord
             'color' => 'Color',
             'title' => 'Title',
         ];
+    }
+    public function save($runValidation = true, $attributeNames = null){
+        $this->title = $this->type.' '.$this->klient.' '.$this->prim;
+        return parent::save($runValidation,$attributeNames);
     }
 }

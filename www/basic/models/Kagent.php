@@ -33,8 +33,9 @@ class Kagent extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'name', 'kindKagent', 'typeKagent', 'company', 'posada', 'birthday', 'kuindActivity', 'userId'], 'required'],
+            [['name', 'kindKagent', 'typeKagent', 'company', 'posada', 'birthday', 'kuindActivity', 'userId'], 'required'],
             [['id', 'kindKagent', 'typeKagent', 'company', 'kuindActivity', 'userId'], 'integer'],
+            [['id'],'safe'],
             [['name'], 'string', 'max' => 60],
             [['posada'], 'string', 'max' => 20],
             [['birthday'], 'string', 'max' => 10],
@@ -48,14 +49,14 @@ class Kagent extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'kindKagent' => 'Kind Kagent',
-            'typeKagent' => 'Type Kagent',
-            'company' => 'Company',
-            'posada' => 'Posada',
-            'birthday' => 'Birthday',
+            'name' => 'Наименование',
+            'kindKagent' => 'Вид',
+            'typeKagent' => 'Тип',
+            'company' => 'Компания',
+            'posada' => 'Должность',
+            'birthday' => 'День рождения',
             'kuindActivity' => 'Kuind Activity',
-            'userId' => 'User ID',
+            'userId' => 'Менеджер',
         ];
     }
 }

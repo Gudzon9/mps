@@ -15,11 +15,17 @@ class UserSearch extends User
     /**
      * @inheritdoc
      */
+    public function attributes()
+    {
+            // делаем поле зависимости доступным для поиска
+        return array_merge(parent::attributes(), ['addatr.tel']);
+    }    
     public function rules()
     {
         return [
             [['id', 'status', 'posada', 'statusEmp'], 'integer'],
             [['fio1', 'fio2', 'fio3', 'fio', 'emailLogin', 'password', 'createdDs', 'updatedDs', 'birthday', 'dateEmp', 'dateDis', 'address', 'tin', 'passport'], 'safe'],
+            [['addatr.tel'], 'string']
         ];
     }
 
@@ -48,6 +54,7 @@ class UserSearch extends User
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+        $query->joinWith(['addAtr' => function($query) { $query->from(['addatr' => 'addatr']); }]);
 
         $this->load($params);
 
@@ -78,7 +85,9 @@ class UserSearch extends User
             ->andFilterWhere(['like', 'dateDis', $this->dateDis])
             ->andFilterWhere(['like', 'address', $this->address])
             ->andFilterWhere(['like', 'tin', $this->tin])
-            ->andFilterWhere(['like', 'passport', $this->passport]);
+            ->andFilterWhere(['like', 'passport', $this->passport])
+            ->andFilterWhere(['LIKE', 'addatr.content', $this->getAttribute('addatr.tel')])
+            ->orFilterWhere(['LIKE', 'addatr.note', $this->getAttribute('addatr.tel')]);        
 
         return $dataProvider;
     }

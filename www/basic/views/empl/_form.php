@@ -24,38 +24,23 @@ use yii\widgets\ActiveForm;
                     <td><?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?></td>
                 </tr>
                 <tr>
-                    <td><?= $form->field($model, 'birthday')->textInput(['maxlength' => true]) ?></td>
-                    <td><?= $form->field($model, 'dateEmp')->textInput(['maxlength' => true]) ?></td>
-                    <td><?= $form->field($model, 'dateDis')->textInput(['maxlength' => true]) ?></td>
+                    <td><?= $form->field($model, 'birthday')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'9{4}-9{2}-9{2}']) ?></td>
+                    <td><?= $form->field($model, 'dateEmp')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'9{4}-9{2}-9{2}']) ?></td>
+                    <td><?= $form->field($model, 'dateDis')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'9{4}-9{2}-9{2}']) ?></td>
                 </tr>
                 <tr>
                     <td colspan="3"><?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?></td>
                 </tr>
                 <tr>
                     <td><?= $form->field($model, 'tin')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'9{10}']) ?></td>
-                    <td colspan="2"><?= $form->field($model, 'passport')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'a{2}\-9{6}','clientOptions'=>['removeMaskOnSubmit' => true,'autoUnmask'=>true]])?></td>
+                    <td colspan="2"><?= $form->field($model, 'passport')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'a{2}\-9{6}'])?></td>
                 </tr>
                 <tr>
                     <td colspan="3"><?= $form->field($model, 'statusEmp')->dropDownList(Yii::$app->params['astatusEmp']) ?></td>
                 </tr>
             </table>
         </div>
-        <div class="col-md-4 col-centered">
-            <?php foreach (Yii::$app->params['aatr'] as $key=>$rec){
-                echo '<div align="center"><a href="#" id="'.$rec['atrName'].'" typeBtn="addAtr" class="btn-xs btn-success">Добавить '.$rec['atrDescr'].'</a></div>';
-                echo '<table id="'.$rec['atrName'].'" maxID="1" class="addAtr" mask="'.$rec['atrMask'].'">';
-                //echo '<tr>';
-                //echo '<tr><td colspan="2" align="center"><a href="#" id="'.$rec['atrName'].'" typeBtn="addAtr" class="btn-xs btn-info">Добавить '.$rec['atrDescr'].'</a></td></tr>';
-                    foreach ($model->getAddAtr($key)->all() As $item)
-                    {
-                        echo '<tr><td><a href="#" id="'.$rec['atrName'].'" typeBtn="delAtr" class="btn-xs btn-default" recid='.$item->id.'>x</a></td>';
-                        echo '<td><input name="'.$rec['atrName'].'_'.$item->id.'" typeinput="addAtr" class="form-control" type="text" value='.$item->content.' recid='.$item->id.'></td>';
-                        echo '<td><input name="note_'.$rec['atrName'].'_'.$item->id.'" class="form-control" type="text" value='.$item->note.'></td></tr>';
-                        //$script = '$("[name='.$rec['atrName'].'_'.$item->id.']").inputmask("+7(999)9999999")';
-                        //$this->registerJs($script,yii\web\View::POS_END); 
-                    }
-                echo '</table>';
-            }?>
+        <div class="col-md-4 col-centered AddAtr">
         </div>
     </div>
     <div class="form-group">
@@ -79,29 +64,53 @@ JS;
 $this->registerJs($script,yii\web\View::POS_END); 
 }
 $script = <<< JS
-    $('[typeBtn="addAtr"').on('click', function(){
-        atr = $(this).attr('id');
-        maxId = parseInt($('table#'+atr).attr('maxID'))+1;
-        $('table#'+atr).attr('maxID',maxId);
-        strObj = '<tr><td><a href="#" id="'+atr+'" typeBtn="delAtr" class="btn-xs btn-default" recid="'+maxId+'">x</a></td><td><input name="'+atr+'_new_'+maxId+'" class="form-control" recid="'+maxId+'"></td><td><input name="note_'+atr+'_new_'+maxId+'" class="form-control"></td></tr>';
-        $('table#'+atr).append(strObj);
-        $('[name="'+atr+'_new_'+maxId+'"]').inputmask($('table#'+atr).attr('mask'));
+    $(document).off('click','.btnAddAtr').on('click','.btnAddAtr', function(){
+        RenderAddAtr(-1,$(this).attr('indKey'));
     });
-    $('[typeBtn="delAtr"').on('click', function(){
-        atr = $(this).attr('id');
-        recId = $(this).attr('recid');
-        nameInput = $('input[recid="'+recId+'"]').attr('name');
-        $('input[recid="'+recId+'"]').attr('name',atr+'_del_'+recId);
-        $('input[recid="'+recId+'"]').attr('disabled','disabled');
-        $('input[name="note_'+nameInput+'"]').attr('disabled','disabled');
-        $(this).remove();
+    $(document).off('click','.btnDelAddAtr').on('click','.btnDelAddAtr', function(){
+        aAddAtr[$(this).attr('indKey')].status = (aAddAtr[$(this).attr('indKey')].status==1) ? 3 : 2;
+        RenderAddAtr($(this).attr('indKey'));
     });        
-    $('[typeinput="addAtr"]').each(function(){
-        var mask = $(this).parents('table.addAtr').attr('mask');
-        if (mask!=''){
-            $(this).inputmask(mask);
+        
+    var maxId=0;
+    for (var key in aAtr) {
+        var strObj = '<div align="center" style="margin-bottom:5px">';
+            strObj = strObj + '<a href="#" class="btn-xs btn-default btnAddAtr" style="font-weight: bold" indKey='+key+'>+ '+aAtr[key].atrDescr+'</a>';
+            strObj = strObj + '<table class="tblAddAtr'+key+'" style="border-spacing:5px; border-collapse: separate"></table></div>';
+        $('.AddAtr').append(strObj);
+        for (var j in aAddAtr){
+            if (aAddAtr[j].atrKod==key){
+                RenderAddAtr(j);
+                maxId = Math.max(maxId,aAddAtr[j].id);
+            }
         }
-    });
+    };
+    
+    function RenderAddAtr(Ind, atrKod){
+        if (Ind==-1){
+            maxId = maxId+1;
+            Ind = maxId;
+            aAddAtr[Ind] = {'id':Ind,'content':'','atrKod':atrKod,'note':'','status':1};
+        }
+        aAddAtr[Ind] = $.extend({status:0},aAddAtr[Ind]);
+        var cInputName = aAtr[aAddAtr[Ind].atrKod].atrName+'['+aAddAtr[Ind].id+']';
+        if (aAddAtr[Ind].status==2 || aAddAtr[Ind].status==3){
+            $('[name="'+cInputName+'"]').parent().parent('tr').remove();
+            if (aAddAtr[Ind].status==3){
+                $('[name="inf_'+cInputName+'"]').remove();
+            }else{
+                $('[name="inf_'+cInputName+'"]').attr('value','del');
+            }
+        }else{
+            var strObj = '<tr id="rr"><td><a href="#" class="btn-xs btn-default btnDelAddAtr" indKey='+Ind+'>x</a></td>';
+            strObj = strObj + '<td><input name='+cInputName+' class="form-control" style="height:25px" type="text" value='+aAddAtr[Ind].content+'></td>';
+            strObj = strObj + '<td><input name=note_'+cInputName+' class="form-control" style="height:25px" type="text" placeholder="коментарий" value='+aAddAtr[Ind].note+'></td>';
+            strObj = strObj + '</tr><input name=inf_'+cInputName+' type="hidden" value='+((aAddAtr[Ind].status==1) ? 'new' : '_')+'>';
+            $('.tblAddAtr'+aAddAtr[Ind].atrKod).append(strObj);
+            $('[name="'+aAtr[aAddAtr[Ind].atrKod].atrName+'['+aAddAtr[Ind].id+']"]').inputmask(aAtr[aAddAtr[Ind].atrKod].atrMask);
+        }
+    }
 JS;
+$script = 'var aAtr = '.json_encode(Yii::$app->params['aatr']).'; var aAddAtr = '.json_encode($model->getAddAtr()->asArray()->all()).'; '.$script;
 $this->registerJs($script,yii\web\View::POS_END); 
 ?>

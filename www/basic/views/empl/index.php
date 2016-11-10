@@ -13,7 +13,7 @@ $this->title = 'Empl';
 $this->params['curmenu'] = 2;
 $this->params['cursubmenu'] = 1;
 ?>
-<a href="#" typebtn="UserNew" class="btn-xs btn-info">Додати</a>
+<a href="#" typebtn="UserNew" class="btn-xs btn-info">Добавить</a>
 <?php Pjax::begin(['enablePushState' => false, 'id' =>  'usrPjax']); ?>
     <?= GridView::widget([
         'id' =>  'usrGrid',
@@ -38,6 +38,19 @@ $this->params['cursubmenu'] = 1;
                     return Yii::$app->params['astatusEmp'][$model->statusEmp];
                 }
             ],
+            [
+                'label'=>'Телефон',
+                'attribute'=>'addatr.tel',
+                'format'=>'html',
+                'value'=>function($model){
+                    $str ='';
+                    foreach ($model->getAddAtr(1)->all() As $item)
+                    {
+                        $str.=$item['content'].' '.$item['note'].'<br>';
+                    }
+                    return $str;
+                }
+            ],                    
         ],
     ]); ?>
 <?php Pjax::end(); ?>

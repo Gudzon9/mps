@@ -133,7 +133,7 @@ class CaleController extends Controller
         $get = Yii::$app->request->get();
         $aKagent = \app\models\Kagent::find()->Where(['like','name',$get['term']])->limit(20)->all();
         foreach ( $aKagent as $oKagent){
-            $aRet[] = array('id'=>$oKagent->id,'value'=>$oKagent->fio);
+            $aRet[] = array('id'=>$oKagent->id,'value'=>$oKagent->name);
         }
         return $aRet;        
         /* поиск по клиентам (по назв)

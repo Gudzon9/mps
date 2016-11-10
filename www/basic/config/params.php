@@ -8,8 +8,10 @@ return [
     'isDirector' => false,
     //'aatr' => array(1 => "phone", 2 => "email", 3 => "link"),
     'aatr' => array(
-        1=>array('atrName'=>'phone','atrDescr'=>'телефон','atrMask'=>'+38(999)9999999'), 
-        2=>array('atrName'=>'email','atrDescr'=>'email','atrMask'=>''), 
-        3=>array('atrName'=>'link','atrDescr'=>'link','atrMask'=>'')
+        1=>array('atrName'=>'phone','atrDescr'=>'Телефон','atrMask'=>'+38(999)9999999'), 
+        2=>array('atrName'=>'email','atrDescr'=>'Email','atrMask'=>''), 
+        3=>array('atrName'=>'link','atrDescr'=>'Link','atrMask'=>'')
     ),
+    'akindKagent' => array(1 => "Человек", 2 => "Компания"),
+    'atypeKagent' => array(1 => "Клиент", 2 => "Конкурент"),
 ];

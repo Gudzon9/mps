@@ -51,7 +51,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['password'], 'string', 'max' => 20],
             [['birthday', 'dateEmp', 'dateDis', 'tin'], 'string', 'max' => 10],
             [['passport'], 'string', 'max' => 80],
-            [['passport'], 'match', 'pattern' => '/^[А-Я]{2}[0-9]{6}$/u'],
+            [['passport'], 'match', 'pattern' => '/^[А-Я]{2}-[0-9]{6}$/u'],
+            [['birthday', 'dateEmp', 'dateDis'], 'match', 'pattern' => '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/'],
             [['emailLogin'], 'email'],
         ];
     }

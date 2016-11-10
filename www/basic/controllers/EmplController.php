@@ -29,7 +29,13 @@ class EmplController extends Controller
             ],
         ];
     }
-
+    public function beforeAction($action)
+    {
+        if (Yii::$app->user->isGuest){
+            return $this->goHome();
+        }
+        return parent::beforeAction($action);
+    }
     /**
      * Lists all User models.
      * @return mixed
@@ -75,6 +81,7 @@ class EmplController extends Controller
         if (Yii::$app->request->isAjax){
             if ($model->load(Yii::$app->request->post())) {
                 if ($model->save()){
+                    $this->saveAddAtr($model);
                     echo 'ok';
                 }
                 else{
@@ -87,14 +94,16 @@ class EmplController extends Controller
                     'model' => $model,
                 ]);
             }
-        }
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            //var_dump($model->getErrors());
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        }else{ 
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                 $this->saveAddAtr($model);
+                return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                //var_dump($model->getErrors());
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
         }
     }
 
@@ -138,44 +147,39 @@ class EmplController extends Controller
         }
     }
     public function saveAddAtr($model){
+        $post = Yii::$app->request->post();
         foreach (Yii::$app->params['aatr'] as $atrKod=>$val){
-            $keys = preg_grep("/^".$val['atrName']."_/", array_keys(Yii::$app->request->post()));
-            foreach ($keys as $key){
-                if (strrpos($key,'new')!=0){
-                    $addAtr = new Addatr();
-                    $addAtr->content = Yii::$app->request->post($key);
-                    $addAtr->tableKod = 1;
-                    $addAtr->tableId = $model->id;
-                    $addAtr->atrKod = $atrKod;
-                    $addAtr->note = Yii::$app->request->post('note_'.$key,'');
-                    if (!$addAtr->save()){
-                        var_dump($addAtr->getErrors());
-                    }                    
-                }else{
-                    $id = substr(strrchr($key, "_"), 1);
-                    $addAtr = Addatr::findOne($id);
-                    if ($addAtr->id!=''){
-                        if (strrpos($key,'del')!=0){
-                            $addAtr->delete();
-                        }Else{
-                            $addAtr->content = Yii::$app->request->post($key);
-                            $addAtr->note = Yii::$app->request->post('note_'.$key,'');
+            if (isset($post['inf_'.$val['atrName']])){
+                $aAtr = $post['inf_'.$val['atrName']];
+                $aAtrVal = $post[$val['atrName']];
+                foreach ($aAtr as $id=>$content){
+                    if ($post['inf_'.$val['atrName']][$id]=='del' || $aAtrVal[$id]==''){
+                        $addAtr = Addatr::findOne($id);
+                        if ($addAtr->id!=''){
+                            $addAtr->delete();                            
+                        }
+                    } elseif($post['inf_'.$val['atrName']][$id]=='new'){
+                        $addAtr = new Addatr();
+                        $addAtr->content = $aAtrVal[$id];
+                        $addAtr->tableKod = 1;
+                        $addAtr->tableId = $model->id;
+                        $addAtr->atrKod = $atrKod;
+                        $addAtr->note = $post['note_'.$val['atrName']][$id];;
+                        if (!$addAtr->save()){
+                            var_dump($addAtr->getErrors());
+                        }                            
+                    }   else{
+                            $addAtr = Addatr::findOne($id);
+                            $addAtr->content = $aAtrVal[$id];
+                            $addAtr->note = $post['note_'.$val['atrName']][$id];
                             if (!$addAtr->save()){
                                 var_dump($addAtr->getErrors());
                             }
-                        }
-                    }
-                }
-                
-            }        
+                    }                    
+                }        
+            }
         }
     }
-    /**
-     * Deletes an existing User model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
@@ -183,13 +187,6 @@ class EmplController extends Controller
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the User model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return User the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     protected function findModel($id)
     {
         if (($model = User::findOne($id)) !== null) {

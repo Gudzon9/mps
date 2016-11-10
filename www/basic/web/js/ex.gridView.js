@@ -96,11 +96,23 @@
                             $obj.append(data);
                             $obj.dialog({'modal':true,
                                         'width':'auto',
-                                buttons:{
-                                    "Ok":function(){
-                                        methods.saveEdit($obj,param,idGrd,msgStr,isNew);
-                                    }
-                                },
+                                        buttons:[{
+                                                id: "BtnOk",
+                                                class: 'btn btn-primary',
+                                                text: "OK",
+                                                click:function(){
+                                                    methods.saveEdit($obj,param,idGrd,msgStr,isNew);
+                                                }
+                                            },
+                                            {
+                                                id: "BtnCancel",
+                                                class: "btn",
+                                                text: "Отмена",
+                                                click: function(){
+                                                    $(this).dialog('close');
+                                                }
+                                            }
+                                        ]
                             })
                         }
                 });                     

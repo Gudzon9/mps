@@ -18,7 +18,7 @@ class KagentSearch extends Kagent
     public function rules()
     {
         return [
-            [['id', 'kindKagent', 'typeKagent', 'company', 'kuindActivity', 'userId'], 'integer'],
+            [['id', 'kindKagent', 'typeKagent', 'company', 'vidId', 'userId'], 'integer'],
             [['name', 'posada', 'birthday'], 'safe'],
         ];
     }
@@ -63,7 +63,7 @@ class KagentSearch extends Kagent
             'kindKagent' => $this->kindKagent,
             'typeKagent' => $this->typeKagent,
             'company' => $this->company,
-            'kuindActivity' => $this->kuindActivity,
+            'vidId' => $this->vidId,
             'userId' => $this->userId,
         ]);
 

@@ -55,14 +55,8 @@ use yii\widgets\ActiveForm;
 
 </div>
 <?php
-if (Yii::$app->request->isAjax){
-$script = <<< JS
-    $('#edtUser').on('beforeSubmit', function () {
-        return false;
-    });
-JS;
-$this->registerJs($script,yii\web\View::POS_END); 
-}
+
+$addAtr = 'var aAtr = '.json_encode(Yii::$app->params['aatr']).'; var aAddAtr = '.json_encode($model->getAddAtr()->asArray()->all()).'; ';
 $script = <<< JS
     $(document).off('click','.btnAddAtr').on('click','.btnAddAtr', function(){
         RenderAddAtr(-1,$(this).attr('indKey'));
@@ -111,6 +105,12 @@ $script = <<< JS
         }
     }
 JS;
-$script = 'var aAtr = '.json_encode(Yii::$app->params['aatr']).'; var aAddAtr = '.json_encode($model->getAddAtr()->asArray()->all()).'; '.$script;
+$script = $addAtr.$script;
+if (Yii::$app->request->isAjax){
+    $script = $script."; 
+        $('#edtUser').on('beforeSubmit', function () {
+            return false;
+        });";
+}
 $this->registerJs($script,yii\web\View::POS_END); 
 ?>

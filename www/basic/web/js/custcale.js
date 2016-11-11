@@ -25,6 +25,7 @@ $(document).ready(function() {
         event_id_type.val("");
         event_color.val("");
         event_klient.val("");
+        event_klient.prop("readonly",false);
         event_id_klient.val("");
         event_prim.val("");
         event_status.bootstrapSwitch('toggleDisabled',false);
@@ -98,8 +99,14 @@ $(document).ready(function() {
             var EventObject = $(this).data('event');
             EventObject.start = date;   
             //alert(EventObject.start.hasTime());
-            event_id.val(EventObject.id);
-            event_type.val(EventObject.title);
+            event_id.val(0);
+            event_type.val(EventObject.type);
+            event_id_type.val(EventObject.id_type);
+            if(($( "#fltklientname" ).val() != "") && (Number($( "#fltklientid" ).val()) != 0)) {
+                event_klient.val($( "#fltklientname" ).val());
+                event_id_klient.val($( "#fltklientid" ).val());
+                event_klient.prop("readonly",true);
+            }
             event_start.val(EventObject.start.format(format));
             if(date.hasTime()) {
                 EventObject.end = EventObject.start.add(30,'minutes');
@@ -109,7 +116,8 @@ $(document).ready(function() {
                 div_event_end.hide();
             }
             event_color.val(EventObject.color);
-            event_type.css('background-color',EventObject.color);
+            //event_type.css('background-color',EventObject.color);
+            $("div > .ui-dialog-titlebar").css('background-color',EventObject.color);
             //console.log(EventObject.color);
             //console.log($('#event_type').css('background-color'));
             //event_status.bootstrapSwitch('toggleDisabled',true);
@@ -205,7 +213,7 @@ $(document).ready(function() {
         modal: true,
         buttons: [
             {
-                id: 'addevent',
+                id: 'add',
                 class: 'btn btn-primary',
                 text: 'Добавить',
                 click: function() {
@@ -256,7 +264,7 @@ $(document).ready(function() {
                             klient: event_klient.val(),
                             id_klient: event_id_klient.val(),
                             prim: event_prim.val(),
-                            status: event_status.val()
+                            status: event_status.bootstrapSwitch('state')
                         };
                     ajaxEvent(url,data);
                     $(this).dialog('close');
@@ -330,5 +338,15 @@ $(document).ready(function() {
             $('#fltklientname').blur();
         }
     })
+    $( "#event_klient" ).autocomplete({
+        minLength: 2,
+        source: "searchklient",
+        select: function( event, ui ) {
+            $( "#event_klient" ).val( ui.item.value );
+            $( "#event_id_klient" ).val( ui.item.id );
+            $('#event_klient').blur();
+        }
+    })
+
 
 });

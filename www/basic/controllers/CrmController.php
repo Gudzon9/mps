@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\Addatr;
 use app\models\Kagent;
 use app\models\KagentSearch;
 use yii\web\Controller;
@@ -44,6 +45,23 @@ class CrmController extends Controller
         ]);
     }
 
+    public function actionChoice()
+    {			
+        $searchModel = new KagentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        //$ui = new Ui();
+        return $this->renderAjax('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'choiceMode' => true,
+        ]);
+    }    
+    public function actionGetRec($id)
+    {
+        $oKagent = Kagent::find()->where(['id'=>$id])->one();
+        return json_encode(array('id'=>$oKagent->id,'descr'=>$oKagent->name));
+        //return json_encode(Kagent::find()->where(['id'=>$id])->asArray()->one());
+    }    
     /**
      * Displays a single Kagent model.
      * @param integer $id
@@ -73,6 +91,7 @@ class CrmController extends Controller
                 else{
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     return ActiveForm::validate($model);
+                    //return $model->getErrors();
                 }
             }
             else{
@@ -80,11 +99,15 @@ class CrmController extends Controller
             }
         }else{ 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                 $this->saveAddAtr($model);
+                $this->saveAddAtr($model);
+                echo 'id '.$model->id;
+                var_dump($model->getErrors());
                 return $this->redirect(['view', 'id' => $model->id]);
             } else {
-                //var_dump($model->getErrors());
-                return $this->render('create', [
+                if ($model->load(Yii::$app->request->post())){
+                    //var_dump($model->getErrors());
+                }
+                return $this->render('_form', [
                     'model' => $model,
                 ]);
             }
@@ -166,5 +189,40 @@ class CrmController extends Controller
     public function actionSends()
     {
         return $this->render('sends');
+    }    
+    
+    public function saveAddAtr($model){
+        $post = Yii::$app->request->post();
+        foreach (Yii::$app->params['aatr'] as $atrKod=>$val){
+            if (isset($post['inf_'.$val['atrName']])){
+                $aAtr = $post['inf_'.$val['atrName']];
+                $aAtrVal = $post[$val['atrName']];
+                foreach ($aAtr as $id=>$content){
+                    if ($post['inf_'.$val['atrName']][$id]=='del' || $aAtrVal[$id]==''){
+                        $addAtr = Addatr::findOne($id);
+                        if ($addAtr->id!=''){
+                            $addAtr->delete();                            
+                        }
+                    } elseif($post['inf_'.$val['atrName']][$id]=='new'){
+                        $addAtr = new Addatr();
+                        $addAtr->content = $aAtrVal[$id];
+                        $addAtr->tableKod = 2;
+                        $addAtr->tableId = $model->id;
+                        $addAtr->atrKod = $atrKod;
+                        $addAtr->note = $post['note_'.$val['atrName']][$id];;
+                        if (!$addAtr->save()){
+                            var_dump($addAtr->getErrors());
+                        }                            
+                    }   else{
+                            $addAtr = Addatr::findOne($id);
+                            $addAtr->content = $aAtrVal[$id];
+                            $addAtr->note = $post['note_'.$val['atrName']][$id];
+                            if (!$addAtr->save()){
+                                var_dump($addAtr->getErrors());
+                            }
+                    }                    
+                }        
+            }
+        }
     }    
 }

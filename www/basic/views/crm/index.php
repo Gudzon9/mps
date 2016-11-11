@@ -17,15 +17,14 @@ $this->params['leftmenu'] = $this->render('lmcrm', ['items' => $items,]);
         
 ?>
 <div class="kagent-index">
-
     
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
+    <?php Pjax::begin(['enablePushState' => false, 'id' => ($choiceMode?uniqid():'pjaxKAgent')]); ?>
     <a href="#" typebtn="KagentNew" class="btn-xs btn-info">Добавить</a>
 
-    <?php Pjax::begin(['enablePushState' => false, 'id' =>  'kagentPjax']); ?>
     <?= GridView::widget([
-        'id'=>'kagentGrid',
+        'id'=>uniqid(),
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'modelName' => 'Kagent',

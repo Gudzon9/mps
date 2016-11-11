@@ -60,11 +60,9 @@
                 msgAjax = $(this).parent().attr('data-key');
             }
             if (param.actionID=='choice'){
-                var idDlg = $('#'+idGrd+'.grid-view').parents('div[selfield]').attr('id');              
-                var urlAction = $('#'+idDlg).attr('url');
-
+                var idDlg = aSelDlg[aSelDlg.length-1].id;
+                var urlAction = aSelDlg[aSelDlg.length-1].url;
                 $('#'+idDlg).dialog('close');
-
                 $.ajax({
                     type:'GET',
                     url:urlAction+'/get-rec',
@@ -72,9 +70,11 @@
                     cache:false,
                     success:function(data){
                         var rec = $.parseJSON(data);
-                        var idFld = $('#'+idDlg).attr('selField');
-                        $('[type=hidden]#'+idFld).attr('value',msgAjax.id);
-                        $('label#'+idFld).text(rec.descr);
+                        var idFld = aSelDlg[aSelDlg.length-1].selField;
+                        $('#'+idFld+' [type=hidden]').attr('value',msgAjax.id);
+                        $('label#lbl'+idFld).text(rec.descr);
+                        $('#'+aSelDlg[aSelDlg.length-1].grid).yiiGridView('applyFilter');
+                        aSelDlg.splice(aSelDlg.length-1,1);
                     }
                 });
             }else {
@@ -85,8 +85,8 @@
             var url = param.URL + ((isNew)?'/create':'/update');  
             
             if (param.edtType=='Modal'){               
-                $(document).find('[name=edt'+param.modelName+']').remove();
-                var $obj = methods.createDlg({'name':'edt'+param.modelName})
+                //$(document).find('[name=edt'+param.modelName+']'+Math.random()).remove();
+                var $obj = methods.createDlg({'id':'edt'+param.modelName+Math.random()})
                 $.ajax({
                         type:'GET',
                         url:url, 
@@ -110,6 +110,7 @@
                                                 text: "Отмена",
                                                 click: function(){
                                                     $(this).dialog('close');
+                                                    $(this).remove();
                                                 }
                                             }
                                         ]
@@ -135,9 +136,11 @@
                 data:msg,
                 cache:false,
                 error:function(data){
+                    alert(JSON.stringify(data));
                 },
                 success:function(data){
                     dlg.dialog('close');
+                    dlg.remove();
                     $('#'+grdID).yiiGridView('applyFilter');
                 }
             });

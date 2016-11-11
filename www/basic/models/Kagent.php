@@ -33,9 +33,9 @@ class Kagent extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'kindKagent', 'typeKagent', 'company', 'posada', 'birthday', 'kuindActivity', 'userId'], 'required'],
-            [['id', 'kindKagent', 'typeKagent', 'company', 'kuindActivity', 'userId'], 'integer'],
-            [['id'],'safe'],
+            [['name', 'kindKagent', 'typeKagent', 'birthday', 'vidId', 'userId'], 'required'],
+            [['id', 'kindKagent', 'typeKagent', 'vidId', 'userId'], 'integer'],
+            [['id','company','posada'],'safe'],
             [['name'], 'string', 'max' => 60],
             [['posada'], 'string', 'max' => 20],
             [['birthday'], 'string', 'max' => 10],
@@ -55,8 +55,32 @@ class Kagent extends \yii\db\ActiveRecord
             'company' => 'Компания',
             'posada' => 'Должность',
             'birthday' => 'День рождения',
-            'kuindActivity' => 'Kuind Activity',
+            'vidId' => 'Вид деятельности',
             'userId' => 'Менеджер',
         ];
     }
+    public function getAddAtrs($atrKod=0)
+    {
+        $relAddAtr = $this->hasMany(Addatr::className(),['tableId'=>'id'])
+                ->andOnCondition(['tableKod'=>2]);
+        if ($atrKod!=0){
+            $relAddAtr->andOnCondition(['atrKod'=>$atrKod]);
+        }
+        return $relAddAtr;
+    }    
+    public function getKagent()
+    {
+            return $this->hasOne(Kagent::className(),['id'=>'company']);
+    }	    
+    public function save($runValidation = true, $attributeNames = null)
+    {
+        $this->userId = Yii::$app->user->id;
+        if (is_null($this->company) || $this->company==''){
+            $this->company = 0;
+        }
+        if (is_null($this->company)){
+            $this->posada = '';
+        }        
+        return parent::save($runValidation, $attributeNames);
+    }    
 }

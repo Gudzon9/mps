@@ -167,6 +167,14 @@ class CaleController extends Controller
          */
     public function actionEditevent()
     {
+        $aRec['Event']=Yii::$app->request->post();
+        $model = \app\models\Event::findOne($aRec['Event']['id']);
+        if ($model->load($aRec)) {
+            if (!$model->save()){
+                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return $model->getErrors();
+            }
+        }
         /*
          * аналогично  actionAddevent - только id != 0  
          */

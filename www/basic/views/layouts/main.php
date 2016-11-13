@@ -11,7 +11,7 @@ use app\assets\AppAsset;
 use app\assets\CaleAsset;
 
 AppAsset::register($this);
-if($this->params['curmenu']==3) CaleAsset::register($this);
+if($this->params['curmenu']===3 || $this->params['curmenu']===1) CaleAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -82,6 +82,9 @@ if($this->params['curmenu']==3) CaleAsset::register($this);
             </div>
         </div>
         <div class="col-xs-9">
+            <?php if($this->params['curmenu']==1 || $this->params['curmenu']==3) {?>
+            <div id="fltinfo"></div>
+            <?php }?> 
             <?php if($this->params['curmenu']==2) {?>
             <ul class="nav navbar-nav navbar-left">
                 <li>

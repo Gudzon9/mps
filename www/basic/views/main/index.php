@@ -6,9 +6,8 @@
 
 use yii\helpers\Html;
 
-$this->title = 'Main';
+//$this->title = 'Main';
 $this->params['curmenu'] = 1;
+$this->params['leftmenu'] = $this->render('lmmain');
 ?>
-<div class="site-contact">
-    <h1><?= Html::encode($this->title) ?></h1>
-</div>
+<div id="listevents" class="container" style="max-width:100%"></div>

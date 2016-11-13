@@ -17,6 +17,7 @@ $fltstatus = [
 ];
 
 ?>
+<br><br><br>
 <? if(Yii::$app->session->get('isDirector')) { ?>
 <div class="panel panel-primary">
     <div class="panel-heading">Сотрудники
@@ -79,21 +80,8 @@ $fltstatus = [
                         <?php } ?>
                     </ul>
         <button type="button" class="btn btn-primary btn-block btn-sm refevent">Go!</button>
+      
     </div>
 
 </div>
 
-<div class="panel panel-primary">
-    <div class="panel-heading">Drag&Drop
-	<span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
-    </div>    
-    <div class="panel-body">
-        <div id='wrap'>
-            <div id='external-events'>
-                <?php foreach($events as $event){ ?>
-                <a class="btn btn-block btn-sm external-event" data-color="<?= $event['color']; ?>" data-id_type="<?= $event['id']; ?>"><?= $event['type']; ?></a>
-                <?php } ?>
-            </div>
-        </div>
-    </div>
-</div>

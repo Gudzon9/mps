@@ -28,8 +28,8 @@ $(document).ready(function() {
         event_klient.prop("readonly",false);
         event_id_klient.val("");
         event_prim.val("");
-        event_status.bootstrapSwitch('toggleDisabled',false);
-        div_event_end.show();
+        event_status.val("0");
+        event_klient.parent().parent().removeClass('has-error');
     }
     function setForm(id,start,end,allday,type,id_type,color,klient,id_klient,prim,status) {
         event_id.val(id);
@@ -42,17 +42,17 @@ $(document).ready(function() {
         event_klient.val(klient);
         event_id_klient.val(id_klient);
         event_prim.val(prim);
-        event_status.bootstrapSwitch('toggleDisabled',status);
+        //event_status.bootstrapSwitch('toggleDisabled',status);
         div_event_end.show();
     }
 
     function formOpen(mode) {
-        if(mode == 'add') {
+        if(mode === 'add') {
             $('#add').show();
             $('#edit').hide();
             //$("#delete").button("option", "disabled", true);
         }
-        else if(mode == 'edit') {
+        else if(mode === 'edit') {
             $('#edit').show();
             $('#add').hide();
             //$("#delete").button("option", "disabled", false);
@@ -65,21 +65,34 @@ $(document).ready(function() {
                 url: url,
                 data: data,    
                 error:function(data){
-                    alert(JSON.stringify(data));
+                    alert('error '+JSON.stringify(data));
                 },
                 success: function(id){
-                    alert(JSON.stringify(id));
+                    //alert('success '+ JSON.stringify(id));
+                    //showFltInfo();
                     calendar.fullCalendar('refetchEvents');
                 }
             });
     }
-     $( ".refevent" ).on("click",function(){
+    function showFltInfo() {
+        var flttypes = '', i=0;
+        $('input[name=flttypes]:checkbox:checked').each(function(){
+            flttypes = flttypes + ((i===0)? '' : ',') + $(this).val();
+            i++;
+        });
+        $('#fltinfo').html($('#fltemplid').val()+$('#fltklientid').val()+$('input[name=fltstatus]:radio:checked').val()+flttypes);
+    }
+    $( ".refevent" ).on("click",function(){
+        //showFltInfo();
 	calendar.fullCalendar('refetchEvents');
-      });
+    });
     /* инициализируем Datetimepicker   datetimepicker*/
     event_start.datetimepicker({hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','οюнь','οюль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
     event_end.datetimepicker({hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','οюнь','οюль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
-
+/*
+        buttonText: {prev: "&nbsp;&#9668;&nbsp;", next: "&nbsp;&#9658;&nbsp;", prevYear: "&nbsp;&lt;&lt;&nbsp;", nextYear: "&nbsp;&gt;&gt;&nbsp;", today: "Сегодня", month: "Месяц", week: "Неделя", day: "День" },	
+ 
+ */
     calendar.fullCalendar({
         firstDay: 1,
         header: {left: 'prev,next today', center: 'title', right: 'month,agendaWeek,agendaDay'},
@@ -87,97 +100,119 @@ $(document).ready(function() {
         monthNamesShort: ['Янв.','Фев.','Март','Апр.','Май','οюнь','οюль','Авг.','Сент.','Окт.','Ноя.','Дек.'],
         dayNames: ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"],
         dayNamesShort: ["ВС","ПН","ВТ","СР","ЧТ","ПТ","СБ"],
-        buttonText: {prev: "&nbsp;&#9668;&nbsp;", next: "&nbsp;&#9658;&nbsp;", prevYear: "&nbsp;&lt;&lt;&nbsp;", nextYear: "&nbsp;&gt;&gt;&nbsp;", today: "Сегодня", month: "Месяц", week: "Неделя", day: "День" },	
+        buttonText: {prev: "<", next: ">", prevYear: "<<", nextYear: ">>", today: "Сегодня", month: "Месяц", week: "Неделя", day: "День" },	
         navLinks: true, // can click day/week names to navigate views
         editable: true,
         eventLimit: true, // allow "more" link when too many events
         defaultView: 'agendaWeek', 
         droppable: true, 
+        nowIndicator: true,
         drop: function(date) {
+            //alert(date);
             var view = calendar.fullCalendar('getView');
             //alert("The view's title is " + view.name);
-            var EventObject = $(this).data('event');
+            var originalEventObject = $(this).data('event');
+            var EventObject = $.extend({}, originalEventObject);
             EventObject.start = date;   
             //alert(EventObject.start.hasTime());
             event_id.val(0);
+            event_start.val(EventObject.start.format(format));
+            //alert(EventObject.start.hasTime());
+            if(EventObject.start.hasTime()) {
+                EventObject.end = EventObject.start.add(30,'minutes');
+                event_end.val(EventObject.end.format(format));
+                event_allday.val("");
+                div_event_end.show();
+            } else {
+                event_end.val(EventObject.start.format(format));
+                event_allday.val("1");
+                div_event_end.hide();
+            }
             event_type.val(EventObject.type);
             event_id_type.val(EventObject.id_type);
-            if(($( "#fltklientname" ).val() != "") && (Number($( "#fltklientid" ).val()) != 0)) {
+            event_color.val(EventObject.color);
+            if(($( "#fltklientname" ).val() !== "") && (Number($( "#fltklientid" ).val()) !== 0)) {
                 event_klient.val($( "#fltklientname" ).val());
                 event_id_klient.val($( "#fltklientid" ).val());
                 event_klient.prop("readonly",true);
             }
-            event_start.val(EventObject.start.format(format));
-            if(date.hasTime()) {
-                EventObject.end = EventObject.start.add(30,'minutes');
-                event_end.val(EventObject.end.format(format));
-            } else {
-                event_allday.val("true");
-                div_event_end.hide();
-            }
-            event_color.val(EventObject.color);
+            event_status.bootstrapSwitch('state',false);
+            event_status.bootstrapSwitch('disabled',true);
+            formOpen('add');
+            
             //event_type.css('background-color',EventObject.color);
-            $("div > .ui-dialog-titlebar").css('background-color',EventObject.color);
+            //$("div > .ui-dialog-titlebar").css('background-color',EventObject.color);
             //console.log(EventObject.color);
             //console.log($('#event_type').css('background-color'));
             //event_status.bootstrapSwitch('toggleDisabled',true);
             
             //calendar.fullCalendar('renderEvent', EventObject, true);
-            formOpen('add');
+            //formOpen('add');
+            //calendar.fullCalendar('removeEvents', event.id);
+            //return false ;
             //console.log(calendar.fullCalendar( 'clientEvents' ));
         },
+        eventReceive: function(event) {
+            //alert(event._id);
+            calendar.fullCalendar('removeEvents', event._id);
+        },
         eventClick: function(calEvent, jsEvent, view) { 
-            event_id.val(calEvent.id);
-            event_type.val(calEvent.title);
-            event_start.val(calEvent.start.format(format));
             
-            if (calEvent.start.hasTime()) {
-                event_end.val(calEvent.end.format(format)) 
+            event_id.val(calEvent.id);
+            event_start.val(calEvent.start.format(format));
+            //event_end.val(calEvent.end.format(format)) ;
+            event_allday.val(calEvent.allDay);
+            event_type.val(calEvent.type);
+            event_id_type.val(calEvent.id_type);
+            event_color.val(calEvent.color);
+            event_klient.val(calEvent.klient);
+            event_id_klient.val(calEvent.id_klient);
+            event_prim.val(calEvent.prim);
+            
+            if (calEvent.allDay==='') {
+                event_end.val(calEvent.end.format(format)) ;
+                div_event_end.show();
             } else {
                 div_event_end.hide();
             }
-            
+            event_status.bootstrapSwitch('state',(calEvent.status!=='0'));
+            event_status.bootstrapSwitch('disabled',false);
             formOpen('edit');
         },
         eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc, calEvent, jsEvent, ui, view ) {
-            event_id.val(calEvent.id);
-            event_type.val(calEvent.title);
-            event_start.val(calEvent.start.format(format));
-            event_end.val(calEvent.end.format(format)) 
-            $.ajax({
-                type: "POST",
-                url: "external/fullcalendar/ajax.php",
-                data: {
-                    id: event_id.val(),
-                    start: event_start.val(),
-                    end: event_end.val(),
-                    type: event_type.val(),
-                    op: 'edit'
-                },    
-                success: function(id){
-                    calendar.fullCalendar('refetchEvents');
-                }
-            });
+            //console.log(event);
+            var url = 'editevent',
+                data = {
+                    id: event.id,
+                    start: event.start.format(format),
+                    end: event.end.format(format),
+                    allDay: event.allDay,
+                    type: event.type,
+                    id_type: event.id_type,
+                    color: event.color,
+                    klient: event.klient,
+                    id_klient: event.id_klient,
+                    prim: event.prim,
+                    status: event.status
+                };
+            ajaxEvent(url,data);
         },
         eventResize: function(event, dayDelta, minuteDelta, allDay, revertFunc, calEvent, jsEvent, ui, view ) {
-            event_id.val(calEvent.id);
-            event_type.val(calEvent.title);
-            event_start.val(calEvent.start.format(format));
-            event_end.val(calEvent.end.format(format)) 
-            $.ajax({
-                type: "POST",
-                url: "external/fullcalendar/ajax.php",
-                data: {
-                    id: event_id.val(),
-                    start: event_start.val(),
-                    end: event_end.val(),
-                    type: event_type.val(),
-                    op: 'edit'
-                },
-                success: function(id){
-                    calendar.fullCalendar('refetchEvents');
-                }
-            });
+            var url = 'editevent',
+                data = {
+                    id: event.id,
+                    start: event.start.format(format),
+                    end: event.end.format(format),
+                    allDay: event.allDay,
+                    type: event.type,
+                    id_type: event.id_type,
+                    color: event.color,
+                    klient: event.klient,
+                    id_klient: event.id_klient,
+                    prim: event.prim,
+                    status: event.status
+                };
+            ajaxEvent(url,data);
         },
         eventSources: [{
             url: 'getevents',
@@ -185,7 +220,7 @@ $(document).ready(function() {
             data: function(){
                 var flttypes = '', i=0;
                 $('input[name=flttypes]:checkbox:checked').each(function(){
-                    flttypes = flttypes + ((i==0)? '' : ',') + $(this).val();
+                    flttypes = flttypes + ((i===0)? '' : ',') + $(this).val();
                     i++;
                 });
                 //console.log(flttypes);
@@ -193,7 +228,7 @@ $(document).ready(function() {
                     fltempl: $('#fltemplid').val(),
                     fltklient: $('#fltklientid').val(),
                     fltstatus: $('input[name=fltstatus]:radio:checked').val(),
-                    flttypes: flttypes,
+                    flttypes: flttypes
                 };    
             },
             error: function(data) {
@@ -217,32 +252,27 @@ $(document).ready(function() {
                 class: 'btn btn-primary',
                 text: 'Добавить',
                 click: function() {
-             
+                    if (Number(event_id_klient.val()) <= 0) {
+                        event_klient.focus();
+                        event_klient.parent().parent().addClass('has-error');
+                        return;
+                    }
                     var url = 'addevent',
-                        data = {
+                    data = {
                             id: 0,
                             start: event_start.val(),
                             end: event_end.val(),
-                            color: event_color.val(),
                             allDay: event_allday.val(),
                             type: event_type.val(),
                             id_type: event_id_type.val(),
+                            color: event_color.val(),
                             klient: event_klient.val(),
                             id_klient: event_id_klient.val(),
                             prim: event_prim.val(),
                             status: 0
-                        };
+                    };
+                    //console.log(data);
                     ajaxEvent(url,data);
-   /*                  
-                    calendar.fullCalendar('renderEvent', {
-                             id: id, 
-                            title: event_type.val(),
-                            start: event_start.val(),
-                            end: event_end.val(),
-                            color: event_color.val(),
-                            
-                        });
-  */
                     $(this).dialog('close');        
                     emptyForm();
                 }
@@ -264,7 +294,7 @@ $(document).ready(function() {
                             klient: event_klient.val(),
                             id_klient: event_id_klient.val(),
                             prim: event_prim.val(),
-                            status: event_status.bootstrapSwitch('state')
+                            status: ((event_status.bootstrapSwitch('state')) ? 1 : 0 )
                         };
                     ajaxEvent(url,data);
                     $(this).dialog('close');
@@ -328,25 +358,65 @@ $(document).ready(function() {
             $( "#fltemplid" ).val( ui.item.id );
             $('#fltemplname').blur();
         }
-    })
+    });
     $( "#fltklientname" ).autocomplete({
         minLength: 2,
         source: "searchklient",
         select: function( event, ui ) {
-            $( "#fltklientname" ).val( ui.item.value );
+            $( "#fltklientname" ).val( ui.item.value ).blur();
             $( "#fltklientid" ).val( ui.item.id );
-            $('#fltklientname').blur();
+            //$('#fltklientname');
         }
-    })
+    });
     $( "#event_klient" ).autocomplete({
         minLength: 2,
         source: "searchklient",
         select: function( event, ui ) {
-            $( "#event_klient" ).val( ui.item.value );
             $( "#event_id_klient" ).val( ui.item.id );
+            $( "#event_klient" ).val( ui.item.value ).blur().parent().parent().removeClass('has-error');
+            /*
+            $( "#event_klient" ).val( ui.item.value );
             $('#event_klient').blur();
+            $('#event_klient').parent().parent().removeClass('has-error');
+            */
         }
-    })
+    });
+    
+    $( "#listevents" ).fullCalendar({
+        firstDay: 1,
+        header: {left: '', center: 'title', right: ''},
+        monthNames: ['Январь','Февраль','Март','Апрель','Май','οюнь','οюль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+        monthNamesShort: ['Янв.','Фев.','Март','Апр.','Май','οюнь','οюль','Авг.','Сент.','Окт.','Ноя.','Дек.'],
+        dayNames: ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"],
+        dayNamesShort: ["ВС","ПН","ВТ","СР","ЧТ","ПТ","СБ"],
+        buttonText: {prev: "<", next: ">", prevYear: "<<", nextYear: ">>", today: "Сегодня", month: "Месяц", week: "Неделя", day: "День" },	
+        navLinks: false, // can click day/week names to navigate views
+        eventLimit: true, // allow "more" link when too many events
+        defaultView: 'agendaDay', 
+        nowIndicator: true,
+        eventSources: [{
+            url: 'getevents',
+            type: 'POST',
+            data: function(){
+                var flttypes = '', i=0;
+                $('input[name=flttypes]:checkbox:checked').each(function(){
+                    flttypes = flttypes + ((i===0)? '' : ',') + $(this).val();
+                    i++;
+                });
+                //console.log(flttypes);
+                return {
+                    fltempl: $('#fltemplid').val(),
+                    fltklient: $('#fltklientid').val(),
+                    fltstatus: $('input[name=fltstatus]:radio:checked').val(),
+                    flttypes: flttypes
+                };    
+            },
+            error: function(data) {
+                alert(JSON.stringify(data));
+                alert('Ошибка соединения с источником данных!');
+            }
+        }]
 
+    });
 
 });

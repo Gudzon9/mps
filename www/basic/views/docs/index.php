@@ -11,11 +11,13 @@ use yii\web\JsExpression;
 mihaildev\elfinder\Assets::noConflict($this);
 
 //$this->title = 'Docs';
+//    'path' => 'word',
 $this->params['curmenu'] = 1;
 $this->params['leftmenu'] = $this->render('lmdocs');
 
 echo ElFinder::widget([
     'language'         => 'ru',
+    'filter'           => 'application/pdf',
     'controller'       => $cn , // вставляем название контроллера, по умолчанию равен elfinder
     'callbackFunction' => new JsExpression('function(file, id){}') // id - id виджета
 ]);

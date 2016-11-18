@@ -13,7 +13,7 @@ use yii\widgets\Pjax;
 $this->title = 'CRM';
 $this->params['curmenu'] = 4;
 $this->params['cursubmenu'] = 1;
-$this->params['leftmenu'] = $this->render('lmcrm', ['items' => $items,]);
+//$this->params['leftmenu'] = $this->render('lmcrm', ['items' => $items,]);
         
 ?>
 <div class="kagent-index">
@@ -32,9 +32,12 @@ $this->params['leftmenu'] = $this->render('lmcrm', ['items' => $items,]);
         'ui'=>new Ui(),         
         'columns' => [
             'name',
-            'kindKagent',
+            [
+               'attribute' => 'kindKagent',
+               'filter' => Yii::$app->params['akindKagent'],
+            ],
             'typeKagent',
-            'company',
+            'companyId',
             // 'posada',
             // 'birthday',
             // 'kuindActivity',
@@ -43,5 +46,6 @@ $this->params['leftmenu'] = $this->render('lmcrm', ['items' => $items,]);
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
+
 
 

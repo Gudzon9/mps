@@ -35,7 +35,7 @@ class Kagent extends \yii\db\ActiveRecord
         return [
             [['name', 'kindKagent', 'typeKagent', 'birthday', 'vidId', 'userId'], 'required'],
             [['id', 'kindKagent', 'typeKagent', 'vidId', 'userId'], 'integer'],
-            [['id','company','posada'],'safe'],
+            [['id','companyId','posada'],'safe'],
             [['name'], 'string', 'max' => 60],
             [['posada'], 'string', 'max' => 20],
             [['birthday'], 'string', 'max' => 10],
@@ -52,7 +52,7 @@ class Kagent extends \yii\db\ActiveRecord
             'name' => 'Наименование',
             'kindKagent' => 'Вид',
             'typeKagent' => 'Тип',
-            'company' => 'Компания',
+            'companyId' => 'Компания',
             'posada' => 'Должность',
             'birthday' => 'День рождения',
             'vidId' => 'Вид деятельности',
@@ -68,17 +68,18 @@ class Kagent extends \yii\db\ActiveRecord
         }
         return $relAddAtr;
     }    
+
     public function getKagent()
     {
-            return $this->hasOne(Kagent::className(),['id'=>'company']);
+        return $this->hasOne(Kagent::className(),['id'=>'companyId']);
     }	    
     public function save($runValidation = true, $attributeNames = null)
     {
         $this->userId = Yii::$app->user->id;
-        if (is_null($this->company) || $this->company==''){
-            $this->company = 0;
+        if (is_null($this->companyId) || $this->companyId==''){
+            $this->companyId = 0;
         }
-        if (is_null($this->company)){
+        if (is_null($this->companyId)){
             $this->posada = '';
         }        
         return parent::save($runValidation, $attributeNames);

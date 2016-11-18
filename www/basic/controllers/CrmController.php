@@ -37,11 +37,14 @@ class CrmController extends Controller
     public function actionIndex()
     {
         $searchModel = new KagentSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $filters['companyId']=0;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$filters);
+        
+        //$searchModel->companyId=1;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'choiceMode' => false,
         ]);
     }
 
@@ -144,9 +147,9 @@ class CrmController extends Controller
         else{
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 $this->saveAddAtr($model);
-                return $this->redirect(['view', 'id' => $model->id]);
+                //return $this->redirect(['view', 'id' => $model->id]);
             } else {
-                return $this->render('update', [
+                return $this->render('_form', [
                     'model' => $model,
                 ]);
             }

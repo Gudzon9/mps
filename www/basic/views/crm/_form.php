@@ -6,6 +6,9 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\Kagent */
 /* @var $form yii\widgets\ActiveForm */
+$this->title = 'CRM';
+$this->params['curmenu'] = 4;
+$this->params['cursubmenu'] = 1;
 ?>
 
 <div class="kagent-form">
@@ -25,9 +28,8 @@ use yii\widgets\ActiveForm;
                     <td class="col-md-4"><?= $form->field($model, 'birthday')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'9{4}-9{2}-9{2}']) ?></td>
                 </tr>
                 <tr class="company" style="vertical-align: top;">
-                    <td class="col-md-4"><?= $form->field($model, 'company')->inputTextBtn('kagent','name')?></td>
+                    <td class="col-md-4"><?= $form->field($model, 'companyId')->inputTextBtn('kagent','name')?></td>
                     <td class="col-md-4"><?= $form->field($model, 'posada')->textInput(['maxlength' => true])?></td>
-
                 </tr>
                 <tr style="vertical-align: top">
                     <td class="col-md-4"><?= $form->field($model, 'typeKagent')->dropDownList(Yii::$app->params['atypeKagent'])?></td>
@@ -109,8 +111,8 @@ $script = <<< JS
         }else{
 
             var strObj = '<tr id="rr"><td><a href="#" class="btn-xs btn-default btnDelAddAtr" indKey='+Ind+'>x</a></td>';
-            strObj = strObj + '<td><input name='+cInputName+' class="form-control" style="height:25px" type="text" value='+aData[id].AddAtr[Ind].content+'></td>';
-            strObj = strObj + '<td><input name=note_'+cInputName+' class="form-control" style="height:25px" type="text" placeholder="коментарий" value='+aData[id].AddAtr[Ind].note+'></td>';
+            strObj = strObj + '<td><input name='+cInputName+' class="form-control" style="height:25px" type="text" value="'+aData[id].AddAtr[Ind].content+'"></td>';
+            strObj = strObj + '<td><input name=note_'+cInputName+' class="form-control" style="height:25px" type="text" placeholder="коментарий" value="'+aData[id].AddAtr[Ind].note+'"></td>';
             strObj = strObj + '</tr><input name=inf_'+cInputName+' type="hidden" value='+((aData[id].AddAtr[Ind].status==1) ? 'new' : '_')+'>';
         
             $('#'+id+' .tblAddAtr'+aData[id].AddAtr[Ind].atrKod).append(strObj);
@@ -118,7 +120,6 @@ $script = <<< JS
         }
     }
 JS;
-$script = $addAtr.$script;
 if (Yii::$app->request->isAjax){
     $script = $script."; 
         $('#$id').on('beforeSubmit', function () {

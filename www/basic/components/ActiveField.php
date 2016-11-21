@@ -42,7 +42,7 @@ class ActiveField extends \yii\widgets\ActiveField
         $idFld = uniqid();
         //Html::getInputId($this->model,$this->attribute);
         $nameFld = Html::getInputName($this->model,$this->attribute);
-        $outVal = Html::getAttributeValue($this->model->$tblName, $fldName);
+        $outVal = (is_object($this->model->$tblName)?Html::getAttributeValue($this->model->$tblName, $fldName):'');
         $optionsInput = array_merge($this->inputOptions, $options,
             ['style'=>'padding: 6px 0px 0px 12px;cursor:pointer; background:#fff', 'class'=>'form-control btnChoice',
                 'id'=>$idFld,

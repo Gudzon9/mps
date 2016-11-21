@@ -35,9 +35,21 @@ $this->params['cursubmenu'] = 1;
             [
                'attribute' => 'kindKagent',
                'filter' => Yii::$app->params['akindKagent'],
+                'value'=>function($model){
+                    return Yii::$app->params['akindKagent'][$model->kindKagent];
+                }                
             ],
-            'typeKagent',
-            'companyId',
+            [
+               'attribute' => 'typeKagent',
+               'filter' => Yii::$app->params['atypeKagent'],
+                'value'=>function($model){
+                    return Yii::$app->params['atypeKagent'][$model->typeKagent];
+                }                
+            ],                    
+            //'companyId'=>'kagent.name',
+            'city',
+            'adr',
+            'coment',
             // 'posada',
             // 'birthday',
             // 'kuindActivity',

@@ -39,6 +39,7 @@ class Kagent extends \yii\db\ActiveRecord
             [['name'], 'string', 'max' => 60],
             [['posada'], 'string', 'max' => 20],
             [['birthday'], 'string', 'max' => 10],
+            [['city','adr','coment'], 'string', 'max' => 60],
         ];
     }
 
@@ -57,6 +58,9 @@ class Kagent extends \yii\db\ActiveRecord
             'birthday' => 'День рождения',
             'vidId' => 'Вид деятельности',
             'userId' => 'Менеджер',
+            'city' => 'Город',
+            'adr' => 'Адрес',
+            'coment' => 'Примечание',
         ];
     }
     public function getAddAtrs($atrKod=0)
@@ -68,11 +72,11 @@ class Kagent extends \yii\db\ActiveRecord
         }
         return $relAddAtr;
     }    
-
     public function getKagent()
     {
         return $this->hasOne(Kagent::className(),['id'=>'companyId']);
     }	    
+       
     public function save($runValidation = true, $attributeNames = null)
     {
         $this->userId = Yii::$app->user->id;

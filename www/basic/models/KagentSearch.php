@@ -15,11 +15,17 @@ class KagentSearch extends Kagent
     /**
      * @inheritdoc
      */
+    public function attributes()
+    {
+            // делаем поле зависимости доступным для поиска
+        return array_merge(parent::attributes(), ['kagent.name']);
+    }    
     public function rules()
     {
         return [
             [['id', 'kindKagent', 'typeKagent', 'companyId', 'vidId', 'userId'], 'integer'],
             [['name', 'posada', 'birthday'], 'safe'],
+            [['city', 'adr', 'coment','kagent.name'], 'string'],
         ];
     }
 
@@ -48,7 +54,7 @@ class KagentSearch extends Kagent
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+        $query->joinWith(['kagent' => function($query) { $query->from(['kagent' => 'kagent'])->alias('company'); }]);
         $this->load($params);
 
         if (!$this->validate()) {
@@ -60,18 +66,22 @@ class KagentSearch extends Kagent
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'kindKagent' => $this->kindKagent,
-            'typeKagent' => $this->typeKagent,
+            'kagent.kindKagent' => $this->kindKagent,
+            'kagent.typeKagent' => $this->typeKagent,
             'companyId' => $this->companyId,
             'vidId' => $this->vidId,
             'userId' => $this->userId,
+            'coment' => $this->coment,
+            'adr' => $this->adr,
+            'city' => $this->city,
         ]);
         
         //$query->andFilterWhere(['companyId'=>$filters['companyId']]);
-        $query->andFilterWhere(['like', 'name', $this->name])
+        $query->andFilterWhere(['like', 'kagent.name', $this->name])
             ->andFilterWhere(['like', 'posada', $this->posada])
-            ->andFilterWhere(['like', 'birthday', $this->birthday]);
-
+            ->andFilterWhere(['like', 'birthday', $this->birthday])
+                ->andFilterWhere(['like', 'kagent.name', $this->getAttribute('kagent.name')]);
+//var_dump($query->createCommand());
         return $dataProvider;
     }
 }

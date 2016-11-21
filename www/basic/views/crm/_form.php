@@ -35,6 +35,13 @@ $this->params['cursubmenu'] = 1;
                     <td class="col-md-4"><?= $form->field($model, 'typeKagent')->dropDownList(Yii::$app->params['atypeKagent'])?></td>
                     <td class="col-md-4"><?= $form->field($model, 'vidId')->textInput()?></td>
                 </tr>
+                <tr style="vertical-align: top">
+                    <td class="col-md-4"><?= $form->field($model, 'city')->textInput(['maxlength' => true])?></td>
+                    <td class="col-md-4"><?= $form->field($model, 'adr')->textInput(['maxlength' => true])?></td>
+                </tr>                
+                <tr style="vertical-align: top">
+                    <td class="col-md-8" colspan="2"><?= $form->field($model, 'coment')->textInput(['maxlength' => true])?></td>
+                </tr>                                
             </table>
         </div>
         <div class="col-md-4 col-centered AddAtr">

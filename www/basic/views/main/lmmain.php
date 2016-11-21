@@ -17,7 +17,7 @@ $fltstatus = [
 ];
 
 ?>
-<br><br><br>
+<br>
 <? if(Yii::$app->session->get('isDirector')) { ?>
 <div class="panel panel-primary">
     <div class="panel-heading">Сотрудники

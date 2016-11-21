@@ -34,7 +34,30 @@ class MainController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        /*
+                ->where('LEFT(start,7) != :cmonth',[':cmonth' => $cmonth])
+                ->where('LEFT(start,10) != :cday ',[':cday' => $cday])
+        
+         */
+        $cmonth =  substr(date('Y-m-d'),0,7);
+        $evoldm = \app\models\Event::find()
+                ->select(['LEFT(start,7) as yearmonth', 'sum(IF((status!=0),0,1)) as evact', 'sum(IF((status!=0),1,0)) as evnoa'])
+                ->groupBy(['yearmonth'])
+                ->asArray()->all();
+
+        $cday =  date('Y-m-d');
+        $evcurm = \app\models\Event::find()
+                ->select(['LEFT(start,10) as day', 'sum(IF((status!=0),0,1)) as evact', 'sum(IF((status!=0),1,0)) as evnoa'])
+                ->andWhere('LEFT(start,7) = :cmonth',[':cmonth' => $cmonth])
+                ->groupBy(['day'])
+                ->asArray()->all();
+
+        $evcurd = \app\models\Event::find()
+                ->where('LEFT(start,10) = :cday',[':cday' => $cday])
+                ->orderBy('start')
+                ->asArray()->all();
+        return $this->render('index',
+            ['cmonth' => $cmonth,'evoldm' => $evoldm,'cday' => $cday,'evcurm' => $evcurm,'evcurd' => $evcurd]);
     }
     public function actionGetevents()
     {
@@ -94,6 +117,25 @@ class MainController extends Controller
          *          ]
          */
         
+    }
+    public function actionShowmonth() {
+        $pmonth = Yii::$app->request->post('pmonth');
+        $evpm = \app\models\Event::find()
+                ->select(['LEFT(start,10) as day', 'sum(IF((status!=0),0,1)) as evact', 'sum(IF((status!=0),1,0)) as evnoa'])
+                ->where('LEFT(start,7) = :cmonth',[':cmonth' => $pmonth])
+                ->groupBy(['day'])
+                ->asArray()->all();
+        return $this->renderPartial('blkdays',['evpm' => $evpm, 'pmonth' => $pmonth]);
+
+    }
+    public function actionShowday() {
+        $pday = Yii::$app->request->post('pday');
+        $evpd = \app\models\Event::find()
+                ->where('LEFT(start,10) = :cday',[':cday' => $pday])
+                ->orderBy('start')
+                ->asArray()->all();
+        return $this->renderPartial('blkday',['evpd' => $evpd, 'pday' => $pday]);
+
     }
 
 

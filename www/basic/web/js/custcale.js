@@ -96,8 +96,8 @@ $(document).ready(function() {
     calendar.fullCalendar({
         firstDay: 1,
         header: {left: 'prev,next today', center: 'title', right: 'month,agendaWeek,agendaDay'},
-        monthNames: ['Январь','Февраль','Март','Апрель','Май','οюнь','οюль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
-        monthNamesShort: ['Янв.','Фев.','Март','Апр.','Май','οюнь','οюль','Авг.','Сент.','Окт.','Ноя.','Дек.'],
+        monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+        monthNamesShort: ['Янв.','Фев.','Март','Апр.','Май','Июнь','Июль','Авг.','Сент.','Окт.','Ноя.','Дек.'],
         dayNames: ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"],
         dayNamesShort: ["ВС","ПН","ВТ","СР","ЧТ","ПТ","СБ"],
         buttonText: {prev: "<", next: ">", prevYear: "<<", nextYear: ">>", today: "Сегодня", month: "Месяц", week: "Неделя", day: "День" },	
@@ -381,7 +381,7 @@ $(document).ready(function() {
             */
         }
     });
-    
+    /*
     $( "#listevents" ).fullCalendar({
         firstDay: 1,
         header: {left: '', center: 'title', right: ''},
@@ -418,5 +418,6 @@ $(document).ready(function() {
         }]
 
     });
-
+    */
 });
+

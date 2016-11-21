@@ -105,18 +105,6 @@ class MainController extends Controller
             $aRet[] = array('id'=>$oEmpl->id,'value'=>$oEmpl->fio);
         }
         return $aRet;
-        
-        /* поиск по менеджерам (по назв)
-         * в $_GET['term'] - набранные символы
-         * 
-         * ответ JSON не более 20 строк
-         * пример :  return [
-         *              ['id' => 1, 'value' => 'qwerty'],
-         *              ['id' => 2, 'value' => 'yuiopui'], 
-         *              .... 
-         *          ]
-         */
-        
     }
     public function actionShowmonth() {
         $pmonth = Yii::$app->request->post('pmonth');

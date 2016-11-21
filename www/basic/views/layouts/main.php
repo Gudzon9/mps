@@ -2,7 +2,15 @@
 
 /* @var $this \yii\web\View */
 /* @var $content string */
- /* Html::img('@web/img/exit.png', ['alt' => 'exit','height'=>'46','width'=>'46'])*/
+ /*<? var_dump(Yii::$app->session->get('isDirector'));?>*/
+ /* Html::img('@web/img/exit.png', ['alt' => 'exit','height'=>'46','width'=>'46'])
+<?
+if (Yii::$app->session->get('isDirector')==null){
+Yii::$app->session->set('isDirector',(Yii::$app->user->identity->posada==1));
+}
+?>
+  * //$user = Yii::$app->user->findIdentity(Yii::$app->user->id);
+*/
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\Nav;
@@ -14,6 +22,10 @@ use app\assets\CaleAsset;
 AppAsset::register($this);
 if($this->params['curmenu']===1) MainAsset::register($this);
 if($this->params['curmenu']===3) CaleAsset::register($this);
+if (Yii::$app->session->get('isDirector')==null){
+	Yii::$app->session->set('isDirector',(Yii::$app->user->identity->posada==1));
+}
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -33,13 +45,6 @@ if($this->params['curmenu']===3) CaleAsset::register($this);
         <div class="row">
             <div class="col-xs-3" >
              <?=Html::a('Project name',['main/index'],['class'=>'navbar-brand','style' => ['padding-top'=>'15px','font-size'=>'30px']]);?>      
-			<? //$user = Yii::$app->user->findIdentity(Yii::$app->user->id);?>
-			<?
-				if (Yii::$app->session->get('isDirector')==null){
-					Yii::$app->session->set('isDirector',(Yii::$app->user->identity->posada==1));
-				}
-			?>
-			 <? var_dump(Yii::$app->session->get('isDirector'));?>
             </div>
             <div class="col-xs-9">
                 <ul class="nav navbar-nav navbar-left">

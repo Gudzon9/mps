@@ -13,7 +13,7 @@ use yii\widgets\Pjax;
 $this->title = 'CRM';
 $this->params['curmenu'] = 4;
 $this->params['cursubmenu'] = 1;
-//$this->params['leftmenu'] = $this->render('lmcrm', ['items' => $items,]);
+$this->params['leftmenu'] = $this->render('lmcrm');
         
 ?>
 <div class="kagent-index">

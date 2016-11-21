@@ -12,6 +12,7 @@ use yii\widgets\Pjax;
 $this->title = 'Empl';
 $this->params['curmenu'] = 2;
 $this->params['cursubmenu'] = 1;
+$this->params['leftmenu'] = $this->render('lmempl');
 ?>
 <a href="#" typebtn="UserNew" class="btn-xs btn-info">Добавить</a>
 <?php Pjax::begin(['enablePushState' => false, 'id' =>  'usrPjax']); ?>

@@ -30,7 +30,7 @@ $glok = '<span class="glyphicon glyphicon-ok"></span>';
    <?php foreach ($evoldm as $evoldmitems){ ?>
    <tr class="evmonths success <?php echo ($evoldmitems['yearmonth']!=$cmonth) ? 'monthoff' : 'monthon' ; ?>" data-yearmonth="<?php echo $evoldmitems['yearmonth'];?> ">
        <td class="foldericon"><?php echo ($evoldmitems['yearmonth']!=$cmonth) ? $glfc : $glfo ; ?> </td>
-       <td colspan="2"><?php echo substr($evoldmitems['yearmonth'],0,4)." ".$nmonts[substr($evoldmitems['yearmonth'],5,2)].(($evoldmitems['yearmonth']!=$cmonth) ? '' : $glok);?></td>
+       <td colspan="2"><?php echo substr($evoldmitems['yearmonth'],0,4)." ".$nmonts[substr($evoldmitems['yearmonth'],5,2)]." ".(($evoldmitems['yearmonth']!=$cmonth) ? '' : $glok);?></td>
        <td><?php echo " Дела : ".($evoldmitems['evact']+$evoldmitems['evnoa'])."  в т.ч. активн.-".$evoldmitems['evact']." закрыто-".$evoldmitems['evnoa'] ; ?></td>
    </tr> 
    <?php } ?>
@@ -38,7 +38,7 @@ $glok = '<span class="glyphicon glyphicon-ok"></span>';
    <tr class="evdays incldays info <?php echo ($evcurmitems['day']!=$cday) ? 'dayoff' : 'dayon' ; ?>" data-day="<?php echo $evcurmitems['day'];?> ">
        <td></td>
        <td class="foldericon"><?php echo ($evcurmitems['day']!=$cday) ? $glfc : $glfo ; ?> </td>
-       <td><?php echo $evcurmitems['day'].(($evcurmitems['day']!=$cday) ? '' : $glok);?></td>
+       <td><?php echo $evcurmitems['day']." ".(($evcurmitems['day']!=$cday) ? '' : $glok);?></td>
        <td><?php echo " Дела : ".($evcurmitems['evact']+$evcurmitems['evnoa'])."  в т.ч. активн.-".$evcurmitems['evact']." закрыто-".$evcurmitems['evnoa'] ; ?></td>
    </tr> 
    <?php } ?>

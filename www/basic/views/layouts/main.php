@@ -18,13 +18,17 @@ use yii\bootstrap\NavBar;
 use app\assets\AppAsset;
 use app\assets\MainAsset;
 use app\assets\CaleAsset;
+use app\assets\CrmAsset;
 
 AppAsset::register($this);
 if($this->params['curmenu']===1) MainAsset::register($this);
 if($this->params['curmenu']===3) CaleAsset::register($this);
-if (Yii::$app->session->get('isDirector')==null){
-	Yii::$app->session->set('isDirector',(Yii::$app->user->identity->posada==1));
-}
+if($this->params['curmenu']===4) CrmAsset::register($this);
+
+
+//if (Yii::$app->session->get('isDirector')==null){
+//	Yii::$app->session->set('isDirector',(Yii::$app->user->identity->posada==1));
+//}
 
 ?>
 <?php $this->beginPage() ?>
@@ -45,6 +49,8 @@ if (Yii::$app->session->get('isDirector')==null){
         <div class="row">
             <div class="col-xs-3" >
              <?=Html::a('Project name',['main/index'],['class'=>'navbar-brand','style' => ['padding-top'=>'15px','font-size'=>'30px']]);?>      
+			 
+			 
             </div>
             <div class="col-xs-9">
                 <ul class="nav navbar-nav navbar-left">

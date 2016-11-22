@@ -32,20 +32,16 @@ class UiController extends Controller
     public function actionApply()
     {
         $varPost    = Yii::$app->request->post();
-        $model      = new ui();
-        //echo $varPost['modelName'];
+        
         foreach ($varPost["colInf"] as $ColInf){
-            //echo $ColInf['attr'];
-            $ui = $model->findOne(['user_id'=>1, 'model'=>$varPost['modelName'], 'attribute'=>$ColInf['attr']]);
-            if (is_null($ui->user_id)){
+            $ui = Ui::findOne(['user_id'=>1, 'model'=>$varPost['modelName'], 'attribute'=>$ColInf['attr']]);
+            if (!is_object($ui)){
                 $ui = new ui();
                 $ui->user_id=1;
                 $ui->model = $varPost['modelName'];
                 $ui->attribute = $ColInf['attr'];
-                
             }
             $ui->value = $ColInf['val'];
-            echo $ui->value;
             $ui->save();
         }
     }

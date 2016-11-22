@@ -32,6 +32,13 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     /**
      * @inheritdoc
      */
+	//public $_dire;
+	
+	public function attributes()
+	{
+		// делаем поле зависимости доступным для поиска
+		return array_merge(parent::attributes(), ['_isDirector']);
+	}	 
     public static function tableName()
     {
         return 'user';
@@ -40,6 +47,9 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     /**
      * @inheritdoc
      */
+	public function getIsDirector(){
+		return $this->posada==1;
+	}
     public function rules()
     {
         return [

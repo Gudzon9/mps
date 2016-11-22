@@ -55,7 +55,7 @@ class CaleController extends Controller
         $aTypes = explode(',', $post['flttypes']);
         $event->andWhere(['id_type'=>$aTypes]);
         if (intval($post['fltklient'])==0){
-            $isDirector = Yii::$app->session->get('isDirector');
+            $isDirector = Yii::$app->user->identity->isDirector;
             $idEmpl = ($isDirector && intval($post['fltempl'])!=0) ? intval($post['fltempl']) : ((!$isDirector) ? Yii::$app->user->id : 0);
             if ($idEmpl!=0){
                 $event->leftJoin('kagent','kagent.id=event.id_klient')

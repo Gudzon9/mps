@@ -82,6 +82,7 @@
             }            
         },
         Edit: function(param, idGrd, msgAjax, msgStr, isNew){
+            return false;
             var url = param.URL + ((isNew)?'/create':'/update');  
             
             if (param.edtType=='Modal'){               
@@ -201,12 +202,14 @@
                 aMsg[i]['val'] = ($(this).is(':checked')?'1':'0')+';'+i;
             });
             $(this).dialog('close');
+            console.log(param.uiURL);
             $.ajax({
                     type:'POST',
                     url:param.uiURL, 
                     data:{'modelName':param.modelName,'colInf':aMsg},
                     cache:false,
                     success:function(data){
+                        console.log(data);
                         //var grdData = $('#'+grdID).yiiGridView('data');
                         //alert(grdData.settings.filterUrl);
                         //$("#"+grdID+'.grid-view').load(grdData.settings.filterUrl +' .grid-view');
@@ -245,7 +248,10 @@
 
             });
         },
-        
+        data: function () {
+            var id = $(this).attr('id');
+            return gridData[id];
+        },        
         destroy: function () {
             return this.each(function () {
                 $(window).unbind('.exGridView');

@@ -78,7 +78,7 @@
                     }
                 });
             }else {
-                methods.Edit(param, idGrd, msgAjax, msgStr);
+                //methods.Edit(param, idGrd, msgAjax, msgStr);
             }            
         },
         Edit: function(param, idGrd, msgAjax, msgStr, isNew){

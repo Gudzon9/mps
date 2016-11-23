@@ -17,6 +17,10 @@ $this->params['cursubmenu'] = 1;
         $id = uniqid();
         $form = ActiveForm::begin(['fieldClass' => 'app\components\ActiveField','id'=>$id]); 
     ?>
+    <input type="hidden" class="UniqID" value="<?=$id?>">
+    <input type="hidden" class="Data-Key" value="<?=$model->id?>">
+    <input type="hidden" class="aAtr" value='<?=json_encode(Yii::$app->params['aatr'])?>'>
+    <input type="hidden" class="aAddAtr" value='<?= json_encode($model->getAddAtrs()->asArray()->all())?>'>
     <div class='row'>
         <div class="col-md-8">
             <table>
@@ -133,5 +137,5 @@ if (Yii::$app->request->isAjax){
             return false;
         });";
 }
-$this->registerJs($script,yii\web\View::POS_END); 
+//$this->registerJs($script,yii\web\View::POS_END); 
 ?>

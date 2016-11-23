@@ -72,9 +72,9 @@ class Kagent extends \yii\db\ActiveRecord
         }
         return $relAddAtr;
     }    
-    public function getKagent()
+    public function getKagents()
     {
-        return $this->hasOne(Kagent::className(),['id'=>'companyId']);
+        return $this->hasMany(Kagent::className(),['id'=>'companyId']);
     }	    
        
     public function save($runValidation = true, $attributeNames = null)

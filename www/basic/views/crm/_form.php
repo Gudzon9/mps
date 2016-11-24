@@ -21,6 +21,15 @@ $this->params['cursubmenu'] = 1;
     <input type="hidden" class="Data-Key" value="<?=$model->id?>">
     <input type="hidden" class="aAtr" value='<?=json_encode(Yii::$app->params['aatr'])?>'>
     <input type="hidden" class="aAddAtr" value='<?= json_encode($model->getAddAtrs()->asArray()->all())?>'>
+    <input type="hidden" class="atr" value='<?= json_encode($model)?>'>
+    <?php
+        
+        //$aPerson    = $model->getKagents()->getAddAtrs()->all();
+        //$aAdd = $aPerson[0]->getAddAtrs()->asArray()->all();
+        
+    ?>
+    <input type="hidden" class="aPerson" value='<?= json_encode($model->getKagents()->asArray()->all())?>'>
+    
     <div class='row'>
         <div class="col-md-8">
             <table>
@@ -32,8 +41,7 @@ $this->params['cursubmenu'] = 1;
                     <td class="col-md-4"><?= $form->field($model, 'birthday')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'9{4}-9{2}-9{2}']) ?></td>
                 </tr>
                 <tr class="company" style="vertical-align: top;">
-                    <td class="col-md-4"><?= $form->field($model, 'companyId')->inputTextBtn('kagent','name')?></td>
-                    <td class="col-md-4"><?= $form->field($model, 'posada')->textInput(['maxlength' => true])?></td>
+                    <td class="col-md-8" colspan="2"><?= $form->field($model, 'posada')->textInput(['maxlength' => true])?></td>
                 </tr>
                 <tr style="vertical-align: top">
                     <td class="col-md-4"><?= $form->field($model, 'typeKagent')->dropDownList(Yii::$app->params['atypeKagent'])?></td>

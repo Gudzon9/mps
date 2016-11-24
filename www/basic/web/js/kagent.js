@@ -77,9 +77,12 @@ jQuery(document).ready(function () {
     };   
     function AppendAddAtr(param,data){
         var id = $(data).find('.UniqID').attr('value');
+        var dataKey = $(data).find('.Data-Key').attr('value');
         var aAtr = $.parseJSON($(data).find('.aAtr').attr('value'));
-        var aAddAtr = $.parseJSON($(data).find('.aAddAtr').attr('value'));
-        aData[id] = {Atr:aAtr,AddAtr:aAddAtr};
+        //var aAddAtr = $.parseJSON($(data).find('.aAddAtr').attr('value'));
+
+        //aData[id] = {Atr:aAtr,AddAtr:aAddAtr};
+        aData[id] = {Atr:aAtr};
         
         $('#'+id).on('beforeSubmit', function () {
             return false;
@@ -90,7 +93,7 @@ jQuery(document).ready(function () {
         $(document).off('click','#'+id+' .btnDelAddAtr').on('click','#'+id+' .btnDelAddAtr', function(){
             aData[id].AddAtr[$(this).attr('indKey')].status = (aData[id].AddAtr[$(this).attr('indKey')].status==1) ? 3 : 2;
             RenderAddAtr($(this).attr('indKey'), 0, id);
-        }); 
+        });         
         $('#'+id+' #kagent-kindkagent').on('change', function(){
             if ($(this).val()==1){
                 $('#'+id+' .company').css('display','');
@@ -106,13 +109,51 @@ jQuery(document).ready(function () {
                 strObj = strObj + '<a href="#" class="btn-xs btn-default btnAddAtr" style="font-weight: bold" indKey='+key+'>+ '+aData[id].Atr[key].atrDescr+'</a>';
                 strObj = strObj + '<table class="tblAddAtr'+key+'" style="border-spacing:5px; border-collapse: separate"></table></div>';
             $('#'+id+' .AddAtr').append(strObj);
-            for (var j in aData[id].AddAtr){
-                if (aData[id].AddAtr[j].atrKod==key){
+        };
+        $.ajax({
+            type:'post',
+            url:param.URL+'/get-rel',
+            data:{'id':dataKey,'rel':'AddAtrs'},
+            success:function(ret){
+                aData[id] = $.extend(aData[id],{'AddAtr':ret});
+                for (var j in aData[id].AddAtr){
                     RenderAddAtr(j,0,id);
                     maxId = Math.max(maxId,aData[id].AddAtr[j].id);
-                }
+                }                    
             }
-        };
+        })
+        //Подгружаем контакты
+        if ($(data).find('.aPerson').attr('class')=='aPerson'){     
+            var strObj = '<div align="center" style="margin-bottom:5px">';
+                strObj = strObj + '<a href="#" class="btn-xs btn-default btnAddPerson" style="font-weight: bold" indKey='+key+'>+ Контакт</a>';
+                strObj = strObj + '<table class="tblAddPerson" style="border-spacing:5px; border-collapse: separate"></table></div>';
+            $('#'+id+' .AddAtr').append(strObj);            
+            $.ajax({
+                type:'post',
+                url:param.URL+'/get-rel',
+                data:{'id':dataKey,'rel':'Kagents'},
+                cache:false,
+                success:function(data){
+                    aData[id] = $.extend(aData[id],{'Person':data});
+                    for (var j in aData[id].Person){
+                        $.ajax({
+                            type:'post',
+                            url:param.URL+'/get-rel',
+                            data:{'id':aData[id].Person[j].id,'rel':'AddAtrs'},
+                            success:function(data){
+                                aData[id].Person[j] = $.extend(aData[id].Person[j],{'AddAtr':data});
+                                RenderPerson(j,id);
+                                maxId = Math.max(maxId,aData[id].Person[j].id);
+                            }
+                        })
+                    }
+                }
+            });
+            
+            $(document).off('click','#'+id+' .btnAddPerson').on('click','#'+id+' .btnAddPerson', function(){
+                RenderAddAtr(-1,$(this).attr('indKey'), id);
+            });             
+        }        
     };
     function RenderAddAtr(Ind, atrKod, id){
         if (Ind==-1){
@@ -140,4 +181,29 @@ jQuery(document).ready(function () {
             $('#'+id+' [name="'+aData[id].Atr[aData[id].AddAtr[Ind].atrKod].atrName+'['+aData[id].AddAtr[Ind].id+']"]').inputmask(aData[id].Atr[aData[id].AddAtr[Ind].atrKod].atrMask);
         }
     };
+    
+    function RenderPerson(Ind, id){
+        if (Ind==-1){
+            maxId = maxId+1;
+            Ind = maxId;
+            aData[id].AddAtr[Ind] = {'id':Ind,'content':'','atrKod':atrKod,'note':'','status':1};
+        }
+        aData[id].Person[Ind] = $.extend({status:0},aData[id].Person[Ind]);
+        var cInputName = 'Person['+aData[id].Person[Ind].id+']';
+        if (aData[id].Person[Ind].status==2 || aData[id].Person[Ind].status==3){
+            $('#'+id+' [name="'+cInputName+'"]').parent().parent('tr').remove();
+            if (aData[id].AddAtr[Ind].status==3){
+                $('#'+id+' [name="inf_'+cInputName+'"]').remove();
+            }else{
+                $('#'+id+' [name="inf_'+cInputName+'"]').attr('value','del');
+            }
+        }else{
+
+            var strObj = '<tr id="rr"><td><a href="#" class="btn-xs btn-default btnDelAddAtr" indKey='+Ind+'>x</a></td>';
+            strObj = strObj + '<td><a href="#" class="btn-xs btn-info btnInfPerson" indKey='+Ind+'>'+aData[id].Person[Ind].name+' '+aData[id].Person[Ind].AddAtr[0].content+'</a></td>';
+            strObj = strObj + '</tr><input name=inf_'+cInputName+' type="hidden" value='+((aData[id].Person[Ind].status==1) ? 'new' : '_')+'>';
+
+            $('#'+id+' .tblAddPerson').append(strObj);
+        }
+    };    
 });    

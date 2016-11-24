@@ -54,7 +54,7 @@ class KagentSearch extends Kagent
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        $query->joinWith(['kagent' => function($query) { $query->from(['kagent' => 'kagent'])->alias('company'); }]);
+        $query->joinWith(['kagents' => function($query) { $query->from(['kagent' => 'kagent'])->alias('company'); }]);
         $this->load($params);
 
         if (!$this->validate()) {

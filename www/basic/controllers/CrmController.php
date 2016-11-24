@@ -123,6 +123,19 @@ class CrmController extends Controller
      * @param integer $id
      * @return mixed
      */
+    public function actionGetRel(){
+        $aPost = Yii::$app->request->post();
+        $model = $this->findModel($aPost['id']);
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        switch ($aPost['rel']){
+            case 'Kagents':
+                return $model->getKagents()->asArray()->all();
+                break;
+            case 'AddAtrs':
+                return $model->getAddAtrs()->asArray()->all();
+                break;
+        }
+    }
     public function actionUpdate($id=1)
     {
         $model = $this->findModel($id);

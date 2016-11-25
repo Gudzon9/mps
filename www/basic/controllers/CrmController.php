@@ -125,7 +125,9 @@ class CrmController extends Controller
      */
     public function actionGetRel(){
         $aPost = Yii::$app->request->post();
+
         $model = $this->findModel($aPost['id']);
+		//exit($model->id);
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         switch ($aPost['rel']){
             case 'Kagents':
@@ -189,6 +191,10 @@ class CrmController extends Controller
      * @return Kagent the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionGetModel(){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return Kagent::find()->Where(['id'=>Yii::$app->request->post('id')])->asArray()->one();
+    }
     protected function findModel($id)
     {
         if (($model = Kagent::findOne($id)) !== null) {

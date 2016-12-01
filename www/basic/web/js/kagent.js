@@ -65,7 +65,7 @@ jQuery(document).ready(function () {
             data:msg,
             cache:false,
             error:function(data){
-                alert(JSON.stringify(data));
+                //alert(JSON.stringify(data));
             },
             success:function(data){
                 if (typeof fCallBack=='function') {
@@ -165,7 +165,7 @@ jQuery(document).ready(function () {
         }
     };
     function LoadPerson(data,id,dataKey){
-        alert(id);
+        //alert(id);
         var param = aData[id].Param;
         if ($(data).find('.aPerson').attr('class')=='aPerson' && $(data).find('#kagent-kindkagent').val()=='2'){     
             $('#'+id+' .divAddPerson').remove();

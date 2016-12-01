@@ -26,11 +26,8 @@ $fltstatus = [
         <div class="input-group">
             <input type="text" class="form-control" id="fltemplname">
             <input type="hidden" id="fltemplid">
-            <span class="input-group-btn">
-                <button class="btn btn-primary refevent" type="button" >Go!</button>
-            </span>
         </div>
-
+        <button class="btn btn-primary btn-block btn-sm refevent" id="fltemplbtn" type="button" >Go</button>
     </div>
 </div>
 <? } ?>
@@ -42,11 +39,8 @@ $fltstatus = [
         <div class="input-group">
             <input type="text" class="form-control"  id="fltklientname">
             <input type="hidden" id="fltklientid">
-            <span class="input-group-btn">
-                <button class="btn btn-primary refevent" type="button">Go!</button>
-            </span>
         </div>
-
+        <button class="btn btn-primary btn-block btn-sm refevent" id="fltklientbtn" type="button">Go</button>
     </div>
 </div>
 <div class="panel panel-primary">

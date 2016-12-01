@@ -5,7 +5,7 @@ use yii\helpers\ArrayHelper;
 
 ?>
 <br>
-<? if(Yii::$app->session->get('isDirector')) { ?>
+<? if(Yii::$app->user->identity->isDirector) { ?>
 <div class="panel panel-primary">
     <div class="panel-heading">Сотрудники
 	<span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
@@ -14,11 +14,8 @@ use yii\helpers\ArrayHelper;
         <div class="input-group">
             <input type="text" class="form-control" id="fltemplname">
             <input type="hidden" id="fltemplid">
-            <span class="input-group-btn">
-                <button class="btn btn-primary refevent" type="button" >Go!</button>
-            </span>
         </div>
-
+        <button class="btn btn-primary btn-block btn-sm refevent" id="fltemplbtn" type="button" >Go</button>
     </div>
 </div>
 <? } ?>
@@ -30,11 +27,8 @@ use yii\helpers\ArrayHelper;
         <div class="input-group">
             <input type="text" class="form-control"  id="fltklientname">
             <input type="hidden" id="fltklientid">
-            <span class="input-group-btn">
-                <button class="btn btn-primary refevent" type="button">Go!</button>
-            </span>
         </div>
-
+        <button class="btn btn-primary btn-block btn-sm refevent" id="fltklientbtn" type="button">Go</button>
     </div>
 </div>
 

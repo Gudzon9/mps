@@ -195,4 +195,15 @@ class EmplController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    public function actionSearchempl()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return \app\models\User::find()->select(['id','fio as value'])->Where(['like','fio',Yii::$app->request->get('term')])->limit(20)->asArray()->all();
+    }
+    public function actionSearchklient()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return \app\models\Kagent::find()->select(['id','name as value'])->Where(['like','name',Yii::$app->request->get('term')])->limit(20)->asArray()->all();
+    }
+    
 }

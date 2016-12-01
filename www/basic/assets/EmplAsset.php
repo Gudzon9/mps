@@ -16,14 +16,13 @@ use yii\web\AssetBundle;
          'js/jquery-ui-1.8.11.custom.min.js',
 
  */
-class CrmAsset extends AssetBundle
+class EmplAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [];
     public $js = [
-        'js/kagent.js',
-        'js/custcrm.js'
+        'js/custempl.js'
     ];
     public $depends = [
     ];

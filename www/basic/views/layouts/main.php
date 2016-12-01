@@ -19,16 +19,14 @@ use app\assets\AppAsset;
 use app\assets\MainAsset;
 use app\assets\CaleAsset;
 use app\assets\CrmAsset;
+use app\assets\EmplAsset;
 
 AppAsset::register($this);
 if($this->params['curmenu']===1) MainAsset::register($this);
+if($this->params['curmenu']===2) EmplAsset::register($this);
 if($this->params['curmenu']===3) CaleAsset::register($this);
 if($this->params['curmenu']===4) CrmAsset::register($this);
 
-
-//if (Yii::$app->session->get('isDirector')==null){
-//	Yii::$app->session->set('isDirector',(Yii::$app->user->identity->posada==1));
-//}
 
 ?>
 <?php $this->beginPage() ?>

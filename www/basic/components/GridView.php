@@ -18,6 +18,7 @@ class GridView extends \yii\grid\GridView
     public $ui;
     public $modelName;
     public $edtType='';
+    public $Edt='auto';
     protected $aColInf = [];
 	
     public function run()
@@ -38,6 +39,7 @@ class GridView extends \yii\grid\GridView
             'URL'   => Url::to([Yii::$app->controller->id.'/']),
             'uiURL' => Url::to(['ui/apply']),
             'edtType' => $this->edtType,
+            'Edt'=>$this->Edt,
         ];
     }
 

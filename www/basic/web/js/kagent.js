@@ -5,11 +5,21 @@ jQuery(document).ready(function () {
         var grdID = $(this).parent().parent().parent().attr('id');
         var param = $('#'+grdID).exGridView('data').settings;
         var dataKey = $(this).attr('data-key');
-        Edit(param,grdID,dataKey,false);
+        if (param.actionID!='choice'){
+            Edit(param,grdID,dataKey,false);
+        };
+    });
+    var btnNew = '[typebtn=KagentNew]';
+    $(document).off('click',btnNew).on('click',btnNew, function(){
+        var grdID = $(this).parent().find('.grid-view').attr('id');
+        var param = $('#'+grdID).exGridView('data').settings;
+        var dataKey = $(this).attr('data-key');
+        if (param.actionID!='choice'){
+            Edit(param,grdID,'',true);
+        };        
     });
 
-
-    function Edit(param, idGrd, dataKey,isNew){
+    function Edit(param, idGrd, dataKey,isNew, idParent){
         var url = param.URL + ((isNew)?'/create':'/update');  
         if (param.edtType=='Modal'){
             $.ajax({
@@ -30,7 +40,7 @@ jQuery(document).ready(function () {
                                             class: 'btn btn-primary',
                                             text: "OK",
                                             click:function(){
-                                                saveEdit($obj,param,idGrd,dataKey,isNew);
+                                                saveEdit($obj,param,idGrd,dataKey,isNew,idParent);
                                             }
                                         },
                                         {
@@ -50,7 +60,69 @@ jQuery(document).ready(function () {
             //window.location.href = url+msgStr;
         }            
     };
-    function saveEdit(dlg, options, grdID, data_key, isNew, fCallBack){
+    function AddNew(idParent){
+        var param = aData[idParent].Param;
+        var url = param.URL + '/create';
+        $.ajax({
+                type:'GET',
+                url:url, 
+                //data:{'id':dataKey},
+                cache:false,
+                success:function(data){
+                    var id = $(data).find('.UniqID').attr('value');
+                    $('body').append('<div id="dlg_'+id+'">');
+                    var $obj = $('#dlg_'+id);                        
+                    $obj.append(data);
+                    AppendAddAtr(param,data);
+                    $obj.dialog({'modal':true,
+                                'width':'auto',
+                                buttons:[{
+                                        id: "BtnOk",
+                                        class: 'btn btn-primary',
+                                        text: "OK",
+                                        click:function(){
+                                            var $form = $obj.find('form');
+                                            $form.yiiActiveForm('data').submitting = true;
+                                            $form.yiiActiveForm('validate');
+                                            var disabled = $form.find(':input:disabled').removeAttr('disabled');
+                                            var msg = $form.find('input.form-control').serializeArray();
+                                            var aInput = {};
+                                            for(s in msg){
+                                                aInput[msg[s]['name'].substring(msg[s]['name'].indexOf('[') + 1, msg[s]['name'].indexOf(']'))] = msg[s]['value'];
+                                            };
+                                            maxId = maxId + 1;
+                                            aInput    = $.extend(aInput,{'id':maxId});
+                                            aData[idParent].Person[maxId] = aInput;
+                                            disabled.attr('disabled','disabled');
+                                            $.ajax({
+                                                type:'post',
+                                                url:param.URL+'/get-rel',
+                                                data:{'id':aData[idParent].Person[maxId].id,'rel':'AddAtrs'},
+                                                success:function(data){
+                                                    aData[id].Person[j] = $.extend(aData[id].Person[j],{'AddAtr':data});
+                                                    RenderPerson(j,id);
+                                                    maxId = Math.max(maxId,aData[id].Person[j].id);
+                                                }
+                                            })                                            
+                                            RenderPerson(maxId,idParent);
+                                        }
+                                    },
+                                    {
+                                        id: "BtnCancel",
+                                        class: "btn",
+                                        text: "Отмена",
+                                        click: function(){
+                                            $(this).dialog('close');
+                                            $(this).remove();
+                                        }
+                                    }
+                                ]
+                    })
+                }
+        });                              
+    };
+    
+    function saveEdit(dlg, options, grdID, data_key, isNew, idParent){
 
         var $form = dlg.find('form');
         $form.yiiActiveForm('data').submitting = true;
@@ -68,9 +140,6 @@ jQuery(document).ready(function () {
                 //alert(JSON.stringify(data));
             },
             success:function(data){
-                if (typeof fCallBack=='function') {
-                    fCallBack;
-                }
                 dlg.dialog('close');
                 dlg.remove();   
                 if (grdID!=''){
@@ -86,7 +155,7 @@ jQuery(document).ready(function () {
         //var aAddAtr = $.parseJSON($(data).find('.aAddAtr').attr('value'));
 
         //aData[id] = {Atr:aAtr,AddAtr:aAddAtr};
-        aData[id] = {'Atr':aAtr,'Param':param,'AddAtr':{}};
+        aData[id] = {'Atr':aAtr,'Param':param,'AddAtr':{},'dataKey':dataKey};
         
         $('#'+id).on('beforeSubmit', function () {
             return false;
@@ -136,7 +205,7 @@ jQuery(document).ready(function () {
         })
         
         //Подгружаем контакты
-        LoadPerson(data,id,dataKey);        
+        //LoadPerson(data,id);        
     };
     function RenderAddAtr(Ind, atrKod, id){
         if (Ind==-1){
@@ -164,9 +233,11 @@ jQuery(document).ready(function () {
             $('#'+id+' [name="'+aData[id].Atr[aData[id].AddAtr[Ind].atrKod].atrName+'['+aData[id].AddAtr[Ind].id+']"]').inputmask(aData[id].Atr[aData[id].AddAtr[Ind].atrKod].atrMask);
         }
     };
-    function LoadPerson(data,id,dataKey){
+    function LoadPerson(data,id){
         //alert(id);
         var param = aData[id].Param;
+        var dataKey = aData[id].dataKey;
+        aData[id] = $.extend(aData[id],{'Person':{}});
         if ($(data).find('.aPerson').attr('class')=='aPerson' && $(data).find('#kagent-kindkagent').val()=='2'){     
             $('#'+id+' .divAddPerson').remove();
             var strObj = '<div align="center" style="margin-bottom:5px" class="divAddPerson">';
@@ -196,7 +267,8 @@ jQuery(document).ready(function () {
             });
             
             $(document).off('click','#'+id+' .btnAddPerson').on('click','#'+id+' .btnAddPerson', function(){   
-                Edit(aData[id].Param,'','',true,function(){LoadPerson($('#'+id).parent().html(),id,dataKey)});
+                AddNew(id);
+                //Edit(aData[id].Param,'','',true,id);
                 //LoadPerson($('#'+id).parent().html(),id,dataKey);
             });            
             $(document).off('click','#'+id+' .btnInfPerson').on('click','#'+id+' .btnInfPerson', function(){

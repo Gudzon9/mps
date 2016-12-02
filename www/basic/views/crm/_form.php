@@ -41,7 +41,8 @@ $this->params['cursubmenu'] = 1;
                     <td class="col-md-4"><?= $form->field($model, 'birthday')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'9{4}-9{2}-9{2}']) ?></td>
                 </tr>
                 <tr class="company" style="vertical-align: top;">
-                    <td class="col-md-8" colspan="2"><?= $form->field($model, 'posada')->textInput(['maxlength' => true])?></td>
+                    <td class="col-md-8"><?= $form->field($model, 'companyId')->inputTextBtn('kagents','name')?></td>
+                    <td class="col-md-8"><?= $form->field($model, 'posada')->textInput(['maxlength' => true])?></td>
                 </tr>
                 <tr style="vertical-align: top">
                     <td class="col-md-4"><?= $form->field($model, 'typeKagent')->dropDownList(Yii::$app->params['atypeKagent'])?></td>

@@ -78,11 +78,13 @@
                     }
                 });
             }else {
-                //methods.Edit(param, idGrd, msgAjax, msgStr);
+                methods.Edit(param, idGrd, msgAjax, msgStr);
             }            
         },
         Edit: function(param, idGrd, msgAjax, msgStr, isNew){
-            return false;
+            if (param.Edt=='manual'){
+                return 0;
+            };
             var url = param.URL + ((isNew)?'/create':'/update');  
             
             if (param.edtType=='Modal'){               

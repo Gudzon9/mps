@@ -45,7 +45,7 @@ class KagentSearch extends Kagent
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params,$filter=null)
     {
         $query = Kagent::find();
 
@@ -56,7 +56,14 @@ class KagentSearch extends Kagent
         ]);
         $query->joinWith(['kagents' => function($query) { $query->from(['kagent' => 'kagent'])->alias('company'); }]);
         $this->load($params);
-
+        
+        if (isset($filter)){
+            foreach ($filter As $atr=>$val){
+                //$this[$atr] = $val;
+                $query->andFilterWhere(['kagent.'.$atr=>$val]);
+            }
+            //$this->kindKagent = $filter['kindKagent'];
+        }
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -65,15 +72,15 @@ class KagentSearch extends Kagent
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'kagent.kindKagent' => $this->kindKagent,
+            'kagent.id' => $this->id,
+            //'kagent.kindKagent' => $this->kindKagent,
             'kagent.typeKagent' => $this->typeKagent,
-            'companyId' => $this->companyId,
-            'vidId' => $this->vidId,
-            'userId' => $this->userId,
-            'coment' => $this->coment,
-            'adr' => $this->adr,
-            'city' => $this->city,
+            'kagent.companyId' => $this->companyId,
+            'kagent.vidId' => $this->vidId,
+            'kagent.userId' => $this->userId,
+            'kagent.coment' => $this->coment,
+            'kagent.adr' => $this->adr,
+            'kagent.city' => $this->city,
         ]);
         
         //$query->andFilterWhere(['companyId'=>$filters['companyId']]);
@@ -81,6 +88,7 @@ class KagentSearch extends Kagent
             ->andFilterWhere(['like', 'posada', $this->posada])
             ->andFilterWhere(['like', 'birthday', $this->birthday])
                 ->andFilterWhere(['like', 'kagent.name', $this->getAttribute('kagent.name')]);
+        
 //var_dump($query->createCommand());
         return $dataProvider;
     }

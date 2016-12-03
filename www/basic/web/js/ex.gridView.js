@@ -60,6 +60,9 @@
                 msgAjax = $(this).parent().attr('data-key');
             }
             if (param.actionID=='choice'){
+                if (param.Edt=='manual'){
+                    return 0;
+                };
                 var idDlg = aSelDlg[aSelDlg.length-1].id;
                 var urlAction = aSelDlg[aSelDlg.length-1].url;
                 $('#'+idDlg).dialog('close');

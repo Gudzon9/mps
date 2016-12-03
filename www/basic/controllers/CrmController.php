@@ -37,8 +37,8 @@ class CrmController extends Controller
     public function actionIndex()
     {
         $searchModel = new KagentSearch();
-        $filters['companyId']=0;
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$filters);
+        $filter['kindKagent'] = 2;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$filter);
         
         //$searchModel->companyId=1;
         return $this->render('index', [
@@ -51,7 +51,7 @@ class CrmController extends Controller
     public function actionChoice()
     {			
         $searchModel = new KagentSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,Yii::$app->request->get('filter'));
         //$ui = new Ui();
         return $this->renderAjax('index', [
             'searchModel' => $searchModel,
@@ -61,7 +61,8 @@ class CrmController extends Controller
     }    
     public function actionGetRec($id)
     {
-        $oKagent = Kagent::find()->where(['id'=>$id])->one();
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Kagent::find()->where(['id'=>$id])->asArray()->one();
         return json_encode(array('id'=>$oKagent->id,'descr'=>$oKagent->name));
         //return json_encode(Kagent::find()->where(['id'=>$id])->asArray()->one());
     }    
@@ -98,6 +99,7 @@ class CrmController extends Controller
                 }
             }
             else{
+                $model->kindKagent = 2;
                 return $this->renderAjax('_form',['model' => $model,]);
             }
         }else{ 
@@ -245,6 +247,20 @@ class CrmController extends Controller
                     }                    
                 }        
             }
+        }
+        if (isset($post['inf_Person'])){
+            $aPerson = $post['inf_Person'];
+            foreach ($aPerson as $id=>$val){
+                            
+                $person = $this->findModel($id);
+                if ($val=='del'){
+                    $person->companyId = 0;
+                }else{
+                    $person->companyId = $model->id;
+                }
+                $person->save();
+                echo $model->id;
+            }        
         }
     }
     public function actionSearchempl()

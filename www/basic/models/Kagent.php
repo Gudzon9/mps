@@ -74,9 +74,12 @@ class Kagent extends \yii\db\ActiveRecord
     }    
     public function getKagents()
     {
-        return $this->hasOne(Kagent::className(),['companyId'=>'id']);
+        return $this->hasMany(Kagent::className(),['companyId'=>'id']);
     }	    
-       
+    public function getKagent()
+    {
+        return $this->hasOne(Kagent::className(),['companyId'=>'id']);
+    }       
     public function save($runValidation = true, $attributeNames = null)
     {
         $this->userId = Yii::$app->user->id;

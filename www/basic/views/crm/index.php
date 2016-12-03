@@ -20,7 +20,7 @@ $this->params['leftmenu'] = $this->render('lmcrm');
     
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?php Pjax::begin(['enablePushState' => false, 'id' => ($choiceMode?uniqid():'pjaxKAgent')]); ?>
+    <?php Pjax::begin(['enablePushState' => false, 'id' => ($choiceMode?uniqid():'pjaxKAgent'), 'timeout'=>2000]); ?>
     <a href="#" typebtn="KagentNew" class="btn-xs btn-info">Добавить</a>
 
     <?= GridView::widget([

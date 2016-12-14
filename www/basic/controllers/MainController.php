@@ -3,8 +3,12 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\Addatr;
+use app\models\Kagent;
+use app\models\KagentSearch;
 use yii\web\Controller;
-use app\models;
+use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
 class MainController extends Controller
 {
@@ -34,11 +38,39 @@ class MainController extends Controller
      */
     public function actionIndex()
     {
+        $today =  date('Y-m-d');
+        $tomorow = date("Y-m-d",strtotime("$today + 1 day"));
+        $last_Monday = date("Y-m-d",strtotime("last Monday"));
+        $end_week = date("Y-m-d",strtotime("$last_Monday + 7 day"));
+        //$sparam = ['fltempl' => Yii::$app->user->identity->id, 'cday' => $cday, 'last_Monday' => $last_Monday, 'end_week' => $end_week,];
+        $events = $this->searchv2(Yii::$app->user->identity->id);
+
+        $stats = ['overdue'=>0,'todaycnt'=>0,'tomorowcnt'=>0,'weekcnt'=>0,];
+        foreach ($events as $event) {
+        if($event['start'] < $today) $stats['overdue']++;
+            if($event['start'] == $today) $stats['todaycnt']++;
+            if($event['start'] == $tomorow) $stats['tomorowcnt']++;
+            if($event['start'] > $last_Monday && $event['start'] < $end_week) $stats['weekcnt']++;
+        }
+
+        $searchModel = new KagentSearch();
+        $filter['kindKagent'] = 2;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$filter);
+        
+        return $this->render('index',[
+            'events' => $events,
+            'stats' => $stats,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'choiceMode' => false,
+            ]);
+        
+/*
         $sparam = ['fltempl' => 0, 'fltklient' => 0, 'fltstatus' => 'all', 'flttypes' => '*',];
 
         $cmonth =  substr(date('Y-m-d'),0,7);
         $cday =  date('Y-m-d');
-        
+
         $sparam['acttype'] = 'groupmonth';
         $sparam['actparam'] = $cmonth;
         $evoldm = $this->search($sparam);
@@ -53,6 +85,7 @@ class MainController extends Controller
         
         return $this->render('index',
             ['cmonth' => $cmonth,'evoldm' => $evoldm,'cday' => $cday,'evcurm' => $evcurm,'evcurd' => $evcurd]);
+ */
     }
     public function actionFltindex()
     {
@@ -162,5 +195,29 @@ class MainController extends Controller
         return $event->asArray()->all();
         
     }
+    public function searchv2($emplid) {
+        $event = \app\models\Event::find()
+            ->andWhere(['status'=>0])
+            ->leftJoin('kagent','kagent.id=event.id_klient')
+            ->andFilterWhere(['kagent.userId'=>$emplid]);
+        
+        return $event->asArray()->all();
+    }
+    public function actionGeteventbyid()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return \app\models\Event::findOne(Yii::$app->request->post('pid'));
+    }        
+    public function actionEditevent()
+    {
+        $aRec['Event']=Yii::$app->request->post();
+        $model = \app\models\Event::findOne($aRec['Event']['id']);
+        if ($model->load($aRec)) {
+            if (!$model->save()){
+                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return $model->getErrors();
+            }
+        }
+    }        
 
 }

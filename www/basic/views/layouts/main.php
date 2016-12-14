@@ -86,7 +86,8 @@ if($this->params['curmenu']===4) CrmAsset::register($this);
         <div class="col-xs-3" style="height: 38px">
             <div style="padding-top: 6px; padding-left: 2px;">
 		<?php if(isset($this->params['leftmenu'])) {
-                //$pm = array(2,3,4,5); //if(in_array($this->params['curmenu'],$pm)){
+                //$pm = array(2,3,4,5); 
+                //if(in_array($this->params['curmenu'],$pm)){
                 ?>
 		<input type="checkbox" id="show-sidebar" data-size="mini" data-on-text="Включено" data-off-text="Выключено" toglemenu data-label-text="меню" class="form-control s-flip" checked>
 		<?php }?>

@@ -26,9 +26,12 @@ class MainAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
+        'css/jquery-ui-timepicker-addon.css',
         'css/custmain.css'
     ];
     public $js = [
+        'js/jquery-ui-timepicker-addon.js',
+        'js/jquery-ui-timepicker-ru.js',
         'js/custmain.js'
     ];
     public $depends = [

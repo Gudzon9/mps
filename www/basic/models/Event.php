@@ -73,4 +73,5 @@ class Event extends \yii\db\ActiveRecord
         $this->title = $this->type.' '.$this->klient.' '.$this->prim;
         return parent::save($runValidation,$attributeNames);
     }
+    
 }

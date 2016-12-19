@@ -119,7 +119,7 @@ if($this->params['curmenu']===4) CrmAsset::register($this);
                     <?=Html::a(Html::tag('i','',['class'=>'k-comm k-menu']).'Коммуникации',['crm/comm'],['class'=>'k-href']);?>
 		</li>
                 <li>
-                    <?=Html::a(Html::tag('i','',['class'=>'k-sends k-menu']).'Рассылки',['crm/sends'],['class'=>'k-href']);?>
+                    <?=Html::a(Html::tag('i','',['class'=>'k-sends k-menu']).'Рассылки',['delivery/index'],['class'=>'k-href']);?>
 		</li>
             </ul>
             <?php }?> 

@@ -44,12 +44,15 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         return 'user';
     }
 
-    /**
-     * @inheritdoc
-     */
-	public function getIsDirector(){
-		return $this->posada==1;
-	}
+    public function getIsDirector(){
+        return $this->posada==1;
+    }
+    public function getFio(){
+        return $this->fio;
+    }
+    public function getEmail(){
+        return $this->emailLogin;
+    }
     public function rules()
     {
         return [

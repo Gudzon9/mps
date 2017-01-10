@@ -6,18 +6,15 @@ use Yii;
 use app\models\User;
 use app\models\Addatr;
 use app\models\UserSearch;
+use app\models\Spratr;
+use yii\filters\AccessControl;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-/**
- * UserController implements the CRUD actions for User model.
- */
 class EmplController extends Controller
 {
-    /**
-     * @inheritdoc
-     */
     public function behaviors()
     {
         return [
@@ -27,8 +24,20 @@ class EmplController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    // разрешаем аутентифицированному директору
+                    [
+                    'allow' => Yii::$app->user->identity->isDirector,
+                    'roles' => ['@'],
+                    ],
+                    // всё остальное по умолчанию запрещено
+                ],
+            ],
         ];
     }
+/*
     public function beforeAction($action)
     {
         if (Yii::$app->user->isGuest){
@@ -36,17 +45,20 @@ class EmplController extends Controller
         }
         return parent::beforeAction($action);
     }
-    /**
-     * Lists all User models.
-     * @return mixed
-     */
+ * 
+ */
     public function actionIndex()
     {
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $sprprov = Spratr::find();
+        $regions = $sprprov->Where(['atrId'=>'7'])->all();
+        $towns = $sprprov->Where(['atrId'=>'8'])->all();
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider, 
+            'regions' => $regions, 
+            'towns' => $towns,
         ]);
     }
     public function actionSal()
@@ -57,27 +69,52 @@ class EmplController extends Controller
     {
         return $this->render('moff');
     }
-
-    /**
-     * Displays a single User model.
-     * @param integer $id
-     * @return mixed
-     */
+    public function actionAspr($atrid=1)
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => Spratr::find()->Where(['atrId'=>$atrid]),
+        ]);
+        return $this->render('lstspr', [
+            'dataProvider' => $dataProvider, 'atrid'=>$atrid,
+        ]);
+    }
+    public function actionUpdspr($id)
+    {
+        $model = Spratr::findOne($id);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['aspr', 'atrid' => $model->atrId]);
+        } else {
+            return $this->render('frmspr', [
+               'model' => $model,
+            ]);
+        }    
+    }
+    public function actionNewspr($atrid=1)
+    {
+        $model = new Spratr();
+        $model->atrId = $atrid;
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['aspr', 'atrid' => $model->atrId]);
+        } else {
+            return $this->render('frmspr', [
+               'model' => $model,
+            ]);
+        }    
+    }
     public function actionView($id)
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
     }
-
-    /**
-     * Creates a new User model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
     public function actionCreate()
     {
         $model = new User();
+        //->select(['id','descr'])
+        $sprprov = Spratr::find();
+        $regions = $sprprov->Where(['atrId'=>'7'])->all();
+        $towns = $sprprov->Where(['atrId'=>'8'])->all();
+        
         if (Yii::$app->request->isAjax){
             if ($model->load(Yii::$app->request->post())) {
                 if ($model->save()){
@@ -91,31 +128,27 @@ class EmplController extends Controller
             }
             else{
                 return $this->renderAjax('_form',[
-                    'model' => $model,
+                    'model' => $model, 'regions' => $regions, 'towns' => $towns, 
                 ]);
             }
         }else{ 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                  $this->saveAddAtr($model);
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['index']);
             } else {
                 //var_dump($model->getErrors());
                 return $this->render('create', [
-                    'model' => $model,
+                    'model' => $model, 'regions' => $regions, 'towns' => $towns,
                 ]);
             }
         }
     }
-
-    /**
-     * Updates an existing User model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionUpdate($id=1)
     {
         $model = $this->findModel($id);
+        $sprprov = Spratr::find();
+        $regions = $sprprov->Where(['atrId'=>'7'])->all();
+        $towns = $sprprov->Where(['atrId'=>'8'])->all();
         if (Yii::$app->request->isAjax){
             if ($model->load(Yii::$app->request->post())) {
                 if ($model->save()){
@@ -130,18 +163,18 @@ class EmplController extends Controller
             }
             else{
                 return $this->renderAjax('_form',[
-                    'model' => $model,
+                    'model' => $model, 'regions' => $regions, 'towns' => $towns,
                 ]);
             }
         }
         else{
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 $this->saveAddAtr($model);
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['index']);
             } else {
                 //var_dump($model->getErrors());
                 return $this->render('update', [
-                    'model' => $model,
+                    'model' => $model, 'regions' => $regions, 'towns' => $towns,
                 ]);
             }
         }

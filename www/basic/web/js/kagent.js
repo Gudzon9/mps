@@ -84,6 +84,7 @@ jQuery(document).ready(function () {
                                         }
                                     ]
                         })
+                        $( ".ui-dialog .ui-dialog-content").css("overflow","hidden");
                     }
             });                     
         }else{

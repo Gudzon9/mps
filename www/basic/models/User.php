@@ -56,15 +56,15 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['fio1', 'fio2', 'fio3', 'fio', 'emailLogin', 'password', 'createdDs', 'birthday', 'dateEmp', 'address', 'tin', 'passport', 'statusEmp'], 'required'],
-            [['status', 'posada', 'statusEmp'], 'integer'],
-            [['createdDs', 'updatedDs','id'], 'safe'],
+            [['fio1', 'fio2', 'fio3', 'fio', 'emailLogin', 'password', 'createdDs', 'birthday', 'dateEmp', 'address', 'statusEmp','region','town'], 'required'],
+            [['status', 'posada', 'statusEmp','region','town'], 'integer'],
+            [['createdDs', 'updatedDs','id', 'tin', 'passport'], 'safe'],
             [['fio1', 'fio2', 'fio3', 'emailLogin'], 'string', 'max' => 40],
             [['fio', 'address'], 'string', 'max' => 60],
-            [['password'], 'string', 'max' => 20],
+            //[['password'], 'string', 'max' => 20],
             [['birthday', 'dateEmp', 'dateDis', 'tin'], 'string', 'max' => 10],
-            [['passport'], 'string', 'max' => 80],
-            [['passport'], 'match', 'pattern' => '/^[А-Я]{2}-[0-9]{6}$/u'],
+            //[['passport'], 'string', 'max' => 80],
+            //[['passport'], 'match', 'pattern' => '/^[А-Я]{2}-[0-9]{6}$/u'],
             [['birthday', 'dateEmp', 'dateDis'], 'match', 'pattern' => '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/'],
             [['emailLogin'], 'email'],
         ];
@@ -81,7 +81,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'fio2' => 'Имя',
             'fio3' => 'Отчество',
             'fio' => 'ФИО',
-            'emailLogin' => 'Email',
+            'emailLogin' => 'Email (логин для входа)',
             'password' => 'Пароль',
             'createdDs' => 'Created Ds',
             'updatedDs' => 'Updated Ds',
@@ -93,6 +93,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'tin' => 'Ид. код',
             'passport' => 'Паспорт',
             'statusEmp' => 'Статус',
+            'region' => 'Область',
+            'town' => 'Город',
         ];
     }
     

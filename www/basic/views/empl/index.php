@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
 $this->title = 'Empl';
 $this->params['curmenu'] = 2;
 $this->params['cursubmenu'] = 1;
-$this->params['leftmenu'] = $this->render('lmempl');
+$this->params['leftmenu'] = $this->render('lmempl',['searchModel' => $searchModel, 'regions' => $regions, 'towns' => $towns]);
 ?>
 <a href="#" typebtn="UserNew" class="btn-xs btn-info">Добавить</a>
 <?php Pjax::begin(['enablePushState' => false, 'id' =>  'usrPjax']); ?>
@@ -21,7 +21,7 @@ $this->params['leftmenu'] = $this->render('lmempl');
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'modelName' => 'User',
-        'edtType'=>'Modal',
+        'edtType'=>'noModal',
         'ui'=>new Ui(),        
         'columns' => [
             'fio',

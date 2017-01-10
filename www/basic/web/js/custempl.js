@@ -1,8 +1,22 @@
 jQuery(document).ready(function () {
 
+    $( ".ui-dialog .ui-dialog-content").css("overflow","hidden");
+    $( "#clearflt" ).on("click",function(){
+        $( ".panel-body .form-control").each(function(){
+            //alert($(this).attr('name')+' = '+$(this).val());
+           $(this).val(''); 
+           //alert($(this).attr('name')+' = '+$(this).val());
+        });
+        $( "#goflt" ).click();
+    });
+/*
+    $( ".panel-body select").addClass("form-control");
+    $( ".panel-body .form-control").on("change",function(){
+        $.pjax.reload({container: '#usrPjax', timeout: 2000});
+    });
     $( ".refevent" ).on("click",function(){
         alert('Функция в разработке ...');
-        /*
+
         $.ajax({
                 type: "POST",
                 url: "fltindex",
@@ -11,7 +25,6 @@ jQuery(document).ready(function () {
                     $("#content").html(retdata);
                 }
         });
-        */
     });
     $( "#fltemplname" ).autocomplete({
         minLength: 2,
@@ -35,5 +48,6 @@ jQuery(document).ready(function () {
         $("#fltklientname").val("");
         $("#fltklientid").val("");
     });
+*/
 });
 

@@ -3,12 +3,15 @@ use yii\widgets\Menu;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 
+/*
 $events = [
     ['id'=>'1','type'=>'Звонок','color'=>'#F0AD4E'],
     ['id'=>'2','type'=>'Встреча','color'=>'#5BC0DE'],
     ['id'=>'3','type'=>'Совещание','color'=>'#337AB7'],
     ['id'=>'4','type'=>'Праздник','color'=>'#5CB85C'],
 ];
+*/
+$events = Yii::$app->params['atypeEvent'];
 $fltstatus = [
     ['id'=>'all','name'=>'Все'],
     ['id'=>'act','name'=>'Активные'],

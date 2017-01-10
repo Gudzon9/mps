@@ -8,10 +8,29 @@ return [
     'isDirector' => false,
     //'aatr' => array(1 => "phone", 2 => "email", 3 => "link"),
     'aatr' => array(
-        1=>array('atrName'=>'phone','atrDescr'=>'Телефон','atrMask'=>'+38(999)9999999'), 
-        2=>array('atrName'=>'email','atrDescr'=>'Email','atrMask'=>''), 
-        3=>array('atrName'=>'link','atrDescr'=>'Link','atrMask'=>'')
+        1=>array('atrId'=>'1','atrName'=>'phone','atrDescr'=>'Телефон','atrMask'=>'+38(999)9999999'), 
+        2=>array('atrId'=>'2','atrName'=>'email','atrDescr'=>'Email','atrMask'=>''), 
+        3=>array('atrId'=>'3','atrName'=>'link','atrDescr'=>'Link','atrMask'=>''),
+    ),
+    'satr' => array(
+        1=>array('atrId'=>'1','atrName'=>'typy','atrDescr'=>'Тип клиента'),
+        2=>array('atrId'=>'2','atrName'=>'status','atrDescr'=>'Статус'),
+        3=>array('atrId'=>'3','atrName'=>'action','atrDescr'=>'Вид деятельности'),
+        4=>array('atrId'=>'4','atrName'=>'chanal','atrDescr'=>'Канал привлечения'),
+        5=>array('atrId'=>'5','atrName'=>'goods','atrDescr'=>'Продукция'),
+        6=>array('atrId'=>'6','atrName'=>'refuse','atrDescr'=>'Причина отказа'),
+        7=>array('atrId'=>'7','atrName'=>'region','atrDescr'=>'Область'),
+        8=>array('atrId'=>'8','atrName'=>'town','atrDescr'=>'Город'),
+        9=>array('atrId'=>'9','atrName'=>'tpay','atrDescr'=>'Форма расчета'),
+        10=>array('atrId'=>'10','atrName'=>'groups','atrDescr'=>'Группы'),
     ),
     'akindKagent' => array(1 => "Человек", 2 => "Компания"),
     'atypeKagent' => array(1 => "Клиент", 2 => "Конкурент"),
+    'atypeEvent' => [
+        ['id'=>'1','type'=>'Звонок','color'=>'#A0CB29'],
+        ['id'=>'2','type'=>'Встреча','color'=>'#F0AD4E'],
+        ['id'=>'3','type'=>'Дело','color'=>'#337AB7'],
+        //['id'=>'4','type'=>'Праздник','color'=>'#5CB85C'],
+    ],
+
 ];

@@ -121,6 +121,7 @@
                                             }
                                         ]
                             })
+                           $( ".ui-dialog .ui-dialog-content").css("overflow","hidden");
                         }
                 });                     
             }else{

@@ -82,7 +82,7 @@ $script = <<< JS
     if (typeof maxId == "undefined"){
         var maxId = 0;
     };
-    aData['$id'] = {Atr:$aAtr,AddAtr:$aAddAtr};
+    aData['$id'] = {Atr:$aAtr,AddAtr:$aAddAtr}; 
     $(document).off('click','#$id .btnAddAtr').on('click','#$id .btnAddAtr', function(){
         RenderAddAtr(-1,$(this).attr('indKey'), '$id');
     });
@@ -100,7 +100,7 @@ $script = <<< JS
         
     $('#$id #kagent-kindkagent').trigger('change');
         
-    for (var key in aData['$id'].Atr) {
+    for (var key in aData['$id'].Atr) { 
         var strObj = '<div align="center" style="margin-bottom:5px">';
             strObj = strObj + '<a href="#" class="btn-xs btn-default btnAddAtr" style="font-weight: bold" indKey='+key+'>+ '+aData['$id'].Atr[key].atrDescr+'</a>';
             strObj = strObj + '<table class="tblAddAtr'+key+'" style="border-spacing:5px; border-collapse: separate"></table></div>';

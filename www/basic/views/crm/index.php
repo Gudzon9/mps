@@ -28,8 +28,8 @@ $this->params['leftmenu'] = $this->render('lmcrm');
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'modelName' => 'Kagent',
-        'edtType'=>'Modal',
-        'Edt'=>'manual',
+        'edtType'=>'noModal',
+        'Edt'=>'nomanual',
         'ui'=>new Ui(),         
         'columns' => [
             'name',

@@ -339,14 +339,40 @@ jQuery(document).ready(function () {
         select: function( event, ui ) {
             $( "#event_id_klient" ).val( ui.item.id );
             $( "#event_klient" ).val( ui.item.value ).blur().parent().parent().removeClass('has-error');
-            /*
-            $( "#event_klient" ).val( ui.item.value );
-            $('#event_klient').blur();
-            $('#event_klient').parent().parent().removeClass('has-error');
-            */
         }
     });
-    
+    function ajaxEvflt(pdata,ptext) {
+         $.ajax({
+            type: "POST",
+            url: "getevwflt",
+            data: "pflt="+pdata,  
+            success: function(data){
+                $("#evtitle").html("Дела : "+ptext);
+                $("#evbody").html(data);
+            }
+        });
+    }
+    $("#evexpaire").on("click",function(){ 
+        var pdata = "evexpaire", ptext="Просроченные";
+        ajaxEvflt(pdata,ptext);
+    });
+    $( "#evtoday" ).on("click",function(){
+        var pdata = "evtoday", ptext="Сегодня";
+        ajaxEvflt(pdata,ptext);
+    });
+    $( "#evtomorow" ).on("click",function(){
+        var pdata = "evtomorow", ptext="Завтра";
+        ajaxEvflt(pdata,ptext);
+    });
+    $( "#evweek" ).on("click",function(){
+        var pdata = "evweek", ptext="Неделя";
+        ajaxEvflt(pdata,ptext);
+    });
+
+
+
+
+
     
 });
 

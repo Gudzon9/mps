@@ -23,7 +23,7 @@ class UserSearch extends User
     public function rules()
     {
         return [
-            [['id', 'status', 'posada', 'statusEmp'], 'integer'],
+            [['id', 'status', 'posada', 'statusEmp','region','town'], 'integer'],
             [['fio1', 'fio2', 'fio3', 'fio', 'emailLogin', 'password', 'createdDs', 'updatedDs', 'birthday', 'dateEmp', 'dateDis', 'address', 'tin', 'passport'], 'safe'],
             [['addatr.tel'], 'string']
         ];
@@ -72,6 +72,8 @@ class UserSearch extends User
             'updatedDs' => $this->updatedDs,
             'posada' => $this->posada,
             'statusEmp' => $this->statusEmp,
+            'region' => $this->region,
+            'town' => $this->town,
         ]);
 
         $query->andFilterWhere(['like', 'fio1', $this->fio1])

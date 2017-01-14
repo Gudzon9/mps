@@ -71,6 +71,9 @@ class EmplController extends Controller
     }
     public function actionAspr($atrid=1)
     {
+        //$dataregion = [];
+        //if($atrid==8) $dataregion = Spratr::find()->Where(['atrId'=>7])->all();
+        //, 'dataregion'=>$dataregion
         $dataProvider = new ActiveDataProvider([
             'query' => Spratr::find()->Where(['atrId'=>$atrid]),
         ]);
@@ -84,8 +87,13 @@ class EmplController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['aspr', 'atrid' => $model->atrId]);
         } else {
+            if($model->atrId == 8) {
+                $regions = Spratr::find()->Where(['atrId'=>'7'])->all();
+            } else {
+                $regions = null;
+            }    
             return $this->render('frmspr', [
-               'model' => $model,
+               'model' => $model, 'regions' => $regions,
             ]);
         }    
     }
@@ -96,8 +104,13 @@ class EmplController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['aspr', 'atrid' => $model->atrId]);
         } else {
+            if($model->atrId == 8) {
+                $regions = Spratr::find()->Where(['atrId'=>'7'])->all();
+            } else {
+                $regions = null;
+            }    
             return $this->render('frmspr', [
-               'model' => $model,
+               'model' => $model, 'regions' => $regions,
             ]);
         }    
     }
@@ -137,7 +150,7 @@ class EmplController extends Controller
                 return $this->redirect(['index']);
             } else {
                 //var_dump($model->getErrors());
-                return $this->render('create', [
+                return $this->render('_form', [
                     'model' => $model, 'regions' => $regions, 'towns' => $towns,
                 ]);
             }
@@ -173,7 +186,7 @@ class EmplController extends Controller
                 return $this->redirect(['index']);
             } else {
                 //var_dump($model->getErrors());
-                return $this->render('update', [
+                return $this->render('_form', [
                     'model' => $model, 'regions' => $regions, 'towns' => $towns,
                 ]);
             }

@@ -10,7 +10,7 @@ use Yii;
  * @property integer $id
  * @property string $name
  * @property integer $kindKagent
- * @property integer $typeKagent
+ * @property integer $typeKag
  * @property integer $company
  * @property string $posada
  * @property string $birthday
@@ -33,13 +33,13 @@ class Kagent extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'kindKagent', 'typeKagent', 'birthday', 'vidId', 'userId'], 'required'],
-            [['id', 'kindKagent', 'typeKagent', 'vidId', 'userId'], 'integer'],
+            [['name', 'kindKagent', 'userId'], 'required'],
+            [['id', 'kindKagent', 'typeKag', 'statKag', 'actiKag', 'chanKag', 'refuKag', 'regiKag', 'townKag', 'userId'], 'integer'],
             [['id','companyId','posada'],'safe'],
-            [['name'], 'string', 'max' => 60],
+            [['prodKag','grouKag'], 'string', 'max' => 100],
             [['posada'], 'string', 'max' => 20],
             [['birthday'], 'string', 'max' => 10],
-            [['city','adr','coment'], 'string', 'max' => 60],
+            [['adr','coment','tpayKag','name'], 'string', 'max' => 60],
         ];
     }
 
@@ -52,15 +52,22 @@ class Kagent extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Наименование',
             'kindKagent' => 'Вид',
-            'typeKagent' => 'Тип',
             'companyId' => 'Компания',
             'posada' => 'Должность',
             'birthday' => 'День рождения',
-            'vidId' => 'Вид деятельности',
-            'userId' => 'Менеджер',
-            'city' => 'Город',
+            'typeKag' => 'Тип',
+            'statKag' => 'Статус',
+            'actiKag' => 'Вид деятельности',
+            'chanKag' => 'Канал привлечения',
+            'prodKag' => 'Продукция',
+            'refuKag' => 'Причина отказа',
+            'regiKag' => 'Область',
+            'townKag' => 'Город',
+            'tpayKag' => 'Формы расчета',
+            'grouKag' => 'Группы',
             'adr' => 'Адрес',
             'coment' => 'Примечание',
+            'userId' => 'Менеджер',
         ];
     }
     public function getAddAtrs($atrKod=0)
@@ -72,6 +79,10 @@ class Kagent extends \yii\db\ActiveRecord
         }
         return $relAddAtr;
     }    
+    public function getAddComents()
+    {
+        return $this->hasMany(Coment::className(),['kagentId'=>'id']);
+    }	    
     public function getKagents()
     {
         return $this->hasMany(Kagent::className(),['companyId'=>'id']);

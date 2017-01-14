@@ -4,12 +4,62 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
 
 $this->params['curmenu'] = 2;
 $this->params['cursubmenu'] = 1;
 $itemsregions = ArrayHelper::map($regions,'id','descr');
-$itemstowns = ArrayHelper::map($towns,'id','descr');
+$itemstowns = [];
+foreach ($regions as $region) {
+    foreach ($towns as $town) {
+        if($town->lvlId == $region->id) {
+           $itemstowns[$region->descr][$town->id] = $town->descr;
+        }
+    }
+}    
+$ajstowns = ArrayHelper::map($towns,'id','lvlId');
+//$itemstowns = ArrayHelper::map($towns,'id','descr');
+/*
+ *                     <td colspan="3"><?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?></td>
+                    <td><?= $form->field($model, 'region')->dropDownList($itemsregions,['prompt' => 'Выберите из списка']) ?></td>
+                    <td colspan="2"><?= $form->field($model, 'town')->dropDownList($itemstowns,['prompt' => 'Выберите из списка']) ?></td>
+$data = [
+  "light" => [
+    "1" => "red",
+    "2" => "green",
+    "3" => "blue",
+    ],
+  "dark" => [
+    "orange" => "orange",
+    "white" => "white",
+    "black" => "black",
+    "purple" => "purple",
+    "cyan" => "cyan",
+    "teal" => "teal"
+    ],
+];
+$model->status =  ['1', '3', 'black'];
+
+<?= $form->field($model, 'address')->hiddenInput()->label(false) ?>                        
+<?= Select2::widget([
+    'name' => 'sadr',
+    'data' => $data,
+    'value' => ['1', '3', 'black'],
+    'options' => ['placeholder' => 'Select a color ...', 'multiple' => true],
+    'pluginOptions' => [
+        'tags' => true,
+        'tokenSeparators' => [',', ' '],
+        'maximumInputLength' => 2
+    ],
+    'pluginEvents' => [
+        'change' => 'function(event) { var selections = $(this).select2("data"); var foradr; $.each(selections, function (idx, obj) { foradr = foradr + "," +obj.id ; }); $("#user-address").val(foradr); }'
+    ],
+]); ?>                        
+            
+
+ */
 ?>
+<h2><?= $model->isNewRecord ? 'Новый сотрудник ' : 'Редактирование сотрудника ' ?></h2>
 <div class="user-form">
     <?php $form = ActiveForm::begin(['id'=>'edtUser']); ?>
     <div class='row'>
@@ -34,11 +84,21 @@ $itemstowns = ArrayHelper::map($towns,'id','descr');
                     <td><?= $form->field($model, 'dateDis')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'9{4}-9{2}-9{2}']) ?></td>
                 </tr>
                 <tr>
-                    <td><?= $form->field($model, 'region')->dropDownList($itemsregions,['prompt' => 'Выберите из списка']) ?></td>
-                    <td colspan="2"><?= $form->field($model, 'town')->dropDownList($itemstowns,['prompt' => 'Выберите из списка']) ?></td>
+                    <td>
+                    <?= $form->field($model, 'region')->widget(Select2::classname(),['data'=>$itemsregions, 'options' => ['placeholder' => 'Выберите город'],'pluginEvents' => ['select2:opening' => 'function(event) { return false ;}'],]) ?></td>
+                    <td colspan="2">
+                    <?= $form->field($model, 'town')->widget(Select2::classname(),[
+                        'data'=>$itemstowns,
+                        'options' => ['placeholder' =>'Выберите из списка'],
+                        'pluginOptions' => ['allowClear' => true],
+                        'pluginEvents' => [
+                            'change' => 'function(event) { $("#user-region").val(arraytowns[$(this).val()]); $("#user-region").trigger("change");}'
+                            ],
+                        ]) ?>
+                    </td>
                 </tr>
                 <tr>
-                    <td colspan="3"><?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?></td>
+                    <td colspan="3"><?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>                    </td>
                 </tr>
             </table>
         </div>
@@ -60,8 +120,9 @@ $itemstowns = ArrayHelper::map($towns,'id','descr');
 </div>
 <?php
 
-$addAtr = 'var aAtr = '.json_encode(Yii::$app->params['aatr']).'; var aAddAtr = '.json_encode($model->getAddAtr()->asArray()->all()).'; ';
+$addAtr = 'var aAtr = '.json_encode(Yii::$app->params['aatr']).'; var aAddAtr = '.json_encode($model->getAddAtr()->asArray()->all()).'; var arraytowns = '.json_encode($ajstowns).'; ';
 $script = <<< JS
+        
     $( "#sidebar-left" ).remove();
     $( "#content" ).css('width','100%');
        

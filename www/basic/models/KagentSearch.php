@@ -23,9 +23,9 @@ class KagentSearch extends Kagent
     public function rules()
     {
         return [
-            [['id', 'kindKagent', 'typeKagent', 'companyId', 'vidId', 'userId'], 'integer'],
+            [['id', 'kindKagent', 'typeKag', 'companyId', 'userId'], 'integer'],
             [['name', 'posada', 'birthday'], 'safe'],
-            [['city', 'adr', 'coment','kagent.name'], 'string'],
+            [['adr', 'coment','kagent.name'], 'string'],
         ];
     }
 
@@ -74,13 +74,11 @@ class KagentSearch extends Kagent
         $query->andFilterWhere([
             'kagent.id' => $this->id,
             //'kagent.kindKagent' => $this->kindKagent,
-            'kagent.typeKagent' => $this->typeKagent,
+            'kagent.typeKag' => $this->typeKag,
             'kagent.companyId' => $this->companyId,
-            'kagent.vidId' => $this->vidId,
             'kagent.userId' => $this->userId,
             'kagent.coment' => $this->coment,
             'kagent.adr' => $this->adr,
-            'kagent.city' => $this->city,
         ]);
         
         //$query->andFilterWhere(['companyId'=>$filters['companyId']]);

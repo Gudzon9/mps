@@ -12,7 +12,7 @@ class Spratr extends \yii\db\ActiveRecord
     {
         return [
             [['atrId', 'descr',], 'required'],
-            [['atrId'], 'integer'],
+            [['atrId','lvlId'], 'integer'],
             [['descr'], 'string', 'max' => 50],
             
         ];
@@ -23,6 +23,8 @@ class Spratr extends \yii\db\ActiveRecord
             'id' => 'ID',
             'atrId' => 'Вид справочника',
             'descr' => 'Текст',
+            'lvlId' => 'lvlId',
+            
          ];
     }
     /*

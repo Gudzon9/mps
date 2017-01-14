@@ -1,10 +1,48 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use app\models\Event;
 use yii\grid\GridView;
 use app\models\Ui;
 use yii\widgets\Pjax;
+use kartik\select2\Select2;
+use kartik\depdrop\DepDrop;
+
+/*
+ * http://stackoverflow.com/questions/25305752/yii-2-0-gridview-update
+ 
+         <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'columns' => [
+                [
+                'label' => 'Клиент',
+                'format' => 'raw',
+                'value' => function($model){
+                    return Html::a($model->name,\yii\helpers\Url::to(['crm/update','id'=>$model->id]));
+                }
+                ],
+                [
+                'label'=>'Телефон',
+                'attribute'=>'addatr.tel',
+                'format'=>'html',
+                'value'=>function($model){
+                    $str ='';
+                    foreach ($model->getAddAtrs(1)->all() As $item)
+                    {
+                        $str.=$item['content'].' '.$item['note'].'<br>';
+                    }
+                    return $str;
+                }
+                ]
+            ],
+        ]); ?>
+ <?= Html::beginForm();?>
+<?= Html::endForm(); ?>  
+ *  <?php Pjax::begin() ?>   
+ * <?php Pjax::end(); ?>
+ */
 
 $this->params['curmenu'] = 1;
 ?>
@@ -58,38 +96,42 @@ $this->params['curmenu'] = 1;
         </td>    
         <td width='50%' style='vertical-align: top; ; padding-left: 5px'>
             <div class="panel panel-info">
-                <div class="panel-heading">VIP</div>
+                <div class="panel-heading">Клиенты</div>
                 <div class="panel-body">
-<?=Html::beginForm();?>
-     <?=Html::dropDownList('type', 'null',['1'=>'VIP','2'=>'Думает','3'=>'Отказался']); ?>
-<?=Html::endForm(); ?>           
-                    
-        <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'columns' => [
-                [
-                'label' => 'Клиент',
-                'format' => 'raw',
-                'value' => function($model){
-                    return Html::a($model->name,\yii\helpers\Url::to(['crm/update','id'=>$model->id]));
-                }
-                ],
-                [
-                'label'=>'Телефон',
-                'attribute'=>'addatr.tel',
-                'format'=>'html',
-                'value'=>function($model){
-                    $str ='';
-                    foreach ($model->getAddAtrs(1)->all() As $item)
-                    {
-                        $str.=$item['content'].' '.$item['note'].'<br>';
-                    }
-                    return $str;
-                }
-                ]
-            ],
-        ]); ?>
-
+                 
+                
+                <table width="100%" >
+                    <tr>
+                        <td width="30%" >
+                        <?= Select2::widget([
+                            'name' => 'asatr',
+                            'data' => ArrayHelper::map(Yii::$app->params['satr'],'atrId','atrDescr'),
+                            'value' => ['1'],
+                            'options'=>['id'=>'lev0'],
+                        ]); ?>                     
+                        </td>
+                        <td width="60%" >
+                        <?= DepDrop::widget([
+                            'name' => 'asatrdd',
+                            'data'=> [],
+                            'options' => ['id'=>'lev1','placeholder' => 'Select ...'],
+                            'type' => DepDrop::TYPE_SELECT2,
+                            'select2Options'=>['pluginOptions'=>['allowClear'=>true]],
+                            'pluginOptions'=>[
+                                'depends'=>['lev0'],
+                                'url' => Url::to(['main/getsatr']),
+                                'loadingText' => 'Loading child level 1 ...',
+                            ],
+                        ]); ?> 
+                        </td>
+                        <td width="10%" >
+                        <?= Html::Button('GO',['class' => 'btn btn-info','id' => 'refrkag']); ?>    
+                        </td>    
+                    </tr>    
+                </table>                    
+                <div id="grkag">
+                <?= $this->render('gridkagent',['dataProvider' => $dataProvider]); ?>                    
+                </div>         
                 </div>
             </div>    
         </td>

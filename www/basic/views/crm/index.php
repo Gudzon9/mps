@@ -9,20 +9,21 @@ use app\components\GridView;
 use app\models\Ui;
 use yii\widgets\Pjax;
 //use yii\web\Controller;
+//<a href="#" typebtn="KagentNew" class="btn-xs btn-info">Добавить</a>
+// echo $this->render('_search', ['model' => $searchModel]);
 
 $this->title = 'CRM';
 $this->params['curmenu'] = 4;
 $this->params['cursubmenu'] = 1;
 $this->params['leftmenu'] = $this->render('lmcrm');
-        
 ?>
 <div class="kagent-index">
-    
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?= Html::a('Добавить компанию', ['create','mode'=>'2'], ['class' => 'btn-xs btn-info']) ?>
+    <?= Html::a('Добавить человека', ['create','mode'=>'1'], ['class' => 'btn-xs btn-info']) ?>    
 
     <?php Pjax::begin(['enablePushState' => false, 'id' => ($choiceMode?uniqid():'pjaxKAgent'), 'timeout'=>2000]); ?>
-    <a href="#" typebtn="KagentNew" class="btn-xs btn-info">Добавить</a>
-
+    
+    
     <?= GridView::widget([
         'id'=>uniqid(),
         'dataProvider' => $dataProvider,
@@ -41,14 +42,13 @@ $this->params['leftmenu'] = $this->render('lmcrm');
                 }                
             ],
             [
-               'attribute' => 'typeKagent',
-               'filter' => Yii::$app->params['atypeKagent'],
-                'value'=>function($model){
-                    return Yii::$app->params['atypeKagent'][$model->typeKagent];
-                }                
+               'attribute' => 'typeKag',
+               //'filter' => Yii::$app->params['atypeKagent'],
+               // 'value'=>function($model){
+               //     return Yii::$app->params['atypeKagent'][$model->typeKagent];
+               // }                
             ],                    
             //'companyId'=>'kagent.name',
-            'city',
             'adr',
             'coment',
             // 'posada',

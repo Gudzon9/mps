@@ -6,10 +6,12 @@ use Yii;
 use app\models\Addatr;
 use app\models\Kagent;
 use app\models\KagentSearch;
+use app\models\Spratr;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Json;
 
 class MainController extends Controller
 {
@@ -48,14 +50,15 @@ class MainController extends Controller
             if($event['start'] > $last_Monday && $event['start'] < $end_week) $stats['weekcnt']++;
         }
         
-        $dataProvider = $this->getdataprovider();
-        $dropdownProvider = ['1'=>'VIP','2'=>'Думает','3'=>'Отказался'];
+        $flt['fldname'] = 'typeKag';
+        $flt['fldvalue'] = 441;
+        $flt['fldtype'] = 'one' ;
+        $dataProvider = $this->getdataprovider($flt);
         
         return $this->render('index',[
             'events' => $events,
             'stats' => $stats,
             'dataProvider' => $dataProvider,
-            'dropdownProvider' => $dropdownProvider,
             ]);
     }
     public function actionGetevwflt()
@@ -109,9 +112,54 @@ class MainController extends Controller
             }
         }
     }
-    public function getdataprovider()
+    public function actionGetsatr()
     {
-        $query = Kagent::find();
+        $out = [];
+        $id = Yii::$app->request->post('depdrop_parents');
+        if (isset($id)) {
+            $list = Spratr::find()->andWhere(['atrId'=>$id])->asArray()->all();
+            $selected  = null;
+            if ($id != null && count($list) > 0) {
+                $selected = '';
+                foreach ($list as $i => $account) {
+                    $out[] = ['id' => $account['id'], 'name' => $account['descr']];
+                    if ($i == 0) {
+                        $selected = $account['id'];
+                    }
+                }
+                // Shows how you can preselect a value
+                echo Json::encode(['output' => $out, 'selected'=>$selected]);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected'=>'']);
+    }
+    public function actionGetkagents()
+    {
+        $post = Yii::$app->request->post();
+        $psatr = intval($post['psatr']);
+        $pvatr = intval($post['pvatr']);
+        $flt['fldname'] = Yii::$app->params['satr'][$psatr]['atrName'];
+        $flt['fldvalue'] = $pvatr;
+        $flt['fldtype'] = ($psatr == 5 || $psatr == 9) ? 'many' : 'one' ;
+        $dataProvider = $this->getdataprovider($flt);
+        
+        return $this->renderAjax('gridkagent',['dataProvider' => $dataProvider]);
+    }
+    /*
+     * $fltparams[fldname] -  
+     */
+    public function getdataprovider($fltparams)
+    {        //var_dump($fltparams);
+        if($fltparams['fldtype']=='one') {
+            $query = Kagent::find()->Where([$fltparams['fldname'] => $fltparams['fldvalue']]);
+        } else {
+            //$avalues = explode(',', $fltparams['fldname']);
+            $search = '['.$fltparams['fldvalue'].']';
+            $query = Kagent::find()->Where(['like', $fltparams['fldname'], $search ]);
+            
+        }
+        
         $provider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [

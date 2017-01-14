@@ -38,7 +38,7 @@ class AppAsset extends AssetBundle
         'js/jquery-ui.js',
         'js/bootstrap.min.js',
         'js/bootstrap-switch.js',
-        'js/script.js',
+        'js/leftmenu.js',
         'js/ex.gridView.js',
         ];
     public $depends = [

@@ -369,7 +369,18 @@ jQuery(document).ready(function () {
         ajaxEvflt(pdata,ptext);
     });
 
-
+    $( "#refrkag" ).on("click",function(){
+        var psatr = $("#lev0").val(), pvatr = $("#lev1").val();
+        $.ajax({
+            type: "POST",
+            url: "getkagents",
+            data: "psatr="+psatr+"&pvatr="+pvatr,  
+            success: function(data){
+                $("#grkag").html(data);
+            }
+        });
+    });
+    
 
 
 

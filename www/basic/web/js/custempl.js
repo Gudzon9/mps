@@ -1,6 +1,7 @@
 jQuery(document).ready(function () {
 
     $( ".ui-dialog .ui-dialog-content").css("overflow","hidden");
+    //$( ".filters").hide();
     $( "#clearflt" ).on("click",function(){
         $( ".panel-body .form-control").each(function(){
             //alert($(this).attr('name')+' = '+$(this).val());

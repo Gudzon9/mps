@@ -1,4 +1,4 @@
-jQuery(document).ready(function () {
+$(document).ready(function () {
 
     $( ".refevent" ).on("click",function(){
         alert('Функция в разработке ...');

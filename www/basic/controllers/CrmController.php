@@ -6,7 +6,9 @@ use Yii;
 use app\models\Addatr;
 use app\models\Kagent;
 use app\models\KagentSearch;
+use app\models\Coment;
 use yii\web\Controller;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -25,6 +27,17 @@ class CrmController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    // разрешаем аутентифицированному директору
+                    [
+                    'allow' => TRUE,
+                    'roles' => ['@'],
+                    ],
+                    // всё остальное по умолчанию запрещено
                 ],
             ],
         ];
@@ -83,7 +96,7 @@ class CrmController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($mode)
     {
         $model = new Kagent();
         if (Yii::$app->request->isAjax){
@@ -105,13 +118,13 @@ class CrmController extends Controller
         }else{ 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 $this->saveAddAtr($model);
-                echo 'id '.$model->id;
-                var_dump($model->getErrors());
-                return $this->redirect(['view', 'id' => $model->id]);
+                $this->saveAddComent($model);
+                //echo 'id '.$model->id;
+                //var_dump($model->getErrors());
+                return $this->redirect(['index']);
             } else {
-                if ($model->load(Yii::$app->request->post())){
-                    //var_dump($model->getErrors());
-                }
+                $model->kindKagent = $mode;
+                $model->userId = Yii::$app->user->identity->id;
                 return $this->render('_form', [
                     'model' => $model,
                 ]);
@@ -164,7 +177,8 @@ class CrmController extends Controller
         else{
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 $this->saveAddAtr($model);
-                //return $this->redirect(['view', 'id' => $model->id]);
+                $this->saveAddComent($model);
+                return $this->redirect(['index']);
             } else {
                 return $this->render('_form', [
                     'model' => $model,
@@ -262,6 +276,52 @@ class CrmController extends Controller
                 echo $model->id;
             }        
         }
+    }
+    public function saveAddComent($model){
+        $post = Yii::$app->request->post();
+        if (isset($post['inf_coment'])){
+            $aAtr = $post['inf_coment'];
+            $aAtrVal = $post['coment'];
+            foreach ($aAtr as $id=>$content){
+                if ($post['inf_coment'][$id]=='del' || $aAtrVal[$id]==''){
+                    $addComent = Coment::findOne($id);
+                    if ($addComent->id!=''){
+                        $addComent->delete();                            
+                    }
+                } elseif($post['inf_coment'][$id]=='new'){
+                    $addComent = new Coment();
+                    $addComent->comentDate = $aAtrVal[$id];
+                    $addComent->kagentId = $model->id;
+                    $addComent->descr = $post['note_coment'][$id];;
+                    if (!$addComent->save()){
+                        var_dump($addComent->getErrors());
+                    }                            
+                }   else{
+                    $addComent = Coment::findOne($id);
+                    $addComent->comentDate = $aAtrVal[$id];
+                    $addComent->descr = $post['note_coment'][$id];
+                    if (!$addComent->save()){
+                        var_dump($addComent->getErrors());
+                    }
+                }                    
+            }        
+        }
+        /*
+        if (isset($post['inf_Person'])){
+            $aPerson = $post['inf_Person'];
+            foreach ($aPerson as $id=>$val){
+                            
+                $person = $this->findModel($id);
+                if ($val=='del'){
+                    $person->companyId = 0;
+                }else{
+                    $person->companyId = $model->id;
+                }
+                $person->save();
+                echo $model->id;
+            }        
+        }
+        */
     }
     public function actionSearchempl()
     {

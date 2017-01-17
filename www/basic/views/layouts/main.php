@@ -45,9 +45,15 @@ if($this->params['curmenu']===4) CrmAsset::register($this);
       <div class="container-fluid">
         <div class="row">
             <div class="col-xs-3" >
-             <?=Html::a(Yii::$app->user->identity->fio,['main/index'],['class'=>'navbar-brand','style' => ['padding-top'=>'15px','font-size'=>'20px']]);?>      
-			 
-			 
+                <table><tr></tr>
+                <td> <?=Html::a(Yii::$app->user->identity->fio,['main/index'],['class'=>'navbar-brand','style' => ['padding-top'=>'15px','font-size'=>'20px']]);?></td>      
+                </tr>
+            <?php if(Yii::$app->user->identity->isDirector && ($this->params['curmenu']===1 || $this->params['curmenu']===4)) { ?>
+                <tr>
+                <td>Клиенты : <input type="checkbox" id="allkag" data-url="<?= Url::to(['empl/setallkag'])?>" data-size="mini" data-on-text="Мои" data-off-text="Все" toglemenu data-label-text="<span class='glyphicon glyphicon-ok'></span>" class="form-control" <?= (Yii::$app->session->get('allkag')==1) ? 'checked' : ''?>> </td>
+                </tr>
+            <?php } ?>
+                </table>
             </div>
             <div class="col-xs-9">
                 <ul class="nav navbar-nav navbar-left">
@@ -56,6 +62,10 @@ if($this->params['curmenu']===4) CrmAsset::register($this);
                     <?=Html::tag('p','Рабочий стол',['class'=>'p-menu text-center']);?>    
                     </li>
                     <?php if(Yii::$app->user->identity->isDirector) { ?>
+                    <li>
+                    <?=Html::a('',['empl/aspr'],['class'=>'i-spr i-menu']);?>          
+                    <?=Html::tag('p','Справочники',['class'=>'p-menu text-center']);?>    
+                    </li>
                     <li>
                     <?=Html::a('',['empl/index'],['class'=>'i-employees i-menu']);?>          
                     <?=Html::tag('p','Сотрудники',['class'=>'p-menu text-center']);?>    
@@ -112,9 +122,6 @@ if($this->params['curmenu']===4) CrmAsset::register($this);
 		</li>
                 <li>
                     <?=Html::a(Html::tag('i','',['class'=>'i-moff k-menu']).'Отпуска',['empl/moff'],['class'=>'k-href']);?>
-		</li>
-                <li>
-                    <?=Html::a(Html::tag('i','',['class'=>'i-aspr k-menu']).'Справочники',['empl/aspr'],['class'=>'k-href']);?>
 		</li>
             </ul>
             <?php }?> 

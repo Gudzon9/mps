@@ -15,7 +15,7 @@ use yii\widgets\Pjax;
 $this->title = 'CRM';
 $this->params['curmenu'] = 4;
 $this->params['cursubmenu'] = 1;
-$this->params['leftmenu'] = $this->render('lmcrm');
+$this->params['leftmenu'] = $this->render('lmcrm',['searchModel' => $searchModel]);
 ?>
 <div class="kagent-index">
     <?= Html::a('Добавить компанию', ['create','mode'=>'2'], ['class' => 'btn-xs btn-info']) ?>

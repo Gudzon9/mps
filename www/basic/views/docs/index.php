@@ -12,12 +12,17 @@ mihaildev\elfinder\Assets::noConflict($this);
 
 //$this->title = 'Docs';
 //    'path' => 'word',
-$this->params['curmenu'] = 1;
+$this->params['curmenu'] = 5;
 $this->params['leftmenu'] = $this->render('lmdocs');
-
+$filter = [
+    0 => '',
+    1 => 'application/doc',
+    2 => 'application/xls',
+    3 => 'application/pdf',
+];
 echo ElFinder::widget([
     'language'         => 'ru',
-    'filter'           => 'application/pdf',
+    'filter'           => $filter[$filestype],
     'controller'       => $cn , // вставляем название контроллера, по умолчанию равен elfinder
     'callbackFunction' => new JsExpression('function(file, id){}') // id - id виджета
 ]);

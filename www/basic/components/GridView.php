@@ -68,7 +68,7 @@ class GridView extends \yii\grid\GridView
         }
         else
         {
-            $aUI	= $this->ui->findAll(['user_id'=>1, 'model'=>$this->modelName]);
+            $aUI	= $this->ui->findAll(['user_id'=>Yii::$app->user->identity->id, 'model'=>$this->modelName]);
             if (empty($this->columns)) {
                     $this->guessColumns();
             }

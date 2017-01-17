@@ -8,6 +8,7 @@ a {color: #000;}
 .i-todos {background: rgba(0, 0, 0, 0) url("../img/sprite-b-page-header.png") no-repeat scroll 0px -214px;}
 .i-crm {background: rgba(0, 0, 0, 0) url("../img/sprite-b-page-header.png") no-repeat scroll 0px -283px;}
 .i-docs {background: rgba(0, 0, 0, 0) url("../img/sprite-b-page-header.png") no-repeat scroll 0px -434px;}
+.i-spr {background: rgba(0, 0, 0, 0) url("../img/sprite-b-page-header.png") no-repeat scroll 0px -648px;}
 .i-menu {
 	cursor: pointer;
 	display: none;

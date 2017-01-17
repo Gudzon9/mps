@@ -18,14 +18,14 @@ class KagentSearch extends Kagent
     public function attributes()
     {
             // делаем поле зависимости доступным для поиска
-        return array_merge(parent::attributes(), ['kagent.name']);
+        return array_merge(parent::attributes(), ['kagent.name','addatr.tel']);
     }    
     public function rules()
     {
         return [
-            [['id', 'kindKagent', 'typeKag', 'companyId', 'userId'], 'integer'],
-            [['name', 'posada', 'birthday'], 'safe'],
-            [['adr', 'coment','kagent.name'], 'string'],
+            [['id', 'kindKagent', 'typeKag', 'statKag', 'actiKag', 'chanKag', 'refuKag', 'regiKag', 'townKag',  'companyId', 'userId'], 'integer'],
+            [['name', 'posada', 'birthday','adr', 'coment','prodKag','grouKag','tpayKag','kagent.name'], 'string'],
+            [['addatr.tel'], 'string']
         ];
     }
 
@@ -55,6 +55,7 @@ class KagentSearch extends Kagent
             'query' => $query,
         ]);
         $query->joinWith(['kagents' => function($query) { $query->from(['kagent' => 'kagent'])->alias('company'); }]);
+        $query->joinWith(['addAtr' => function($query) { $query->from(['addatr' => 'addatr']); }]);
         $this->load($params);
         
         if (isset($filter)){
@@ -73,19 +74,27 @@ class KagentSearch extends Kagent
         // grid filtering conditions
         $query->andFilterWhere([
             'kagent.id' => $this->id,
-            //'kagent.kindKagent' => $this->kindKagent,
+            'kagent.kindKagent' => $this->kindKagent,
             'kagent.typeKag' => $this->typeKag,
+            'kagent.statKag' => $this->statKag,
+            'kagent.actiKag' => $this->actiKag,
+            'kagent.chanKag' => $this->chanKag,
+            'kagent.refuKag' => $this->refuKag,
+            'kagent.regiKag' => $this->regiKag,
+            'kagent.townKag' => $this->townKag,
             'kagent.companyId' => $this->companyId,
             'kagent.userId' => $this->userId,
-            'kagent.coment' => $this->coment,
-            'kagent.adr' => $this->adr,
         ]);
-        
-        //$query->andFilterWhere(['companyId'=>$filters['companyId']]);
         $query->andFilterWhere(['like', 'kagent.name', $this->name])
-            ->andFilterWhere(['like', 'posada', $this->posada])
-            ->andFilterWhere(['like', 'birthday', $this->birthday])
-                ->andFilterWhere(['like', 'kagent.name', $this->getAttribute('kagent.name')]);
+            ->andFilterWhere(['like', 'kagent.posada', $this->posada])
+            ->andFilterWhere(['like', 'kagent.birthday', $this->birthday])
+            ->andFilterWhere(['like', 'kagent.coment', $this->coment])
+            ->andFilterWhere(['like', 'kagent.adr', $this->adr])
+            ->andFilterWhere(['like', 'kagent.prodKag', $this->prodKag])
+            ->andFilterWhere(['like', 'kagent.tpayKag', $this->tpayKag])
+            ->andFilterWhere(['like', 'kagent.grouKag', $this->grouKag])
+            ->andFilterWhere(['like', 'kagent.name', $this->getAttribute('kagent.name')])
+            ->andFilterWhere(['LIKE', 'addatr.content', $this->getAttribute('addatr.tel')]);
         
 //var_dump($query->createCommand());
         return $dataProvider;

@@ -1,10 +1,8 @@
 <?php
-
 namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
-//use mihaildev\elfinder\ElFinder;
 
 class DocsController extends Controller
 {
@@ -17,16 +15,11 @@ class DocsController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
-    public function actionIndex()
+    public function actionIndex($filestype=0)
     {
-        // default see config/web.php
-        return $this->render('index',['cn' => 'elfinder']);
+        return $this->render('index',['cn' => 'elfinder','filestype'=>$filestype]);
     }
+    /*
     public function actionMng()
     {
         return $this->render('index',['cn' => 'elfinderm']);
@@ -36,6 +29,5 @@ class DocsController extends Controller
     {
         return $this->render('index',['cn' => 'elfindert']);
     }
-
-
+    */
 }

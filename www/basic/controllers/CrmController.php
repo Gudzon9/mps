@@ -50,7 +50,9 @@ class CrmController extends Controller
     public function actionIndex()
     {
         $searchModel = new KagentSearch();
-        $filter['kindKagent'] = 2;
+        if(!Yii::$app->user->identity->isDirector || Yii::$app->session->get('allkag')==1) {
+            $filter['userId'] = Yii::$app->user->identity->id;   
+        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$filter);
         
         //$searchModel->companyId=1;

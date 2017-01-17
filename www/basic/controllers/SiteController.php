@@ -43,6 +43,11 @@ class SiteController extends Controller
     public function actionIndex()
     {
         if (!Yii::$app->user->isGuest) {
+            if(Yii::$app->user->identity->isDirector) {
+                $session = Yii::$app->session;
+                if (!$session->isActive) $session->open();
+                $session->set('allkag',1 ); 
+            }
              return $this->redirect('main/index',302);
         } else {     
              return $this->redirect('site/login',302);

@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Delivery;
+use app\models\Kagent;
+use app\models\KagentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -89,8 +91,17 @@ class DeliveryController extends Controller
             $model->fromadr = Yii::$app->user->identity->email;
             $model->date = date('Y-m-d');
             $model->msgerr = 0;
-            return $this->render('create', [
+            
+            $searchModel = new KagentSearch();
+            if(!Yii::$app->user->identity->isDirector || Yii::$app->session->get('allkag')==1) {
+                $filter['userId'] = Yii::$app->user->identity->id;   
+            }
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$filter);
+
+            return $this->render('_form', [
                 'model' => $model,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
             ]);
         }        
     }
@@ -103,8 +114,16 @@ class DeliveryController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('update', [
+            $searchModel = new KagentSearch();
+            if(!Yii::$app->user->identity->isDirector || Yii::$app->session->get('allkag')==1) {
+                $filter['userId'] = Yii::$app->user->identity->id;   
+            }
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$filter);
+
+            return $this->render('_form', [
                 'model' => $model,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
             ]);
         }
     }
@@ -145,5 +164,16 @@ class DeliveryController extends Controller
             mkdir($path, 0775, true);  
             //echo "The directory {$path} was successfully created.";  
         }
-    }    
+    } 
+    public function actionGetemails()
+    {
+        $aList = explode(',', Yii::$app->request->post('keylist'));
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return \app\models\Addatr::find()
+            ->select(['content'])
+            ->Where(['tableKod'=>2,'atrKod'=>2])
+            ->andFilterWhere(['in','tableId',$aList])
+            ->all();
+    }        
+    
 }

@@ -13,6 +13,15 @@ $(document).ready(function () {
         });
         */
     });
+    $( "#clearflt" ).on("click",function(){
+        $( ".panel-body .form-control").each(function(){
+            //alert($(this).attr('name')+' = '+$(this).val());
+           $(this).val(''); 
+           //alert($(this).attr('name')+' = '+$(this).val());
+        });
+        $( "#goflt" ).click();
+    });    
+/*    
     $( "#fltemplname" ).autocomplete({
         minLength: 2,
         source: "searchempl",
@@ -35,5 +44,6 @@ $(document).ready(function () {
         $("#fltklientname").val("");
         $("#fltklientid").val("");
     });
+*/    
 });
 

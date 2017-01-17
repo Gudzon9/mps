@@ -101,5 +101,15 @@ class Kagent extends \yii\db\ActiveRecord
             $this->posada = '';
         }        
         return parent::save($runValidation, $attributeNames);
-    }    
+    }  
+    public function getAddAtr($atrKod=0)
+    {
+        $relAddAtr = $this->hasMany(Addatr::className(),['tableId'=>'id'])
+                ->andOnCondition(['tableKod'=>2]);
+        if ($atrKod!=0){
+            $relAddAtr->andOnCondition(['atrKod'=>$atrKod]);
+        }
+        return $relAddAtr;
+    }
+    
 }

@@ -7,7 +7,8 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Рассылки';
-//$this->params['breadcrumbs'][] = $this->title;
+$this->params['curmenu'] = 4;
+$this->params['cursubmenu'] = 3;
 ?>
 <div class="delivery-index">
     <table width="100%">

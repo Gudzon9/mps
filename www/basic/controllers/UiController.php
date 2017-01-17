@@ -31,13 +31,13 @@ class UiController extends Controller
 
     public function actionApply()
     {
-        $varPost    = Yii::$app->request->post();
-        
+        $varPost = Yii::$app->request->post();
+        $user_id = Yii::$app->user->identity->id;
         foreach ($varPost["colInf"] as $ColInf){
-            $ui = Ui::findOne(['user_id'=>1, 'model'=>$varPost['modelName'], 'attribute'=>$ColInf['attr']]);
+            $ui = Ui::findOne(['user_id'=>$user_id, 'model'=>$varPost['modelName'], 'attribute'=>$ColInf['attr']]);
             if (!is_object($ui)){
                 $ui = new ui();
-                $ui->user_id=1;
+                $ui->user_id=$user_id;
                 $ui->model = $varPost['modelName'];
                 $ui->attribute = $ColInf['attr'];
             }

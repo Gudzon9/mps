@@ -32,7 +32,7 @@ class MainAsset extends AssetBundle
     public $js = [
         'js/jquery-ui-timepicker-addon.js',
         'js/jquery-ui-timepicker-ru.js',
-        'js/custmain.js'
+        'js/custmain.js',
     ];
     public $depends = [
     ];

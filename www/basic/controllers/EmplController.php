@@ -251,5 +251,16 @@ class EmplController extends Controller
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return \app\models\Kagent::find()->select(['id','name as value'])->Where(['like','name',Yii::$app->request->get('term')])->limit(20)->asArray()->all();
     }
+    public function actionSetallkag()
+    {
+        if(Yii::$app->request->isAjax && Yii::$app->user->identity->isDirector) {
+            $session = Yii::$app->session;
+            if (!$session->isActive) $session->open();
+            $session->set('allkag',intval(Yii::$app->request->post('state')) ); 
+            return 'ok';
+        } else {
+            return 'canc';
+        }
+    }
     
 }

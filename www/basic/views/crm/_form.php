@@ -251,7 +251,8 @@ $script = <<< JS
         if (Ind==-1){
             maxId = maxId+1;
             Ind = maxId;
-            aAddComent[Ind] = {'id':Ind,'contentDate':'','descr':'','status':1};
+            var cDate = new Date();
+            aAddComent[Ind] = {'id':Ind,'contentDate':cDate.toISOString().substr(0,10),'descr':'','status':1};
         }
         aAddComent[Ind] = $.extend({status:0},aAddComent[Ind]);
         var cInputName = 'coment['+aAddComent[Ind].id+']';

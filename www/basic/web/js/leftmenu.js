@@ -9,7 +9,21 @@ jQuery(document).ready(function () {
 		$('#show-sidebar').toggleClass('s-flip h-flip');
 	});
 	
-	$(document).on('click', '.panel-heading span.clickable', function(e){
+	$('#allkag').bootstrapSwitch();
+	$('#allkag').on('switchChange.bootstrapSwitch', function (e,s) {
+            var $url = $(this).data('url'), $state = s ? 1 : 0 ;
+            $.ajax({
+                type: "POST",
+                url: $url,
+                data: 'state='+$state, 
+                success: function(retdata){
+                    if(retdata == 'ok') location.reload();
+                }
+            });
+            
+        });
+
+        $(document).on('click', '.panel-heading span.clickable', function(e){
 	var $this = $(this);
 	if(!$this.hasClass('panel-collapsed')) {
 		$this.parents('.panel').find('.panel-body').slideUp();

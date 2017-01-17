@@ -39,8 +39,10 @@ class MainController extends Controller
         $tomorow = date("Y-m-d",strtotime("$today + 1 day"));
         $last_Monday = date("Y-m-d",strtotime("last Monday"));
         $end_week = date("Y-m-d",strtotime("$last_Monday + 7 day"));
-        //$sparam = ['fltempl' => Yii::$app->user->identity->id, 'cday' => $cday, 'last_Monday' => $last_Monday, 'end_week' => $end_week,];
-        $events = $this->searchv2(Yii::$app->user->identity->id,'All');
+        if(!Yii::$app->user->identity->isDirector || Yii::$app->session->get('allkag')==1) {
+            $fltuserId = Yii::$app->user->identity->id;   
+        } else {$fltuserId = NULL;}
+        $events = $this->searchv2($fltuserId,'All');
 
         $stats = ['overdue'=>0,'todaycnt'=>0,'tomorowcnt'=>0,'weekcnt'=>0,];
         foreach ($events as $event) {
@@ -49,32 +51,54 @@ class MainController extends Controller
             if($event['start'] == $tomorow) $stats['tomorowcnt']++;
             if($event['start'] > $last_Monday && $event['start'] < $end_week) $stats['weekcnt']++;
         }
-        
+        /*
         $flt['fldname'] = 'typeKag';
         $flt['fldvalue'] = 441;
         $flt['fldtype'] = 'one' ;
         $dataProvider = $this->getdataprovider($flt);
+        */
+        
+        $searchModel = new KagentSearch();
+        if(!Yii::$app->user->identity->isDirector || Yii::$app->session->get('allkag')==1) {
+            $filter['userId'] = Yii::$app->user->identity->id;   
+        }
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$filter);
         
         return $this->render('index',[
             'events' => $events,
             'stats' => $stats,
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'choiceMode' => false,
             ]);
+    }
+    public function actionUpdate($id)
+    {
+        return $this->redirect(['crm/update','id'=>$id],302);
     }
     public function actionGetevwflt()
     {
+        if(!Yii::$app->user->identity->isDirector || Yii::$app->session->get('allkag')==1) {
+            $fltuserId = Yii::$app->user->identity->id;   
+        } else {$fltuserId = NULL;}
         $sparam = Yii::$app->request->post('pflt');
-        $events = $this->searchv2(Yii::$app->user->identity->id,$sparam);
+        $events = $this->searchv2($fltuserId,$sparam);
+        
+        return $this->renderPartial('tblevent',['events' => $events]); 
+        
+        /*
         foreach ($events as $event){ 
             echo "<p><a style='color: ".$event['color']."' class='refevent' data-id='".$event['id']."' title='".$event['start']."'>".$event['title']."</a></p>";
         } 
+        */
     } 
-    public function searchv2($emplid,$flt) {
+    public function searchv2($emplid=NULL,$flt) {
         $today =  date('Y-m-d');
         $tomorow = date("Y-m-d",strtotime("$today + 1 day"));
         $last_Monday = date("Y-m-d",strtotime("last Monday"));
         $end_week = date("Y-m-d",strtotime("$last_Monday + 7 day"));
         $event = \app\models\Event::find()
+            ->orderBy(['start'=>SORT_DESC])
             ->andWhere(['status'=>0])
             ->leftJoin('kagent','kagent.id=event.id_klient')
             ->andFilterWhere(['kagent.userId'=>$emplid]);
@@ -112,6 +136,7 @@ class MainController extends Controller
             }
         }
     }
+    /*
     public function actionGetsatr()
     {
         $out = [];
@@ -146,9 +171,7 @@ class MainController extends Controller
         
         return $this->renderAjax('gridkagent',['dataProvider' => $dataProvider]);
     }
-    /*
-     * $fltparams[fldname] -  
-     */
+
     public function getdataprovider($fltparams)
     {        //var_dump($fltparams);
         if($fltparams['fldtype']=='one') {
@@ -159,6 +182,9 @@ class MainController extends Controller
             $query = Kagent::find()->Where(['like', $fltparams['fldname'], $search ]);
             
         }
+        if(!Yii::$app->user->identity->isDirector || Yii::$app->session->get('allkag')==1) {
+            $query->andWhere(['userId' => Yii::$app->user->identity->id]);
+        }
         
         $provider = new ActiveDataProvider([
             'query' => $query,
@@ -168,5 +194,6 @@ class MainController extends Controller
         ]);
 
         return $provider;
-     }        
+     } 
+     */
 }

@@ -1,102 +1,4 @@
 jQuery(document).ready(function () {
-    /*
-    function prepdata(atype,adata) {
-        var flttypes = '', i=0;
-        $('input[name=flttypes]:checkbox:checked').each(function(){
-            flttypes = flttypes + ((i===0)? '' : ',') + $(this).val();
-            i++;
-        });
-        return {
-            acttype: atype,
-            actparam: adata,
-            fltempl: $('#fltemplid').val(),
-            fltklient: $('#fltklientid').val(),
-            fltstatus: $('input[name=fltstatus]:radio:checked').val(),
-            flttypes: flttypes
-        };    
-    }            
-
-    $(document).on("click",".evmonths",function(){
-        var vdate ;
-        var curtr=$(this) ;
-        if (curtr.hasClass("monthon")) {
-            curtr.removeClass("monthon");
-            curtr.addClass("monthoff");
-            curtr.children(".foldericon").html('<span class="glyphicon glyphicon-folder-close"></span>');
-            var ctr=curtr.next();
-            while (ctr.hasClass("incldays") || ctr.hasClass("inclevents")) {ctr.addClass("fordel"); ctr=ctr.next(); } ;
-            curtr.nextAll(".fordel").each(function(indx){$(this).remove() ;}) ;
-        } else {	
-            $.ajax({
-                type: "POST",
-                url: "showmonth",
-                data: prepdata('groupday',curtr.data('yearmonth')), 
-                success: function(retdata){ //console.log(retdata);
-                    curtr.removeClass("monthoff");
-                    curtr.addClass("monthon");
-                    curtr.children(".foldericon").html('<span class="glyphicon glyphicon-folder-open"></span>');
-                    curtr.after(retdata);
-                }
-            });
-        };
-    });
-    $(document).on("click",".evdays",function(){
-        var vdate ;
-        var curtr=$(this) ;
-        if (curtr.hasClass("dayon")) {
-            curtr.removeClass("dayon");
-            curtr.addClass("dayoff");
-            curtr.children(".foldericon").html('<span class="glyphicon glyphicon-folder-close"></span>');
-            var ctr=curtr.next();
-            while (ctr.hasClass("inclevents")) {ctr.addClass("fordel"); ctr=ctr.next(); } ;
-            curtr.nextAll(".fordel").each(function(indx){$(this).remove() ;}) ;
-        } else {	
-            $.ajax({
-                type: "POST",
-                url: "showday",
-                data: prepdata('nogroup',curtr.data('day')), 
-                success: function(retdata){ //console.log(retdata);
-                    curtr.removeClass("dayoff");
-                    curtr.addClass("dayon");
-                    curtr.children(".foldericon").html('<span class="glyphicon glyphicon-folder-open"></span>');
-                    curtr.after(retdata);
-                }
-            });
-        };
-    });
-    $( ".refevent" ).on("click",function(){
-             $.ajax({
-                type: "POST",
-                url: "fltindex",
-                data: prepdata('',''), 
-                success: function(retdata){
-                    $("#content").html(retdata);
-                }
-           });
-    });
-    $( "#fltemplname" ).autocomplete({
-        minLength: 2,
-        source: "searchempl",
-        select: function(event,ui) {
-            $("#fltemplname").val(ui.item.value).blur();
-            $("#fltemplid").val(ui.item.id);
-        }
-    }).on("focus",function(){
-        $("#fltemplname").val("");
-        $("#fltemplid").val("");
-    });
-    $( "#fltklientname" ).autocomplete({
-        minLength: 2,
-        source: "searchklient",
-        select: function( event, ui ) {
-            $( "#fltklientname" ).val( ui.item.value ).blur();
-            $( "#fltklientid" ).val( ui.item.id );
-        }
-    }).on("focus",function(){
-        $("#fltklientname").val("");
-        $("#fltklientid").val("");
-    });
-    */
     $( "#sidebar-left" ).remove();
     $( "#content" ).css('width','100%');
 
@@ -169,10 +71,12 @@ jQuery(document).ready(function () {
                 },
                 success: function(id){
                     //alert('success '+ JSON.stringify(id));
-                    location.reload();
+                    //location.reload();
+                    ajaxEvflt();
                 }
             });
     }
+    function refeventseth() {
     $( ".refevent" ).on("click",function(){
         var pdata = $(this).data("id");
         $.ajax({
@@ -196,8 +100,8 @@ jQuery(document).ready(function () {
                 formOpen('edit');
             }
         });
-        
     });
+    }
     /* инициализируем Datetimepicker   datetimepicker*/
     event_start.datetimepicker({hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','οюнь','οюль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
     event_end.datetimepicker({hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','οюнь','οюль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
@@ -273,66 +177,9 @@ jQuery(document).ready(function () {
                         emptyForm();
                 }
             },
-                /*
-                {   id: 'delete',
-                    class: 'btn btn-warning',
-                    text: 'Удалить',
-                    click: function() { 
-                        $.ajax({
-                            type: "POST",
-                            url: "ajax.php",
-                            data: {
-                                id: event_id.val(),
-                                op: 'delete'
-                            },
-                            success: function(id){
-                                calendar.fullCalendar('removeEvents', id);
-                            }
-                        });
-                        $(this).dialog('close');
-                        emptyForm();
-                    },
-                    disabled: true
-                }
-                    allDaySlot: false,
-                */
         ]
     });
     $('#event_status').bootstrapSwitch();
-    /*
-    $('#external-events a.external-event').each(function() {
-        var ccolor = $(this).data('color'), cid_type = $(this).data('id_type');
-        $(this).css({'color': '#fff', 'background-color': ccolor});
-        $(this).data('event', {
-            type: $.trim($(this).text()), 
-            id_type: cid_type,
-            color: ccolor 
-	});
-	$(this).draggable({
-            zIndex: 999,
-            revert: true, 
-            revertDuration: 0 
-	});
-    });
-    $( "#fltemplname" ).autocomplete({
-        minLength: 2,
-        source: "searchempl",
-        select: function( event, ui ) {
-            $( "#fltemplname" ).val( ui.item.value );
-            $( "#fltemplid" ).val( ui.item.id );
-            $('#fltemplname').blur();
-        }
-    });
-    $( "#fltklientname" ).autocomplete({
-        minLength: 2,
-        source: "searchklient",
-        select: function( event, ui ) {
-            $( "#fltklientname" ).val( ui.item.value ).blur();
-            $( "#fltklientid" ).val( ui.item.id );
-            //$('#fltklientname');
-        }
-    });
-    */
     $( "#event_klient" ).autocomplete({
         minLength: 2,
         source: "searchklient",
@@ -341,49 +188,181 @@ jQuery(document).ready(function () {
             $( "#event_klient" ).val( ui.item.value ).blur().parent().parent().removeClass('has-error');
         }
     });
-    function ajaxEvflt(pdata,ptext) {
+    function ajaxEvflt() {
+        var pdata = $("#evstat").data("stat");
          $.ajax({
             type: "POST",
             url: "getevwflt",
             data: "pflt="+pdata,  
             success: function(data){
-                $("#evtitle").html("Дела : "+ptext);
+                $("#evtitle").html("Дела : "+otext[pdata]);
                 $("#evbody").html(data);
+                init();
+                refeventseth();
             }
         });
     }
     $("#evexpaire").on("click",function(){ 
-        var pdata = "evexpaire", ptext="Просроченные";
-        ajaxEvflt(pdata,ptext);
+        $("#evstat").data("stat","evexpaire") ; 
+        ajaxEvflt();
     });
     $( "#evtoday" ).on("click",function(){
-        var pdata = "evtoday", ptext="Сегодня";
-        ajaxEvflt(pdata,ptext);
+        $("#evstat").data("stat","evtoday") ; 
+        ajaxEvflt();
     });
     $( "#evtomorow" ).on("click",function(){
-        var pdata = "evtomorow", ptext="Завтра";
-        ajaxEvflt(pdata,ptext);
+        $("#evstat").data("stat","evtomorow") ; 
+        ajaxEvflt();
     });
     $( "#evweek" ).on("click",function(){
-        var pdata = "evweek", ptext="Неделя";
-        ajaxEvflt(pdata,ptext);
+        $("#evstat").data("stat","evweek") ; 
+        ajaxEvflt();
     });
+    var otext = {
+            all : "Все",
+            evexpaire : "Просроченные",
+            evtoday : "Сегодня",
+            evtomorow : "Завтра",
+            evweek : "Неделя"
+    };
+///////////////////////////////////////////////////////////
+    var img_dir = ""; 
+    var sort_case_sensitive = false; 
 
-    $( "#refrkag" ).on("click",function(){
-        var psatr = $("#lev0").val(), pvatr = $("#lev1").val();
-        $.ajax({
-            type: "POST",
-            url: "getkagents",
-            data: "psatr="+psatr+"&pvatr="+pvatr,  
-            success: function(data){
-                $("#grkag").html(data);
+    function _sort(a, b) {
+        var a = a[0];
+        var b = b[0];
+        var _a = (a + '').replace(/,/, '.');
+        var _b = (b + '').replace(/,/, '.');
+        if (parseFloat(_a) && parseFloat(_b)) return sort_numbers(parseFloat(_a), parseFloat(_b));
+        else if (!sort_case_sensitive) return sort_insensitive(a, b);
+        else return sort_sensitive(a, b);
+    }
+    function sort_numbers(a, b) {
+        return a - b;
+    }
+    function sort_insensitive(a, b) {
+        var anew = a.toLowerCase();
+        var bnew = b.toLowerCase();
+        if (anew < bnew) return -1;
+        if (anew > bnew) return 1;
+        return 0;
+    }
+    function sort_sensitive(a, b) {
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+    }
+    function getConcatenedTextContent(node) {
+        var _result = "";
+        if (node == null) {
+            return _result;
+        }
+        var childrens = node.childNodes;
+        var i = 0;
+        while (i < childrens.length) {
+            var child = childrens.item(i);
+            switch (child.nodeType) {
+                case 1: // ELEMENT_NODE
+                case 5: // ENTITY_REFERENCE_NODE
+                    _result += getConcatenedTextContent(child);
+                    break;
+                case 3: // TEXT_NODE
+                case 2: // ATTRIBUTE_NODE
+                case 4: // CDATA_SECTION_NODE
+                    _result += child.nodeValue;
+                    break;
+                case 6: // ENTITY_NODE
+                case 7: // PROCESSING_INSTRUCTION_NODE
+                case 8: // COMMENT_NODE
+                case 9: // DOCUMENT_NODE
+                case 10: // DOCUMENT_TYPE_NODE
+                case 11: // DOCUMENT_FRAGMENT_NODE
+                case 12: // NOTATION_NODE
+                // skip
+                break;
             }
-        });
-    });
-    
+            i++;
+        }
+        return _result;
+    }
+    function sort(e) {
+        var el = window.event ? window.event.srcElement : e.currentTarget;
+        while (el.tagName.toLowerCase() != "td") el = el.parentNode;
+        var a = new Array();
+        var name = el.lastChild.nodeValue;
+        var dad = el.parentNode;
+        var table = dad.parentNode.parentNode;
+        var up = table.up;
+        var node, arrow, curcol;
+        for (var i = 0; (node = dad.getElementsByTagName("td").item(i)); i++) {
+            if (node.lastChild.nodeValue == name){
+                curcol = i;
+                if (node.className == "curcol"){
+                    arrow = node.firstChild;
+                    table.up = Number(!up);
+                }else{
+                    node.className = "curcol";
+                    arrow = node.insertBefore(document.createElement("img"),node.firstChild);
+                    table.up = 0;
+                }
+                arrow.src = img_dir + table.up + ".gif";
+                arrow.alt = "";
+            }else{
+                if (node.className == "curcol"){
+                    node.className = "";
+                    if (node.firstChild) node.removeChild(node.firstChild);
+                }
+            }
+        }
+        var tbody = table.getElementsByTagName("tbody").item(0);
+        for (var i = 0; (node = tbody.getElementsByTagName("tr").item(i)); i++) {
+            a[i] = new Array();
+            a[i][0] = getConcatenedTextContent(node.getElementsByTagName("td").item(curcol));
+            a[i][1] = getConcatenedTextContent(node.getElementsByTagName("td").item(1));
+            a[i][2] = getConcatenedTextContent(node.getElementsByTagName("td").item(0));
+            a[i][3] = node;
+        }
+        a.sort(_sort);
+        if (table.up) a.reverse();
+        for (var i = 0; i < a.length; i++) {
+            tbody.appendChild(a[i][3]);
+        }
+    }
+    function init(e) { 
+        if (!document.getElementsByTagName) return;
 
+        for (var j = 0; (thead = document.getElementsByTagName("thead").item(j)); j++) {
+            var node;
+            for (var i = 0; (node = thead.getElementsByTagName("td").item(i)); i++) {
+                if (node.addEventListener) node.addEventListener("click", sort, false);
+                else if (node.attachEvent) node.attachEvent("onclick", sort);
+                node.title = "Нажмите на заголовок, чтобы отсортировать колонку";
+            }
+            thead.parentNode.up = 0;
 
-
-    
+            if (typeof(initial_sort_id) != "undefined"){
+                td_for_event = thead.getElementsByTagName("td").item(initial_sort_id);
+                if (document.createEvent){
+                    var evt = document.createEvent("MouseEvents");
+                    evt.initMouseEvent("click", false, false, window, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, td_for_event);
+                    td_for_event.dispatchEvent(evt);
+                } else if (td_for_event.fireEvent) td_for_event.fireEvent("onclick");
+                if (typeof(initial_sort_up) != "undefined" && initial_sort_up){
+                    if (td_for_event.dispatchEvent) td_for_event.dispatchEvent(evt);
+                    else if (td_for_event.fireEvent) td_for_event.fireEvent("onclick");
+                }
+            }
+        }
+    }
+    /*
+    var root = window.addEventListener || window.attachEvent ? window : document.addEventListener ? document : null;
+    if (root){
+        if (root.addEventListener) root.addEventListener("load", init, false);
+        else if (root.attachEvent) root.attachEvent("onload", init);
+    }
+    */
+   init();
+   refeventseth(); 
 });
 

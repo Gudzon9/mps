@@ -4,15 +4,21 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use app\models\Event;
-use yii\grid\GridView;
+//use yii\grid\GridView;
+use app\components\GridView;
 use app\models\Ui;
+use app\models\Spratr;
+use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 use kartik\select2\Select2;
 use kartik\depdrop\DepDrop;
 
 /*
  * http://stackoverflow.com/questions/25305752/yii-2-0-gridview-update
- 
+    <a style="color: <?php echo $event['color'];?>" class='refevent' data-id='<?php echo $event['id'];?>' title='<?php echo $event['start'];?>'>
+    <?php echo $event['title'];?>
+    </a>
+         
          <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [
@@ -42,65 +48,30 @@ use kartik\depdrop\DepDrop;
 <?= Html::endForm(); ?>  
  *  <?php Pjax::begin() ?>   
  * <?php Pjax::end(); ?>
- */
-
-$this->params['curmenu'] = 1;
-?>
-    <table width='100%'>
-        <tr>
-        <td width='40%' style='vertical-align: top; padding-right: 5px;'>
-            <div class="panel panel-info">
-                <div id="evtitle" class="panel-heading">Дела</div>
-                <div id="evbody" class="panel-body">
+ * 
+ * <?= $this->render('gridkagent',['dataProvider' => $dataProvider]); ?>                    
+                    <table class='table table-condensed table-hover '>
+                        <thead>
+                        <tr>
+                            <td><b>Клиент</b></td>
+                            <td><b>Дело</b></td>
+                            <td><b>Дата</b></td>
+                            <td><b>Прим.</b></td>
+                        </tr>    
+                        </thead>
+                        <tbody>
                     <?php foreach ($events as $event){ ?>
-                    <p>
-                        <a style="color: <?php echo $event['color'];?>" class='refevent' data-id='<?php echo $event['id'];?>' title='<?php echo $event['start'];?>'>
-                            <?php echo $event['title'];?>
-                        </a>
-                    </p>
+                    <tr class='refevent' style='cursor: pointer' data-id='<?php echo $event['id'];?>' >
+                        <td><?php echo $event['klient'];?></td>
+                        <td style="color: <?php echo $event['color'];?>"><?php echo $event['type'];?></td>
+                        <td><?php echo substr($event['start'], 8, 2).substr($event['start'], 4, 4).substr($event['start'], 2, 2);?></td>
+                        <td><?php echo $event['prim'];?></td>
+                    </tr>
                     <?php } ?>
-                    </ul>
-                </div>
-            </div>    
-        </td>    
-        <td width='10%' style='vertical-align: top;'>
-            <div class="panel panel-info">
-                <div class="panel-heading">Просроченные</div>
-                <div class="panel-body">
-                    <p id="evexpaire" style='text-align: center; font-size: 40px;'>
-                        <?php echo $stats['overdue'];?>
-                    </p>
-                </div>
-            </div>    
-            <br><br><br><br><br><br>
-            <div class="panel panel-info">
-                <div class="panel-heading">Дела</div>
-                <div class="panel-body">
-                    <table width='100%'>
-                        <tr><th width='50%'></th><th width='50%'></th></tr>
-                        <tr id="evtoday">
-                            <td>Сегодня</td>
-                            <td style='text-align: right; font-size: 40px;'><?php echo $stats['todaycnt'];?></td>
-                        </tr>
-                        <tr id="evtomorow">
-                            <td>Завтра</td>
-                            <td style='text-align: right; font-size: 40px;'><?php echo $stats['tomorowcnt'];?></td>
-                        </tr>
-                        <tr id="evweek">
-                            <td>Неделя</td>
-                            <td style='text-align: right; font-size: 40px;'><?php echo $stats['weekcnt'];?></td>
-                        </tr>
+                        </tbody>
                     </table>
-                </div>
-            </div>    
-        </td>    
-        <td width='50%' style='vertical-align: top; ; padding-left: 5px'>
-            <div class="panel panel-info">
-                <div class="panel-heading">Клиенты</div>
-                <div class="panel-body">
-                 
-                
-                <table width="100%" >
+ 
+                 <table width="100%" >
                     <tr>
                         <td width="30%" >
                         <?= Select2::widget([
@@ -111,7 +82,7 @@ $this->params['curmenu'] = 1;
                         ]); ?>                     
                         </td>
                         <td width="60%" >
-                        <?= DepDrop::widget([
+<?= $form->field($searchModel, 'typeKag')->label(false)->widget(DepDrop::classname(),[
                             'name' => 'asatrdd',
                             'data'=> [],
                             'options' => ['id'=>'lev1','placeholder' => 'Select ...'],
@@ -125,14 +96,100 @@ $this->params['curmenu'] = 1;
                         ]); ?> 
                         </td>
                         <td width="10%" >
-                        <?= Html::Button('GO',['class' => 'btn btn-info','id' => 'refrkag']); ?>    
+                        <?= Html::submitButton('GO',['class' => 'btn btn-info','id' => 'refrkag','data-pjax'=>1]); ?>    
                         </td>    
                     </tr>    
-                </table>                    
+                </table>
+
+  
+ *  * <?= $form->field($searchModel, 'typeKag')->dropDownList(ArrayHelper::map(Spratr::find()->Where(['atrId'=>1])->all(),'id','descr'),['prompt' => 'Все ...']) ?>              
+
+    <?= DepDrop::widget([
+ */
+
+$this->params['curmenu'] = 1;
+?>
+    <table width='100%'>
+        <tr>
+        <td width='40%' style='vertical-align: top; padding-right: 5px;'>
+            <div class="panel panel-info">
+                <div id="evtitle" class="panel-heading">Дела</div>
+                <div id="evbody" class="panel-body">
+                <?= $this->render('tblevent',['events' => $events]); ?>
+                </div>
+            </div>    
+        </td>    
+        <td width='10%' style='vertical-align: top;' id='evstat' data-stat='all'>
+            <div class="panel panel-info">
+                <div class="panel-heading">Просроченные</div>
+                <div class="panel-body" id="evexpaire" style='cursor: pointer'>
+                    <p  style='text-align: center; font-size: 40px;'>
+                        <?php echo $stats['overdue'];?>
+                    </p>
+                </div>
+            </div>    
+            <br><br><br><br><br><br>
+            <div class="panel panel-info">
+                <div class="panel-heading">Дела</div>
+                <div class="panel-body">
+                    <table width='100%'>
+                        <tr><th width='50%'></th><th width='50%'></th></tr>
+                        <tr id="evtoday" style='cursor: pointer'>
+                            <td>Сегодня</td>
+                            <td style='text-align: right; font-size: 40px;'><?php echo $stats['todaycnt'];?></td>
+                        </tr>
+                        <tr id="evtomorow" style='cursor: pointer'>
+                            <td>Завтра</td>
+                            <td style='text-align: right; font-size: 40px;'><?php echo $stats['tomorowcnt'];?></td>
+                        </tr>
+                        <tr id="evweek" style='cursor: pointer'>
+                            <td>Неделя</td>
+                            <td style='text-align: right; font-size: 40px;'><?php echo $stats['weekcnt'];?></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>    
+        </td>    
+        <td width='50%' style='vertical-align: top; ; padding-left: 5px'>
+            <div class="panel panel-info">
+                <div class="panel-heading">Клиенты</div>
+
+                <div class="panel-body">
+                 
+                <?php $form = ActiveForm::begin(['action' => ['index'],'method' => 'get']); ?>
+                    <?= $form->field($searchModel, 'typeKag')->label(false)->widget(Select2::classname(),['data'=>ArrayHelper::map(Spratr::find()->Where(['atrId'=>1])->all(),'id','descr'),'pluginEvents' => ['change' => 'function(event) { $(this).parents("form").submit();}']]) ?>
+                <?php ActiveForm::end(); ?>                    
                 <div id="grkag">
-                <?= $this->render('gridkagent',['dataProvider' => $dataProvider]); ?>                    
+    <?php Pjax::begin(['enablePushState' => false, 'id' => ('pjaxKAgent'), 'timeout'=>2000]); ?>
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'modelName' => 'Kagent',
+        'edtType'=>'noModal',
+        'Edt'=>'nomanual',
+        'ui'=>new Ui(),         
+        'columns' => [
+            'name',
+                [
+                'label'=>'Телефон',
+                'attribute'=>'addatr.tel',
+                'format'=>'html',
+                'value'=>function($model){
+                    $str ='';
+                    foreach ($model->getAddAtrs(1)->all() As $item)
+                    {
+                        $str.=$item['content'].' '.$item['note'].'<br>';
+                    }
+                    return $str;
+                }
+                ],
+        ],
+    ]); ?>
+
+    <?php Pjax::end(); ?>
                 </div>         
                 </div>
+
             </div>    
         </td>
         </tr>   

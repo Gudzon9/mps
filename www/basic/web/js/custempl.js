@@ -8,7 +8,8 @@ jQuery(document).ready(function () {
            $(this).val(''); 
            //alert($(this).attr('name')+' = '+$(this).val());
         });
-        $( "#goflt" ).click();
+        //$( "#goflt" ).click();
+        $("form").submit();
     });
 /*
     $( ".panel-body select").addClass("form-control");

@@ -15,6 +15,9 @@ class CrmAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [];
     public $js = [
+        'js/jquery-ui-timepicker-addon.js',
+        'js/jquery-ui-timepicker-ru.js',
+        'js/moment.min.js',
         'js/custcrm.js',
     ];
     public $depends = [

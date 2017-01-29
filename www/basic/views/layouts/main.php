@@ -10,6 +10,7 @@ Yii::$app->session->set('isDirector',(Yii::$app->user->identity->posada==1));
 }
 ?>
   * //$user = Yii::$app->user->findIdentity(Yii::$app->user->id);
+  *,['class'=>'navbar-brand',] 'style' => ['padding-top'=>'15px','font-size'=>'20px']
 */
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -20,12 +21,14 @@ use app\assets\MainAsset;
 use app\assets\CaleAsset;
 use app\assets\CrmAsset;
 use app\assets\EmplAsset;
+use app\assets\DocsAsset;
 
 AppAsset::register($this);
 if($this->params['curmenu']===1) MainAsset::register($this);
 if($this->params['curmenu']===2) EmplAsset::register($this);
 if($this->params['curmenu']===3) CaleAsset::register($this);
 if($this->params['curmenu']===4) CrmAsset::register($this);
+if($this->params['curmenu']===5) DocsAsset::register($this);
 
 ?>
 <?php $this->beginPage() ?>
@@ -45,8 +48,8 @@ if($this->params['curmenu']===4) CrmAsset::register($this);
       <div class="container-fluid">
         <div class="row">
             <div class="col-xs-3" >
-                <table><tr></tr>
-                <td> <?=Html::a(Yii::$app->user->identity->fio,['main/index'],['class'=>'navbar-brand','style' => ['padding-top'=>'15px','font-size'=>'20px']]);?></td>      
+                <table><tr>
+                        <td><h4> <?=Html::a(Yii::$app->user->identity->fio,['main/index']);?></h4></td>      
                 </tr>
             <?php if(Yii::$app->user->identity->isDirector && ($this->params['curmenu']===1 || $this->params['curmenu']===4)) { ?>
                 <tr>
@@ -63,10 +66,6 @@ if($this->params['curmenu']===4) CrmAsset::register($this);
                     </li>
                     <?php if(Yii::$app->user->identity->isDirector) { ?>
                     <li>
-                    <?=Html::a('',['empl/aspr'],['class'=>'i-spr i-menu']);?>          
-                    <?=Html::tag('p','Справочники',['class'=>'p-menu text-center']);?>    
-                    </li>
-                    <li>
                     <?=Html::a('',['empl/index'],['class'=>'i-employees i-menu']);?>          
                     <?=Html::tag('p','Сотрудники',['class'=>'p-menu text-center']);?>    
                     </li>
@@ -79,10 +78,22 @@ if($this->params['curmenu']===4) CrmAsset::register($this);
                     <?=Html::a('',['crm/index'],['class'=>'i-crm i-menu']);?>          
                     <?=Html::tag('p','Клиенты',['class'=>'p-menu text-center']);?>    
                     </li>
+                    <?php if(Yii::$app->user->identity->isDirector) { ?>
+                    <li>
+                    <?=Html::a('',['delivery/index'],['class'=>'i-delivery i-menu']);?>          
+                    <?=Html::tag('p','Рассылки',['class'=>'p-menu text-center']);?>    
+                    </li>
+                    <?php } ?>
                     <li>
                     <?=Html::a('',['docs/index'],['class'=>'i-docs i-menu']);?>          
                     <?=Html::tag('p','Документы',['class'=>'p-menu text-center']);?>    
                     </li>
+                    <?php if(Yii::$app->user->identity->isDirector) { ?>
+                    <li>
+                    <?=Html::a('',['empl/aspr'],['class'=>'i-spr i-menu']);?>          
+                    <?=Html::tag('p','Справочники',['class'=>'p-menu text-center']);?>    
+                    </li>
+                    <?php } ?>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -98,10 +109,10 @@ if($this->params['curmenu']===4) CrmAsset::register($this);
        
 <div class="container-fluid">
     <div class="row">
-        <div class="col-xs-3" style="height: 38px">
+        <div class="col-xs-3" >
             <div style="padding-top: 6px; padding-left: 2px;">
 		<?php if(isset($this->params['leftmenu'])) {
-                //$pm = array(2,3,4,5); 
+                //$pm = array(2,3,4,5); style="height: 38px"
                 //if(in_array($this->params['curmenu'],$pm)){
                 ?>
 		<input type="checkbox" id="show-sidebar" data-size="mini" data-on-text="Включено" data-off-text="Выключено" toglemenu data-label-text="меню" class="form-control s-flip" checked>
@@ -125,7 +136,17 @@ if($this->params['curmenu']===4) CrmAsset::register($this);
 		</li>
             </ul>
             <?php }?> 
-            <?php if($this->params['curmenu']==4) {?>
+            <?php if($this->params['curmenu']==4 && isset($this->params['leftmenu'])) {?>
+            <table width="100%">
+                <tr>
+                    <td style="text-align:left"><h3>Клиенты</h3></td>
+                    <td style="text-align:right"><?= Html::a('Добавить компанию', ['create','mode'=>'2'], ['class' => 'btn btn-info']) ?></td>
+                    <td style="text-align:right"><?= Html::a('Добавить человека', ['create','mode'=>'1'], ['class' => 'btn btn-info']) ?></td>
+                </tr>
+            </table>
+            
+            <?php }?> 
+            <?php if($this->params['curmenu']==14) {?>
             <ul class="nav navbar-nav navbar-left">
                 <li>
                     <?=Html::a(Html::tag('i','',['class'=>'k-crm k-menu']).'Клиенты',['crm/index'],['class'=>'k-href']);?>

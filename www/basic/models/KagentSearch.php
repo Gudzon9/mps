@@ -23,7 +23,7 @@ class KagentSearch extends Kagent
     public function rules()
     {
         return [
-            [['id', 'kindKagent', 'typeKag', 'statKag', 'actiKag', 'chanKag', 'refuKag', 'regiKag', 'townKag',  'companyId', 'userId'], 'integer'],
+            [['id', 'kindKagent', 'typeKag', 'statKag', 'actiKag', 'chanKag', 'refuKag', 'regiKag', 'townKag', 'deliKag', 'companyId', 'userId'], 'integer'],
             [['name', 'posada', 'birthday','adr', 'coment','prodKag','grouKag','tpayKag','kagent.name'], 'string'],
             [['addatr.tel'], 'string']
         ];
@@ -52,16 +52,21 @@ class KagentSearch extends Kagent
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query,'pagination' => ['pagesize' => 10,],
         ]);
-        $query->joinWith(['kagents' => function($query) { $query->from(['kagent' => 'kagent'])->alias('company'); }]);
-        $query->joinWith(['addAtr' => function($query) { $query->from(['addatr' => 'addatr']); }]);
+        //$query->joinWith(['kagents' => function($query) { $query->from(['kagent' => 'kagent'])->alias('company'); }]);
+        //$query->joinWith(['addAtr' => function($query) { $query->from(['addatr' => 'addatr']); }]);
         $this->load($params);
         
         if (isset($filter)){
+            $afldname = ['prodKag','tpayKag','grouKag'];
             foreach ($filter As $atr=>$val){
                 //$this[$atr] = $val;
-                $query->andFilterWhere(['kagent.'.$atr=>$val]);
+                if(in_array($atr, $afldname)) {
+                    $query->andFilterWhere(['like','kagent.'.$atr, $val]);
+                } else {
+                    $query->andFilterWhere(['kagent.'.$atr=>$val]);
+                }    
             }
             //$this->kindKagent = $filter['kindKagent'];
         }
@@ -82,6 +87,7 @@ class KagentSearch extends Kagent
             'kagent.refuKag' => $this->refuKag,
             'kagent.regiKag' => $this->regiKag,
             'kagent.townKag' => $this->townKag,
+            'kagent.deliKag' => $this->deliKag,
             'kagent.companyId' => $this->companyId,
             'kagent.userId' => $this->userId,
         ]);

@@ -10,13 +10,14 @@ $events = [
     ['id'=>'3','type'=>'Совещание','color'=>'#337AB7'],
     ['id'=>'4','type'=>'Праздник','color'=>'#5CB85C'],
 ];
+ *     ['id'=>'overdue','name'=>'Просроченные'],
+
 */
 $events = Yii::$app->params['atypeEvent'];
 $fltstatus = [
     ['id'=>'all','name'=>'Все'],
     ['id'=>'act','name'=>'Активные'],
     ['id'=>'close','name'=>'Закрытые'],
-    ['id'=>'overdue','name'=>'Просроченные'],
 ];
 
 ?>
@@ -30,20 +31,20 @@ $fltstatus = [
             <input type="text" class="form-control" id="fltemplname">
             <input type="hidden" id="fltemplid">
         </div>
-        <button class="btn btn-primary btn-block btn-sm refevent" id="fltemplbtn" type="button" >Go</button>
+        <button class="btn btn-primary btn-block btn-sm refevent" id="fltemplbtn" type="button" >Принять</button>
     </div>
 </div>
 <? } ?>
 <div class="panel panel-primary">
     <div class="panel-heading">Клиенты
-	<span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
+	<span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
     </div>
-    <div class="panel-body" style="display: none">
+    <div class="panel-body" style="display: block">
         <div class="input-group">
             <input type="text" class="form-control"  id="fltklientname">
             <input type="hidden" id="fltklientid">
         </div>
-        <button class="btn btn-primary btn-block btn-sm refevent" id="fltklientbtn" type="button">Go</button>
+        <button class="btn btn-primary btn-block btn-sm refevent" id="fltklientbtn" type="button">Принять</button>
     </div>
 </div>
 <div class="panel panel-primary">
@@ -75,7 +76,7 @@ $fltstatus = [
                         </li>
                         <?php } ?>
                     </ul>
-        <button type="button" class="btn btn-primary btn-block btn-sm refevent">Go!</button>
+        <button type="button" class="btn btn-primary btn-block btn-sm refevent">Принять</button>
     </div>
 
 </div>

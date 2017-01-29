@@ -7,7 +7,7 @@ $spratrs = Yii::$app->params['satr'];
 <br>
 <div class="panel panel-primary">
     <div class="panel-heading">Справочники
-	<span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
+	<span class="pull-right clickable "><i class="glyphicon glyphicon-chevron-up"></i></span>
     </div>
     <div class="panel-body" style="display: block">
         <ul class="list-unstyled">

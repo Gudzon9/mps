@@ -10,19 +10,23 @@ use yii\web\JsExpression;
 
 mihaildev\elfinder\Assets::noConflict($this);
 
-//$this->title = 'Docs';
-//    'path' => 'word',
 $this->params['curmenu'] = 5;
-$this->params['leftmenu'] = $this->render('lmdocs');
+//$this->params['leftmenu'] = $this->render('lmdocs');
+
+/*
+// see MIME types in google    
+// or \vendor\studio-42\elfinder\php\mime.types
 $filter = [
     0 => '',
-    1 => 'application/doc',
-    2 => 'application/xls',
+    1 => 'application',
+    2 => 'application/vnd.ms-excel',
     3 => 'application/pdf',
 ];
+ *     'filter'           => $filter[$filestype],
+
+ */
 echo ElFinder::widget([
     'language'         => 'ru',
-    'filter'           => $filter[$filestype],
     'controller'       => $cn , // вставляем название контроллера, по умолчанию равен elfinder
     'callbackFunction' => new JsExpression('function(file, id){}') // id - id виджета
 ]);

@@ -48,4 +48,8 @@ class Deliveryresult extends \yii\db\ActiveRecord
             'err' => 'Err',
         ];
     }
+    public function getKagent()
+    {
+        return $this->hasMany(Kagent::className(),['id'=>'partnerKagentId']);
+    }	    
 }

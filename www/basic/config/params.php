@@ -9,8 +9,8 @@ return [
     //'aatr' => array(1 => "phone", 2 => "email", 3 => "link"),
     'aatr' => array(
         1=>array('atrId'=>'1','atrName'=>'phone','atrDescr'=>'Телефон','atrMask'=>'+38(999)9999999'), 
-        2=>array('atrId'=>'2','atrName'=>'email','atrDescr'=>'Email','atrMask'=>''), 
-        3=>array('atrId'=>'3','atrName'=>'link','atrDescr'=>'Link','atrMask'=>''),
+        2=>array('atrId'=>'2','atrName'=>'email','atrDescr'=>'Почта','atrMask'=>''), 
+        3=>array('atrId'=>'3','atrName'=>'link','atrDescr'=>'Ссылки','atrMask'=>''),
     ),
     'satr' => array(
         1=>array('atrId'=>'1','atrName'=>'typeKag','atrType'=>'one','atrDescr'=>'Тип клиента'),
@@ -23,6 +23,7 @@ return [
         8=>array('atrId'=>'8','atrName'=>'townKag','atrType'=>'one','atrDescr'=>'Город'),
         9=>array('atrId'=>'9','atrName'=>'tpayKag','atrType'=>'many','atrDescr'=>'Форма расчета'),
         10=>array('atrId'=>'10','atrName'=>'grouKag','atrType'=>'many','atrDescr'=>'Группы'),
+        11=>array('atrId'=>'11','atrName'=>'deliKag','atrType'=>'one','atrDescr'=>'Служба доставки'),
     ),
     'akindKagent' => array(1 => "Человек", 2 => "Компания"),
     //'atypeKagent' => array(1 => "Клиент", 2 => "Конкурент"),

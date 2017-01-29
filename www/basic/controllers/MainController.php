@@ -9,7 +9,8 @@ use app\models\KagentSearch;
 use app\models\Spratr;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+//use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Json;
 
@@ -23,11 +24,27 @@ class MainController extends Controller
             ],
         ];
     }
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                    'allow' => TRUE,
+                    'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
     public function beforeAction($action)
     {
+        /*
         if (Yii::$app->user->isGuest){
             return $this->goHome();
         }
+        */
         if ($action->actionMethod!='actionIndex' && !Yii::$app->request->isAjax){
             return $this->goHome();
         }
@@ -43,7 +60,7 @@ class MainController extends Controller
             $fltuserId = Yii::$app->user->identity->id;   
         } else {$fltuserId = NULL;}
         $events = $this->searchv2($fltuserId,'All');
-
+        $top = 'top';
         $stats = ['overdue'=>0,'todaycnt'=>0,'tomorowcnt'=>0,'weekcnt'=>0,];
         foreach ($events as $event) {
         if($event['start'] < $today) $stats['overdue']++;
@@ -66,6 +83,7 @@ class MainController extends Controller
         
         return $this->render('index',[
             'events' => $events,
+            'top' => $top,
             'stats' => $stats,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -82,15 +100,10 @@ class MainController extends Controller
             $fltuserId = Yii::$app->user->identity->id;   
         } else {$fltuserId = NULL;}
         $sparam = Yii::$app->request->post('pflt');
-        $events = $this->searchv2($fltuserId,$sparam);
+        $top = Yii::$app->request->post('ptop');
+        $events = $this->searchv2($fltuserId,$sparam,$top);
         
-        return $this->renderPartial('tblevent',['events' => $events]); 
-        
-        /*
-        foreach ($events as $event){ 
-            echo "<p><a style='color: ".$event['color']."' class='refevent' data-id='".$event['id']."' title='".$event['start']."'>".$event['title']."</a></p>";
-        } 
-        */
+        return $this->renderPartial('tblevent',['events' => $events,'top' => $top]); 
     } 
     public function searchv2($emplid=NULL,$flt) {
         $today =  date('Y-m-d');
@@ -136,7 +149,7 @@ class MainController extends Controller
             }
         }
     }
-    /*
+
     public function actionGetsatr()
     {
         $out = [];
@@ -159,7 +172,7 @@ class MainController extends Controller
         }
         echo Json::encode(['output' => '', 'selected'=>'']);
     }
-    public function actionGetkagents()
+    /*    public function actionGetkagents()
     {
         $post = Yii::$app->request->post();
         $psatr = intval($post['psatr']);

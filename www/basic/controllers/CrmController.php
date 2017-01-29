@@ -10,7 +10,7 @@ use app\models\Coment;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+//use yii\filters\VerbFilter;
 
 /**
  * KagentController implements the CRUD actions for Kagent model.
@@ -23,21 +23,13 @@ class CrmController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
-                    // разрешаем аутентифицированному директору
                     [
                     'allow' => TRUE,
                     'roles' => ['@'],
                     ],
-                    // всё остальное по умолчанию запрещено
                 ],
             ],
         ];
@@ -126,6 +118,14 @@ class CrmController extends Controller
                 return $this->redirect(['index']);
             } else {
                 $model->kindKagent = $mode;
+                $model->regiKag = 0;
+                $model->townKag = 0;
+                $model->typeKag = 0;
+                $model->statKag = 0;
+                $model->actiKag = 0;
+                $model->chanKag = 0;
+                $model->deliKag = 0;
+                $model->refuKag = 0;
                 $model->userId = Yii::$app->user->identity->id;
                 return $this->render('_form', [
                     'model' => $model,
@@ -334,6 +334,37 @@ class CrmController extends Controller
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return \app\models\Kagent::find()->select(['id','name as value'])->Where(['like','name',Yii::$app->request->get('term')])->limit(20)->asArray()->all();
+    }
+    public function actionAddeditev()
+    {
+        if (Yii::$app->request->isAjax){
+            $post=Yii::$app->request->post();
+            if($post['id']=='0') {
+                $modelEvent = new \app\models\Event(); 
+               //$modelEvent->load($post);
+                $modelEvent->id_klient = $post['id_klient'];
+                $modelEvent->id_type = $post['id_type'];
+                $modelEvent->allDay = '';
+                $modelEvent->end = $post['end'];
+                $modelEvent->status = 0;
+                $modelEvent->klient = $post['klient'];
+                $modelEvent->type = $post['type'];
+                $modelEvent->color = $post['color'];
+                $modelEvent->prim = $post['prim'];
+                $modelEvent->start = $post['start'];
+            } else {
+                $modelEvent = \app\models\Event::findOne($post['id']);
+                $modelEvent->prim = $post['prim'];
+                $modelEvent->start = $post['start'];
+                $modelEvent->status = $post['status'];
+            }
+            $modelEvent->save();
+
+            $model = $this->findModel($modelEvent->id_klient);
+            return $this->renderPartial('tblevkag',['model' => $model,]);
+        } else {
+            return "No ajax !!!";
+        }
     }
     
 }

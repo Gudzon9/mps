@@ -77,30 +77,51 @@ jQuery(document).ready(function () {
             });
     }
     function refeventseth() {
-    $( ".refevent" ).on("click",function(){
-        var pdata = $(this).data("id");
-        $.ajax({
-            type: "POST",
-            url: "geteventbyid",
-            data: "pid="+pdata,    
-            success: function(data){
-                    //alert('success '+ JSON.stringify(data));
-                event_id.val(data.id);
-                event_start.val(data.start);
-                event_end.val(data.end);
-                event_allday.val(data.allday);
-                event_type.val(data.type);
-                event_id_type.val(data.id_type);
-                event_color.val(data.color);
-                event_klient.val(data.klient);
-                event_id_klient.val(data.id_klient);
-                event_prim.val(data.prim);
-                //event_status.bootstrapSwitch('toggleDisabled',status);
-                div_event_end.show();
-                formOpen('edit');
-            }
+        $( "#showallev" ).on("click",function(){
+            $(this).addClass("showall") ; 
+            ajaxEvflt();
         });
-    });
+        /*        
+        $(".refevent").on("click",function(){
+            $("tr .on" ).each(function(){ 
+                $(this).removeClass("on").addClass("off").next().remove() ;
+            });
+            var $curtr = $(this);
+            $curtr.addClass("on");
+            var incl = '<tr><td colspan=4><table>';
+            incl = incl + '<tr><td width=25%><b>Примечание :</b></td> <td colspan=3> ' + $curtr.data('prim') + '</td></tr><tr><td colspan=4></td></tr>' ;
+            incl = incl + '<tr><td colspan=4><br></td></tr>';
+            incl = incl + '<tr><td colspan=2><input type="checkbox" class="form-control" name="event_status" id="ev_st" data-size="mini" data-on-color="info" data-on-text="завершено" data-off-text="активно" toglemenu data-label-text="дело" /></td>';
+            incl = incl + '<td width=15%><button class="btn-xs btn-primary" >Сохранить</button></td>' ;
+            incl = incl + '<td width=15%><button class="btn-xs" >Отказ</button></td></tr>' ;
+            incl = incl + '</table></td></tr>';
+            $curtr.after(incl);
+            $("#ev_st").bootstrapSwitch();
+            //var pdata  = $(this).data("id");
+
+            $.ajax({
+                type: "POST",
+                url: "geteventbyid",
+                data: "pid="+pdata,    
+                success: function(data){
+                        //alert('success '+ JSON.stringify(data));
+                    event_id.val(data.id);
+                    event_start.val(data.start);
+                    event_end.val(data.end);
+                    event_allday.val(data.allday);
+                    event_type.val(data.type);
+                    event_id_type.val(data.id_type);
+                    event_color.val(data.color);
+                    event_klient.val(data.klient);
+                    event_id_klient.val(data.id_klient);
+                    event_prim.val(data.prim);
+                    //event_status.bootstrapSwitch('toggleDisabled',status);
+                    div_event_end.show();
+                    formOpen('edit');
+                }
+            });
+        });
+        */
     }
     /* инициализируем Datetimepicker   datetimepicker*/
     event_start.datetimepicker({hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','οюнь','οюль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
@@ -190,14 +211,15 @@ jQuery(document).ready(function () {
     });
     function ajaxEvflt() {
         var pdata = $("#evstat").data("stat");
+        var ste = ($("#showallev").hasClass('showall')) ? 'all' : 'top' ;
          $.ajax({
             type: "POST",
             url: "getevwflt",
-            data: "pflt="+pdata,  
+            data: "pflt="+pdata+"&ptop="+ste,  
             success: function(data){
                 $("#evtitle").html("Дела : "+otext[pdata]);
                 $("#evbody").html(data);
-                init();
+                //init();
                 refeventseth();
             }
         });
@@ -218,6 +240,7 @@ jQuery(document).ready(function () {
         $("#evstat").data("stat","evweek") ; 
         ajaxEvflt();
     });
+
     var otext = {
             all : "Все",
             evexpaire : "Просроченные",
@@ -226,6 +249,7 @@ jQuery(document).ready(function () {
             evweek : "Неделя"
     };
 ///////////////////////////////////////////////////////////
+    /*
     var img_dir = ""; 
     var sort_case_sensitive = false; 
 
@@ -355,14 +379,14 @@ jQuery(document).ready(function () {
             }
         }
     }
-    /*
+
     var root = window.addEventListener || window.attachEvent ? window : document.addEventListener ? document : null;
     if (root){
         if (root.addEventListener) root.addEventListener("load", init, false);
         else if (root.attachEvent) root.attachEvent("onload", init);
     }
     */
-   init();
+   //init();
    refeventseth(); 
 });
 

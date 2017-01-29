@@ -111,11 +111,11 @@ $this->params['curmenu'] = 1;
 ?>
     <table width='100%'>
         <tr>
-        <td width='40%' style='vertical-align: top; padding-right: 5px;'>
+        <td width='50%' style='vertical-align: top; padding-right: 5px;'>
             <div class="panel panel-info">
                 <div id="evtitle" class="panel-heading">Дела</div>
                 <div id="evbody" class="panel-body">
-                <?= $this->render('tblevent',['events' => $events]); ?>
+                <?= $this->render('tblevent',['events' => $events,'top' => $top]); ?>
                 </div>
             </div>    
         </td>    
@@ -150,7 +150,7 @@ $this->params['curmenu'] = 1;
                 </div>
             </div>    
         </td>    
-        <td width='50%' style='vertical-align: top; ; padding-left: 5px'>
+        <td width='40%' style='vertical-align: top; ; padding-left: 5px'>
             <div class="panel panel-info">
                 <div class="panel-heading">Клиенты</div>
 
@@ -170,9 +170,15 @@ $this->params['curmenu'] = 1;
         'ui'=>new Ui(),         
         'columns' => [
             'name',
-                [
+            [
+                'label'=>'Город',
+                'value'=>function($model){
+                    return $model->getTown()->one()->descr;
+                }               
+            ],
+            [
                 'label'=>'Телефон',
-                'attribute'=>'addatr.tel',
+                //'attribute'=>'addatr.tel',
                 'format'=>'html',
                 'value'=>function($model){
                     $str ='';
@@ -182,7 +188,7 @@ $this->params['curmenu'] = 1;
                     }
                     return $str;
                 }
-                ],
+            ],
         ],
     ]); ?>
 

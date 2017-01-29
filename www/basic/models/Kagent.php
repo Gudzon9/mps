@@ -34,12 +34,13 @@ class Kagent extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'kindKagent', 'userId'], 'required'],
-            [['id', 'kindKagent', 'typeKag', 'statKag', 'actiKag', 'chanKag', 'refuKag', 'regiKag', 'townKag', 'userId'], 'integer'],
+            [['id', 'kindKagent', 'typeKag', 'statKag', 'actiKag', 'chanKag', 'refuKag', 'regiKag', 'townKag', 'deliKag', 'userId'], 'integer'],
             [['id','companyId','posada'],'safe'],
             [['prodKag','grouKag'], 'string', 'max' => 100],
             [['posada'], 'string', 'max' => 20],
             [['birthday'], 'string', 'max' => 10],
             [['adr','coment','tpayKag','name'], 'string', 'max' => 60],
+            [['typeKag', 'statKag', 'actiKag', 'chanKag', 'refuKag', 'regiKag', 'townKag', 'deliKag'], 'default', 'value' => 0],
         ];
     }
 
@@ -65,9 +66,10 @@ class Kagent extends \yii\db\ActiveRecord
             'townKag' => 'Город',
             'tpayKag' => 'Формы расчета',
             'grouKag' => 'Группы',
+            'deliKag' => 'Служба доставки',
             'adr' => 'Адрес',
             'coment' => 'Примечание',
-            'userId' => 'Менеджер',
+            'userId' => 'Ответственный',
         ];
     }
     public function getAddAtrs($atrKod=0)
@@ -83,6 +85,10 @@ class Kagent extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Coment::className(),['kagentId'=>'id']);
     }	    
+    public function getEvents()
+    {
+        return $this->hasMany(Event::className(),['id_klient'=>'id']);
+    }	    
     public function getKagents()
     {
         return $this->hasMany(Kagent::className(),['companyId'=>'id']);
@@ -90,7 +96,16 @@ class Kagent extends \yii\db\ActiveRecord
     public function getKagent()
     {
         return $this->hasOne(Kagent::className(),['companyId'=>'id']);
-    }       
+    } 
+    public function getUser()
+    {
+        return $this->hasOne(User::className(),['id'=>'userId']);
+    } 
+    public function getTown()
+    {
+        return $this->hasOne(Spratr::className(),['id'=>'townKag']);
+    } 
+    /*
     public function save($runValidation = true, $attributeNames = null)
     {
         $this->userId = Yii::$app->user->id;
@@ -102,6 +117,7 @@ class Kagent extends \yii\db\ActiveRecord
         }        
         return parent::save($runValidation, $attributeNames);
     }  
+    */
     public function getAddAtr($atrKod=0)
     {
         $relAddAtr = $this->hasMany(Addatr::className(),['tableId'=>'id'])

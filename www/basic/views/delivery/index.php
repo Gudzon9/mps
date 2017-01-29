@@ -13,7 +13,7 @@ $this->params['cursubmenu'] = 3;
 <div class="delivery-index">
     <table width="100%">
         <tr>
-            <td style="text-align:left"><h1><?= Html::encode($this->title) ?></h1></td>
+            <td style="text-align:left"><h3><?= Html::encode($this->title) ?></h3></td>
             <td style="text-align:right"><?= Html::a('Создать рассылку', ['create'], ['class' => 'btn btn-success']) ?></td>
         </tr>
     </table>
@@ -31,7 +31,7 @@ $this->params['cursubmenu'] = 3;
             'msgcont:ntext',
             'msgatt:ntext',
             'msgerr',
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn','template'=>'{update}{delete}'],
         ],
     ]); ?>
 </div>

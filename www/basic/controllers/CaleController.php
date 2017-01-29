@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use app\models;
+use yii\filters\AccessControl;
 
 class CaleController extends Controller
 {
@@ -16,12 +17,23 @@ class CaleController extends Controller
             ],
         ];
     }
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                    'allow' => TRUE,
+                    'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
     
     public function beforeAction($action)
     {
-        if (Yii::$app->user->isGuest){
-            return $this->goHome();
-        }
         if ($action->actionMethod!='actionIndex' && !Yii::$app->request->isAjax){
             return $this->goHome();
         }

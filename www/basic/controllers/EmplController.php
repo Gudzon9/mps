@@ -11,28 +11,20 @@ use yii\filters\AccessControl;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+//use yii\filters\VerbFilter;
 
 class EmplController extends Controller
 {
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
-                    // разрешаем аутентифицированному директору
                     [
                     'allow' => Yii::$app->user->identity->isDirector,
                     'roles' => ['@'],
                     ],
-                    // всё остальное по умолчанию запрещено
                 ],
             ],
         ];

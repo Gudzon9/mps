@@ -4,6 +4,7 @@ use Yii;
 
 class Spratr extends \yii\db\ActiveRecord
 {
+    public $cnt;
     public static function tableName()
     {
         return 'spratr';

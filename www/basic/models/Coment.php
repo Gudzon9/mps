@@ -46,4 +46,8 @@ class Coment extends \yii\db\ActiveRecord
             'descr' => 'Коментарий',
         ];
     }
+    public function getKagent()
+    {
+        return $this->hasOne(Kagent::className(),['id'=>'kagentId']);
+    } 
 }

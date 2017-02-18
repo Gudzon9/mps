@@ -42,7 +42,20 @@ class CaleController extends Controller
     
     public function actionIndex()
     {
-        return $this->render('index');
+        $today =  date('Y-m-d');
+        $tomorow = date("Y-m-d",strtotime("$today + 1 day"));
+        $last_Monday = date("Y-m-d",strtotime("last Monday"));
+        $end_week = date("Y-m-d",strtotime("$last_Monday + 7 day"));
+        if(!Yii::$app->user->identity->isDirector || Yii::$app->session->get('allkag')==1) {
+            $fltuserId = Yii::$app->user->identity->id;   
+        } else {$fltuserId = NULL;}
+        $events = $this->searchevents($fltuserId,'allevents');
+        $top = 'top';
+
+        return $this->render('index',[
+            'events' => $events,
+            'top' => $top,
+            ]);
     }
 
     public function actionGetevents()
@@ -190,5 +203,45 @@ class CaleController extends Controller
         /*
          * аналогично  actionAddevent - только id != 0  
          */
-    }        
+    }  
+    public function actionGetevwflt()
+    {
+        if(!Yii::$app->user->identity->isDirector || Yii::$app->session->get('allkag')==1) {
+            $fltuserId = Yii::$app->user->identity->id;   
+        } else {$fltuserId = NULL;}
+        $flt = Yii::$app->request->post('pflt');
+        $fdate = Yii::$app->request->post('pfdate');
+        $top = Yii::$app->request->post('ptop');
+        //$events = $this->searchv2($fltuserId,$sparam,$top);
+        
+        $events = $this->searchevents($fltuserId,$flt,$fdate);
+        
+        return $this->renderFile(Yii::getAlias('@app/views/main/tblevent.php'),['events' => $events,'top' => $top]); 
+    } 
+    public function searchevents($emplid=NULL,$flt,$fdate=NULL) {
+        $event = \app\models\Event::find()
+            ->orderBy(['start'=>SORT_DESC])
+            ->andWhere(['status'=>0])
+            ->leftJoin('kagent','kagent.id=event.id_klient')
+            ->andFilterWhere(['kagent.userId'=>$emplid]);
+        switch ($flt){
+            case 'allevents':
+                //$event->andWhere('LEFT(start,10) < :curDate',[':curDate' => $today]);
+                break;
+            case 'dayevents':
+                $event->andWhere('LEFT(start,10) = :curDate',[':curDate' => $fdate]);
+                break;
+            case 'weekevents':
+                $today =  date('Y-m-d',strtotime($fdate));
+                $last_Monday = date("Y-m-d",strtotime("last Monday of $today"));
+                $end_week = date("Y-m-d",strtotime("$last_Monday + 7 day"));
+                
+                $event->andWhere('LEFT(start,10) >= :begDate',[':begDate' => $last_Monday])
+                    ->andWhere('LEFT(start,10) <= :endDate',[':endDate' => $end_week]);
+                break;
+        };
+        
+        return $event->asArray()->all();
+    }
+    
 }

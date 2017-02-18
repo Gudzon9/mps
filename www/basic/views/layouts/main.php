@@ -1,17 +1,5 @@
 <?php
 
-/* @var $this \yii\web\View */
-/* @var $content string */
- /*<? var_dump(Yii::$app->session->get('isDirector'));?>*/
- /* Html::img('@web/img/exit.png', ['alt' => 'exit','height'=>'46','width'=>'46'])
-<?
-if (Yii::$app->session->get('isDirector')==null){
-Yii::$app->session->set('isDirector',(Yii::$app->user->identity->posada==1));
-}
-?>
-  * //$user = Yii::$app->user->findIdentity(Yii::$app->user->id);
-  *,['class'=>'navbar-brand',] 'style' => ['padding-top'=>'15px','font-size'=>'20px']
-*/
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\Nav;
@@ -47,7 +35,7 @@ if($this->params['curmenu']===5) DocsAsset::register($this);
 <div class="header">
       <div class="container-fluid">
         <div class="row">
-            <div class="col-xs-3" >
+            <div class="col-xs-2" >
                 <table><tr>
                         <td><h4> <?=Html::a(Yii::$app->user->identity->fio,['main/index']);?></h4></td>      
                 </tr>
@@ -58,7 +46,7 @@ if($this->params['curmenu']===5) DocsAsset::register($this);
             <?php } ?>
                 </table>
             </div>
-            <div class="col-xs-9">
+            <div class="col-xs-10">
                 <ul class="nav navbar-nav navbar-left">
                     <li>
                     <?=Html::a('',['main/index'],['class'=>'i-main i-menu']);?>          
@@ -92,6 +80,10 @@ if($this->params['curmenu']===5) DocsAsset::register($this);
                     <li>
                     <?=Html::a('',['empl/aspr'],['class'=>'i-spr i-menu']);?>          
                     <?=Html::tag('p','Справочники',['class'=>'p-menu text-center']);?>    
+                    </li>
+                    <li>
+                    <?=Html::a('',['rep/index'],['class'=>'i-zvit i-menu']);?>          
+                    <?=Html::tag('p','Отчеты',['class'=>'p-menu text-center']);?>    
                     </li>
                     <?php } ?>
                 </ul>
@@ -137,11 +129,11 @@ if($this->params['curmenu']===5) DocsAsset::register($this);
             </ul>
             <?php }?> 
             <?php if($this->params['curmenu']==4 && isset($this->params['leftmenu'])) {?>
-            <table width="100%">
+            <table width="35%">
                 <tr>
-                    <td style="text-align:left"><h3>Клиенты</h3></td>
-                    <td style="text-align:right"><?= Html::a('Добавить компанию', ['create','mode'=>'2'], ['class' => 'btn btn-info']) ?></td>
-                    <td style="text-align:right"><?= Html::a('Добавить человека', ['create','mode'=>'1'], ['class' => 'btn btn-info']) ?></td>
+                    <td style="text-align:left; padding-right: 10px"><h4>Клиенты</h4></td>
+                    <td style="text-align:left; padding-right: 10px"><?= Html::a('Добавить компанию', ['create','mode'=>'2'], ['class' => 'btn btn-info']) ?></td>
+                    <td style="text-align:left; padding-right: 10px"><?= Html::a('Добавить человека', ['create','mode'=>'1'], ['class' => 'btn btn-info']) ?></td>
                 </tr>
             </table>
             

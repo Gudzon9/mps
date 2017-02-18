@@ -130,3 +130,53 @@
 Дела уже получилось сконвертировать !!!
 
 alter table addatr engine=MYISAM
+
+UPDATE `event` SET `type`= 'Дело' WHERE `id_type`=3
+UPDATE `event` SET `title`= CONCAT(`klient`,' ',`prim`) WHERE 1 
+
+UPDATE `addatr` SET `content`=replace(`content`,' ','') WHERE tableKod=2 AND atrKod=1;
+UPDATE `addatr` SET `content`=replace(`content`,'+8','+38') WHERE tableKod=2 AND atrKod=1;
+UPDATE `addatr` SET `content`=replace(`content`,'_','') WHERE tableKod=2 AND atrKod=1;
+
+ALTER  TABLE kagent ADD COLUMN deliprim varchar(60) DEFAULT NULL ;
+ALTER  TABLE kagent ADD COLUMN deliphon varchar(30) DEFAULT NULL ;
+ALTER  TABLE kagent ADD COLUMN enterdate varchar(10) DEFAULT NULL ;
+UPDATE `kagent` SET `enterdate`='2017-01-30'  WHERE 1 ;
+
+SELECT a.`content`, a.`note`, k.name FROM `addatr` as a INNER JOIN kagent as k ON a.`tableId`=k.id WHERE tableKod=2 AND atrKod=1
+ AND left(`content`,3) != '+38' 
+
+	public function beforeSave($insert)
+	{
+		if (parent::beforeSave($insert)) {
+			$this->content = str_replace (' ','',$this->content) ;
+			return true;
+		}
+		return false;
+	}	
+
+ Mail Delivery System или Non-Delivery Report (NDR), Delivery Status Notification (DSN), Non-Delivery Notification (NDN), bounce message
+
+UPDATE `kagent` SET `prodKag`='' WHERE `prodKag`='0';
+UPDATE `kagent` SET `prodKag`='[443]' WHERE `prodKag`='443';
+UPDATE `kagent` SET `prodKag`='[444]' WHERE `prodKag`='444';
+UPDATE `kagent` SET `prodKag`='[445]' WHERE `prodKag`='445';
+UPDATE `kagent` SET `prodKag`='[459]' WHERE `prodKag`='459';
+
+UPDATE `addatr` SET `content`=replace(`content`,' ','') WHERE id>12678 AND tableKod=2 AND atrKod=1 ;
+UPDATE `addatr` SET `content`=replace(`content`,'+8','+38') WHERE id>12678 AND tableKod=2 AND atrKod=1;
+UPDATE `addatr` SET `content`=replace(`content`,'_','') WHERE id>12678 AND tableKod=2 AND atrKod=1;
+
+SELECT a.`content`, a.`note`, k.name FROM `addatr` as a INNER JOIN kagent as k ON a.`tableId`=k.id WHERE a.id>12678 AND tableKod=2 AND atrKod=1 AND left(`content`,3) != '+38' 
+***************************************************************************************
+
+***1.Структура данных
+***2.Нов группа
+***3.Почта
+***3.1 По списку из сотрудн.
+***3,2 Отбои
+***4 Удаление по справочнику
+5 Удаление клиента
+5.1 Сохранение (кнопка)
+6 Ошибки и замечания
+7 Табель 

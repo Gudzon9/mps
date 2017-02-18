@@ -164,7 +164,7 @@ $this->params['curmenu'] = 1;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'modelName' => 'Kagent',
+        'modelName' => 'MainKagent',
         'edtType'=>'noModal',
         'Edt'=>'nomanual',
         'ui'=>new Ui(),         
@@ -172,13 +172,14 @@ $this->params['curmenu'] = 1;
             'name',
             [
                 'label'=>'Город',
+                'attribute' => 'townKag',
                 'value'=>function($model){
                     return $model->getTown()->one()->descr;
                 }               
             ],
             [
                 'label'=>'Телефон',
-                //'attribute'=>'addatr.tel',
+                'attribute'=>'addatr.tel',
                 'format'=>'html',
                 'value'=>function($model){
                     $str ='';
@@ -187,6 +188,23 @@ $this->params['curmenu'] = 1;
                         $str.=$item['content'].' '.$item['note'].'<br>';
                     }
                     return $str;
+                }
+            ],
+            [
+                'label'=>'Коментарии',
+                'attribute' => 'coment',
+                'format'=>'html',
+                'value'=>function($model){
+                    $str =''; 
+                    $counter = 0;
+                    foreach ($model->getAddComents()->orderBy(['comentDate'=>SORT_DESC])->all() As $item)
+                    {
+                        if($counter == 0) {
+                            $str.=substr(($item['comentDate'].' '.$item['descr']),0,50).' ...';
+                        }     
+                        $counter++ ;
+                    }
+                    return $str.(($counter > 1) ? '<br> еще коментариев :'.($counter-1) : '');
                 }
             ],
         ],

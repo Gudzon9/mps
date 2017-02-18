@@ -8,7 +8,7 @@ return [
     'isDirector' => false,
     //'aatr' => array(1 => "phone", 2 => "email", 3 => "link"),
     'aatr' => array(
-        1=>array('atrId'=>'1','atrName'=>'phone','atrDescr'=>'Телефон','atrMask'=>'+38(999)9999999'), 
+        1=>array('atrId'=>'1','atrName'=>'phone','atrDescr'=>'Телефон','atrMask'=>'+999 99 999 9999'), 
         2=>array('atrId'=>'2','atrName'=>'email','atrDescr'=>'Почта','atrMask'=>''), 
         3=>array('atrId'=>'3','atrName'=>'link','atrDescr'=>'Ссылки','atrMask'=>''),
     ),

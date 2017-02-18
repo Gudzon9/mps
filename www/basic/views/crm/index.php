@@ -1,48 +1,16 @@
 <?php
 
-/* @var $this yii\web\View */
-/* @var $form yii\bootstrap\ActiveForm */
-/* @var $model app\models\ContactForm */
-
 use yii\helpers\Html;
 use app\components\GridView;
 use app\models\Ui;
 use yii\widgets\Pjax;
-//use yii\web\Controller;
-//<a href="#" typebtn="KagentNew" class="btn-xs btn-info">Добавить</a>
-// echo $this->render('_search', ['model' => $searchModel]);
-/*
-    <?= Html::a('Добавить компанию', ['create','mode'=>'2'], ['class' => 'btn-xs btn-info']) ?>
-    <?= Html::a('Добавить человека', ['create','mode'=>'1'], ['class' => 'btn-xs btn-info']) ?>    
 
-            [
-               'attribute' => 'kindKagent',
-               'filter' => Yii::$app->params['akindKagent'],
-                'value'=>function($model){
-                    return Yii::$app->params['akindKagent'][$model->kindKagent];
-                }                
-            ],
-            [
-               'attribute' => 'typeKag',
-               //'filter' => Yii::$app->params['atypeKagent'],
-               // 'value'=>function($model){
-               //     return Yii::$app->params['atypeKagent'][$model->typeKagent];
-               // }                
-            ],                    
-            //'companyId'=>'kagent.name',
-            'adr',
-            'coment',
-            // 'posada',
-            // 'birthday',
-            // 'kuindActivity',
-            // 'userId',
-
- *  */
 $this->title = 'CRM';
 $this->params['curmenu'] = 4;
 $this->params['cursubmenu'] = 1;
 $this->params['leftmenu'] = $this->render('lmcrm',['searchModel' => $searchModel]);
 ?>
+
 <div class="kagent-index">
     <?php Pjax::begin(['enablePushState' => false, 'id' => ($choiceMode?uniqid():'pjaxKAgent'), 'timeout'=>2000]); ?>
     
@@ -60,6 +28,7 @@ $this->params['leftmenu'] = $this->render('lmcrm',['searchModel' => $searchModel
             'name',
             [
                 'label'=>'Город',
+                'attribute' => 'townKag',
                 'value'=>function($model){
                     return $model->getTown()->one()->descr;
                 }               
@@ -77,32 +46,36 @@ $this->params['leftmenu'] = $this->render('lmcrm',['searchModel' => $searchModel
                 'format'=>'html',
                 'value'=>function($model){
                     $str ='';
-                    foreach ($model->getAddAtrs(1)->all() As $item)
+                    foreach ($model->addatrphone As $item)
                     {
-                        $str.=$item['content'].' '.$item['note'].'<br>';
+                        $cont =  substr($item['content'],0,4).' '.substr($item['content'],4,2).' '.substr($item['content'],6,3).' '.substr($item['content'],9);
+                        $str.=$cont.' '.$item['note'].'<br>';
                     }
                     return $str;
                 }
             ],
             [
                 'label'=>'Коментарии',
+                'attribute' => 'coment.descr',
                 'format'=>'html',
                 'value'=>function($model){
                     $str =''; 
-                    $counter = 0;
-                    foreach ($model->getAddComents()->orderBy(['comentDate'=>SORT_DESC])->all() As $item)
+                    $maxCD = '';
+                    foreach ($model->addcoment As $item)
                     {
-                        if($counter == 0) {
-                            $str.=substr(($item['comentDate'].' '.$item['descr']),0,50).' ...';
+                        if($maxCD < $item['comentDate']) {
+                            $str = substr(($item['comentDate'].' '.$item['descr']),0,50).' ...';
+                            $maxCD = $item['comentDate'];
                         }     
-                        $counter++ ;
                     }
-                    return $str.(($counter > 1) ? '<br> еще коментариев :'.($counter-1) : '');
+                    return $str ;
+                            //.(($counter > 1) ? '<br> еще коментариев :'.($counter-1) : '');
                 }
             ],
             (Yii::$app->user->identity->isDirector && Yii::$app->session->get('allkag')!=1) ?        
             [
                 'label'=>'Ответственный',
+                'attribute' => 'userId',
                 'value'=>function($model){
                     return $model->getUser()->one()->fio1;
                 }               

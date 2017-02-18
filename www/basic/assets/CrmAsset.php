@@ -18,6 +18,7 @@ class CrmAsset extends AssetBundle
         'js/jquery-ui-timepicker-addon.js',
         'js/jquery-ui-timepicker-ru.js',
         'js/moment.min.js',
+        'js/jquery.inputmask.bundle.js',
         'js/custcrm.js',
     ];
     public $depends = [

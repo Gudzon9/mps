@@ -4,7 +4,7 @@ use yii\helpers\Url;
 
 $today =  date('Y-m-d hh:mm');
 $amonts = ['01'=>'янв','02'=>'фев','03'=>'мар','04'=>'апр','05'=>'май','06'=>'июн','07'=>'июл','08'=>'авг','09'=>'сен','10'=>'окт','11'=>'ноя','12'=>'дек'];
-$maxcnt = ($top == 'top') ? 5 : 500 ; 
+$maxcnt = ($top == 'top') ? 10 : 500 ; 
 /*
 <table id="evtbl" class='table table-condensed table-hover '>
     <thead>

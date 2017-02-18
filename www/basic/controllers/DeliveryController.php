@@ -106,25 +106,33 @@ class DeliveryController extends Controller
                 }
                 $messages[] = $message;
             }
-            Yii::$app->mailer->sendMultiple($messages);
+            if(Yii::$app->mailer->sendMultiple($messages)) {
+                $model->msgerr = 0;
+                $model->save(false);
+            }
             
             return $this->redirect(['index',]);
                 //return $this->redirect(['view', 'id' => $model->id]);
             //}               
         } else {
+            $maillist = Addatr::find()
+                    ->where(['tableKod'=>1,'atrKod'=>2,'tableId'=>Yii::$app->user->identity->id])
+                    ->all();
             $model->userId = Yii::$app->user->identity->id;
             $model->name = Yii::$app->user->identity->fio;
-            $model->fromadr = Yii::$app->user->identity->email;
+            $model->fromadr = ($maillist[0]) ? $maillist[0]['content'] : '' ; 
+            //Yii::$app->user->identity->email;
             $model->date = date('Y-m-d');
-            $model->msgerr = 0;
+            $model->msgerr = -1;
             
             $searchModel = new KagentSearch();
             if(!Yii::$app->user->identity->isDirector || Yii::$app->session->get('allkag')==1) {
                 $filter['userId'] = Yii::$app->user->identity->id;   
             }
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$filter);
-
+            
             return $this->render('_form', [
+                'maillist' => $maillist,
                 'model' => $model,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
@@ -233,12 +241,62 @@ class DeliveryController extends Controller
             }    
 
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$filter);
-
+            $dataProvider->pagination->pageSize=100;
             return $this->renderPartial('fltkag', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
             ]);
        
+    }
+    public function actionDelichek($id)
+    {
+        $model = $this->findModel($id);
+        $mailfc = $model->fromadr;
+        $tmp = explode('@', $mailfc);
+        $maildom = $tmp[1]; 
+        $maildp = Addatr::find()
+            ->where(['tableKod'=>1,'atrKod'=>2,'tableId'=>$model->userId,'content'=>$mailfc])
+            ->one();
+        $mailpw = $maildp['note'];
+        $bouncelist = [];
+        $mbox = imap_open ("{".$maildom.":995/pop3/ssl/novalidate-cert}", $mailfc, $mailpw);
+        $MC = imap_check($mbox);
+        $result = imap_fetch_overview($mbox,"1:{$MC->Nmsgs}",0);
+        foreach ($result as $overview) {
+            if( $this->isabounce($overview->subject,$overview->from)) {
+               $msg=imap_fetchbody($mbox,$overview->msgno,'1');
+                preg_match("/([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)/" , $msg, $matches) ;
+                if($matches[0]) {
+                    $bouncelist[] = $matches[0];
+                }
+            }
+        }
+        imap_close($mbox);
+        //var_dump($bouncelist);
+        if(count($bouncelist)>0){
+            $delicont = Deliveryresult::find()->Where(['deliveryId'=>$id])->all();
+            foreach ($delicont as $cont) {
+                //echo $cont['email'].' = '.$cont['id'].'<br>';
+                if(in_array($cont['email'],$bouncelist)){
+                    //echo 'found <br>';
+                    $curritem = Deliveryresult::findOne($cont['id']);
+                    $curritem->err = 2;
+                    $curritem->save();
+                    //echo 'save '.$curritem->err.'<br>';
+                }
+            }
+            $delierr = Deliveryresult::find()->Where(['deliveryId'=>$id,'err'=>2])->count();
+            $model->msgerr = $delierr;
+            $model->save();
+        }
+        
+        return $this->redirect(['update','id'=>$id]);
+    }
+    public function isabounce($Subject,$From)
+    {
+        if (preg_match("/(mail delivery failed|failure notice|warning: message|delivery status notif|delivery failure|delivery problem|spam eater|returned mail|undeliverable|returned mail|delivery errors|mail status report|mail system error|failure delivery|delivery notification|delivery has failed|undelivered mail|returned email|returning message to sender|returned to sender|message delayed|mdaemon notification|mailserver notification|mail delivery system|nondeliverable mail|mail transaction failed)|auto.{0,20}reply|vacation|(out|away|on holiday).*office/i", $Subject)) return true;
+        if (preg_match("/^(postmaster|mailer-daemon)\@?/i", $From)) return true;
+        return false;
     }
     
 }

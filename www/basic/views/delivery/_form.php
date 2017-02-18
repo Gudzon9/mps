@@ -71,7 +71,26 @@ use kartik\depdrop\DepDrop;
                 </tr>
                 <tr>
                     <td><?= Html::activeLabel($model, 'fromadr') ?></td>
-                    <td><?= Html::activeTextInput($model, 'fromadr', ['class' => 'form-control',]) ?></td>
+                    <td><table witdth="100%"><tr>
+                    <td>
+                    <?php if($model->isNewRecord) { 
+                        echo Select2::widget([
+                            'name' => 'afromadr',
+                            'data' => ArrayHelper::map($maillist,'id','content'),
+                            'value' => $maillist[0]['id'],
+                            'options' => ['placeholder' => 'Выбрать адрес ...'],
+                            'pluginEvents' => [
+                                'change' => 'function(event) { var selections = $(this).select2("data"); $("#fromadr").val(selections[0].text);  }'
+                            ],
+                        ]);
+
+                    } ?>    
+                    </td>           
+                    <td>
+                    <?= Html::activeTextInput($model, 'fromadr', ['id'=>'fromadr','class' => 'form-control',]) ?>
+                    </td>
+                    </tr></table>
+                    </td>
                 </tr>
                 <tr>
                     <td><?= Html::activeLabel($model, 'date') ?></td>
@@ -95,7 +114,7 @@ use kartik\depdrop\DepDrop;
                         <?= Html::submitButton($model->isNewRecord ? 'Отправить' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
                         <?php } ?>
                     </td>
-                    <td><?= Html::Button('Отказ', ['class' => 'btn','onclick' => 'document.location.href="'.Url::to(['delivery/index']).'"']); ?></td>
+                    <td><?= Html::Button('Выход', ['class' => 'btn','onclick' => 'document.location.href="'.Url::to(['delivery/index']).'"']); ?></td>
                 </tr>
             </table>
         </div>
@@ -104,6 +123,7 @@ use kartik\depdrop\DepDrop;
                 <?php if($model->isNewRecord) { ?>
                 <?= Html::activeTextArea($model, 'toadrs', ['class' => 'form-control','rows'=>'20','readonly'=>'readonly']) ?>
                 <?php } else { 
+                    echo Html::a('Контроль доставки',Url::to(['delivery/delichek','id'=>$model->id]), ['class' => 'btn btn-sm btn-info']) ;
                     echo GridView::widget([
                         'dataProvider' => $delicont,
                         'rowOptions' => function ($model, $key, $index, $grid)
@@ -130,7 +150,6 @@ use kartik\depdrop\DepDrop;
                             ],            
                         ],
                     ]); 
-                
                 } ?>
             </div>
         </div>  

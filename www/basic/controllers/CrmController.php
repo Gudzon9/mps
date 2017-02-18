@@ -115,9 +115,13 @@ class CrmController extends Controller
                 $this->saveAddComent($model);
                 //echo 'id '.$model->id;
                 //var_dump($model->getErrors());
-                return $this->redirect(['index']);
+                return $this->render('_form', [
+                    'model' => $model,
+                ]);
+//                return $this->redirect(['index']);
             } else {
                 $model->kindKagent = $mode;
+                $model->enterdate = date('Y-m-d');
                 $model->regiKag = 0;
                 $model->townKag = 0;
                 $model->typeKag = 0;
@@ -158,7 +162,7 @@ class CrmController extends Controller
     public function actionUpdate($id=1)
     {
         $model = $this->findModel($id);
-        if (Yii::$app->request->isAjax){
+        if (Yii::$app->request->isAjax){ 
             if ($model->load(Yii::$app->request->post())) {
                 if ($model->save()){
                     $this->saveAddAtr($model);
@@ -176,11 +180,14 @@ class CrmController extends Controller
                 ]);
             }
         }
-        else{
-            if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                $this->saveAddAtr($model);
+        else{ 
+            if ($model->load(Yii::$app->request->post()) && $model->save()) { 
+                $this->saveAddAtr($model); 
                 $this->saveAddComent($model);
-                return $this->redirect(['index']);
+                return $this->render('_form', [
+                    'model' => $model,
+                ]);
+                //return $this->redirect(['index']);
             } else {
                 return $this->render('_form', [
                     'model' => $model,
@@ -245,7 +252,7 @@ class CrmController extends Controller
                         }
                     } elseif($post['inf_'.$val['atrName']][$id]=='new'){
                         $addAtr = new Addatr();
-                        $addAtr->content = $aAtrVal[$id];
+                        $addAtr->content = str_replace (' ','',$aAtrVal[$id]);
                         $addAtr->tableKod = 2;
                         $addAtr->tableId = $model->id;
                         $addAtr->atrKod = $atrKod;
@@ -255,7 +262,7 @@ class CrmController extends Controller
                         }                            
                     }   else{
                             $addAtr = Addatr::findOne($id);
-                            $addAtr->content = $aAtrVal[$id];
+                            $addAtr->content = str_replace (' ','',$aAtrVal[$id]);
                             $addAtr->note = $post['note_'.$val['atrName']][$id];
                             if (!$addAtr->save()){
                                 var_dump($addAtr->getErrors());
@@ -334,6 +341,17 @@ class CrmController extends Controller
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return \app\models\Kagent::find()->select(['id','name as value'])->Where(['like','name',Yii::$app->request->get('term')])->limit(20)->asArray()->all();
+    }
+    public function actionSearchaddatr()
+    {
+        //Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $retstr = '';
+        $pnum = intval(Yii::$app->request->post('pnum')) ;
+        $pval = str_replace (' ','',Yii::$app->request->post('pval')) ;
+        //$pval = str_replace ('_','',$pval) ;
+        $adata = \app\models\Addatr::find()->Where(['atrKod'=>$pnum])->andWhere(['like','content',$pval])->all();
+        foreach ($adata as $data){ $retstr .= $data->kagent->name.' , ';}
+        return $retstr ;
     }
     public function actionAddeditev()
     {

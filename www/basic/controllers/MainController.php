@@ -63,10 +63,11 @@ class MainController extends Controller
         $top = 'top';
         $stats = ['overdue'=>0,'todaycnt'=>0,'tomorowcnt'=>0,'weekcnt'=>0,];
         foreach ($events as $event) {
-        if($event['start'] < $today) $stats['overdue']++;
-            if($event['start'] == $today) $stats['todaycnt']++;
-            if($event['start'] == $tomorow) $stats['tomorowcnt']++;
-            if($event['start'] > $last_Monday && $event['start'] < $end_week) $stats['weekcnt']++;
+            $eventstart = substr($event['start'],0,10);
+            if($eventstart < $today) $stats['overdue']++;
+            if($eventstart == $today) $stats['todaycnt']++;
+            if($eventstart == $tomorow) $stats['tomorowcnt']++;
+            if($eventstart > $last_Monday && $eventstart < $end_week) $stats['weekcnt']++;
         }
         /*
         $flt['fldname'] = 'typeKag';
@@ -117,17 +118,17 @@ class MainController extends Controller
             ->andFilterWhere(['kagent.userId'=>$emplid]);
         switch ($flt){
             case 'evexpaire':
-                $event->andWhere('start < :curDate',[':curDate' => $today]);
+                $event->andWhere('LEFT(start,10) < :curDate',[':curDate' => $today]);
                 break;
             case 'evtoday':
-                $event->andWhere('start = :curDate',[':curDate' => $today]);
+                $event->andWhere('LEFT(start,10) = :curDate',[':curDate' => $today]);
                 break;
             case 'evtomorow':
-                $event->andWhere('start = :curDate',[':curDate' => $tomorow]);
+                $event->andWhere('LEFT(start,10) = :curDate',[':curDate' => $tomorow]);
                 break;
             case 'evweek':
-                $event->andWhere('start >= :begDate',[':begDate' => $last_Monday])
-                    ->andWhere('start <= :endDate',[':endDate' => $end_week]);
+                $event->andWhere('LEFT(start,10) >= :begDate',[':begDate' => $last_Monday])
+                    ->andWhere('LEFT(start,10) <= :endDate',[':endDate' => $end_week]);
                 break;
         };
         

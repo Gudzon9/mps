@@ -87,8 +87,8 @@ $(document).ready(function() {
 	calendar.fullCalendar('refetchEvents');
     });
     /* инициализируем Datetimepicker   datetimepicker*/
-    event_start.datetimepicker({hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
-    event_end.datetimepicker({hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
+    event_start.datetimepicker({firstDay:1, hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
+    event_end.datetimepicker({firstDay:1, hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'yy-mm-dd',monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
 /*
         buttonText: {prev: "&nbsp;&#9668;&nbsp;", next: "&nbsp;&#9658;&nbsp;", prevYear: "&nbsp;&lt;&lt;&nbsp;", nextYear: "&nbsp;&gt;&gt;&nbsp;", today: "Сегодня", month: "Месяц", week: "Неделя", day: "День" },	
  
@@ -235,10 +235,11 @@ $(document).ready(function() {
                 alert(JSON.stringify(data));
                 alert('Ошибка соединения с источником данных!');
             }
-        }]
+        }],
+        eventAfterAllRender: function() { $('.fc-title').css('font-size', '1.3em'); }
 
     });
-    
+    $('.fc-title').css('font-size', '2em');
     form.dialog({ 
         autoOpen: false,
         resizable: true,
@@ -381,43 +382,58 @@ $(document).ready(function() {
             */
         }
     });
-    /*
-    $( "#listevents" ).fullCalendar({
-        firstDay: 1,
-        header: {left: '', center: 'title', right: ''},
-        monthNames: ['Январь','Февраль','Март','Апрель','Май','οюнь','οюль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
-        monthNamesShort: ['Янв.','Фев.','Март','Апр.','Май','οюнь','οюль','Авг.','Сент.','Окт.','Ноя.','Дек.'],
-        dayNames: ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"],
-        dayNamesShort: ["ВС","ПН","ВТ","СР","ЧТ","ПТ","СБ"],
-        buttonText: {prev: "<", next: ">", prevYear: "<<", nextYear: ">>", today: "Сегодня", month: "Месяц", week: "Неделя", day: "День" },	
-        navLinks: false, // can click day/week names to navigate views
-        eventLimit: true, // allow "more" link when too many events
-        defaultView: 'agendaDay', 
-        nowIndicator: true,
-        eventSources: [{
-            url: 'getevents',
-            type: 'POST',
-            data: function(){
-                var flttypes = '', i=0;
-                $('input[name=flttypes]:checkbox:checked').each(function(){
-                    flttypes = flttypes + ((i===0)? '' : ',') + $(this).val();
-                    i++;
-                });
-                //console.log(flttypes);
-                return {
-                    fltempl: $('#fltemplid').val(),
-                    fltklient: $('#fltklientid').val(),
-                    fltstatus: $('input[name=fltstatus]:radio:checked').val(),
-                    flttypes: flttypes
-                };    
-            },
-            error: function(data) {
-                alert(JSON.stringify(data));
-                alert('Ошибка соединения с источником данных!');
+///////////////////////////////////////////////////////////////
+    function refeventseth() {
+        $( "#showallev" ).on("click",function(){
+            $(this).addClass("showall") ; 
+            ajaxEvflt();
+        });
+    }    
+    function ajaxEvflt() {
+        var pdata = topbtn, pdate = "";
+        
+        if(topbtn != "allevents") pdate = $.datepicker.formatDate("yy-mm-dd", $("#calestatedp").datepicker("getDate"));
+            //pdate = $("#calestatedp").datepicker("getDate");
+        var ste = ($("#showallev").hasClass('showall')) ? 'all' : 'top' ;
+         $.ajax({
+            type: "POST",
+            url: "getevwflt",
+            data: "pflt="+pdata+"&pfdate="+pdate+"&ptop="+ste,  
+            success: function(data){
+                $("#evbody").html(data);
+                refeventseth();
             }
-        }]
-
+        });
+    }
+    $( "#calestatedp" ).datepicker({ 
+        firstDay:1, 
+        dateFormat: 'yy-mm-dd',
+        monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], 
+        dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ],
+        onSelect: function(date, picker){
+            if(topbtn == "allevents")  return;
+            ajaxEvflt();
+        }
     });
-    */
+    var topbtn = "allevents";
+    $(".topbtn").on("click",function(){
+        if($(this).hasClass("btn-xs")) return;
+        $(".topbtn").removeClass("btn-xs btn-warning");
+        $(this).addClass("btn-xs btn-warning");
+        topbtn = $(this).attr("id");
+        ajaxEvflt();
+        /*
+        switch (topbtn){
+            case "allevents":
+                break;
+            case "dayevents":
+                break;
+            case "weekevents":
+                break;
+        };
+        */
+    });
+    refeventseth(); 
+
 });
 

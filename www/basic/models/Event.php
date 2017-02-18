@@ -41,7 +41,7 @@ class Event extends \yii\db\ActiveRecord
         ];
     }
     public function save($runValidation = true, $attributeNames = null){
-        $this->title = $this->type.' '.$this->klient.' '.$this->prim;
+        $this->title = $this->klient.' '.$this->prim;
         return parent::save($runValidation,$attributeNames);
     }
     

@@ -18,14 +18,14 @@ class KagentSearch extends Kagent
     public function attributes()
     {
             // делаем поле зависимости доступным для поиска
-        return array_merge(parent::attributes(), ['kagent.name','addatr.tel']);
+        return array_merge(parent::attributes(), ['kagent.name','addatr.tel','coment.descr']);
     }    
     public function rules()
     {
         return [
             [['id', 'kindKagent', 'typeKag', 'statKag', 'actiKag', 'chanKag', 'refuKag', 'regiKag', 'townKag', 'deliKag', 'companyId', 'userId'], 'integer'],
             [['name', 'posada', 'birthday','adr', 'coment','prodKag','grouKag','tpayKag','kagent.name'], 'string'],
-            [['addatr.tel'], 'string']
+            [['addatr.tel','coment.descr'], 'string']
         ];
     }
 
@@ -47,15 +47,16 @@ class KagentSearch extends Kagent
      */
     public function search($params,$filter=null)
     {
-        $query = Kagent::find();
+        $query = Kagent::find()->joinWith(['addatrphone','addcoment']);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,'pagination' => ['pagesize' => 10,],
+            'query' => $query,'pagination' => ['pagesize' => 20,],
         ]);
         //$query->joinWith(['kagents' => function($query) { $query->from(['kagent' => 'kagent'])->alias('company'); }]);
         //$query->joinWith(['addAtr' => function($query) { $query->from(['addatr' => 'addatr']); }]);
+        //$query->joinWith(['addAtr'])->joinWith(['coment']);
         $this->load($params);
         
         if (isset($filter)){
@@ -100,8 +101,9 @@ class KagentSearch extends Kagent
             ->andFilterWhere(['like', 'kagent.tpayKag', $this->tpayKag])
             ->andFilterWhere(['like', 'kagent.grouKag', $this->grouKag])
             ->andFilterWhere(['like', 'kagent.name', $this->getAttribute('kagent.name')])
-            ->andFilterWhere(['LIKE', 'addatr.content', $this->getAttribute('addatr.tel')]);
-        
+            ->andFilterWhere(['LIKE', 'addatr.content', $this->getAttribute('addatr.tel')])
+            ->andFilterWhere(['LIKE', 'coment.descr', $this->getAttribute('coment.descr')]);
+                
 //var_dump($query->createCommand());
         return $dataProvider;
     }

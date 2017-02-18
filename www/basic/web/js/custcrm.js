@@ -1,5 +1,59 @@
 $(document).ready(function () {
+    $( "#clearflt" ).on("click",function(){
+        $( ".panel-body .form-control").each(function(){
+           $(this).val(''); 
+        });
+        $("form").submit();
+    });   
     /*
+    $('[name="KagentSearch[addatr.tel]"]').inputmask('+999 99 999 9999');
+    
+    $('.grid-view').on('beforeFilter', function(event) {
+        console.log(event);
+        return false;
+    })
+    
+    $('[name="KagentSearch[addatr.tel]"]').on('beforeFilter',function(e){
+        e.preventDefault();
+        alert($(this).val());
+        return false;
+    });
+    */
+      /*
+    var submit_form = true;
+    $('.grid-view').on('beforeFilter', function(event) {
+        return submit_form;
+    })
+    $(document).on('pjax:success', function() {
+        custflt();
+    });
+    function custflt() {
+        $('tr.filters').children().next().next().next().html('<input id="tel" class="form-control" type="text">');
+        $('#tel').inputmask('+999 99 999 9999');
+        $('#tel').on('focus',function(e){ submit_form = false;});
+        $('#tel').on('blur',function(e){ submit_form = true;});
+        $('#tel').on('keydown',function(e){
+            if(e.keyCode === 13) {
+                e.preventDefault();
+                var ftel = $(this).val();
+                if(ftel == "") return;
+                $.ajax({
+                   type: "POST",
+                   url: "searchphone",
+                   data: "ptel="+ftel,    
+                   success: function(data){
+                           //$('#evcontent').html(data);
+                        alert(data);   
+                   }
+                });
+            }    
+        });
+    }
+    custflt();
+
+    
+    
+ 
     var typesev = JSON.parse($("#typesev").val());
     function rendevwind(curtr,newrec) {
         if(newrec) {
@@ -84,11 +138,6 @@ $(document).ready(function () {
         }    
     });
     */
-    $( "#clearflt" ).on("click",function(){
-        $( ".panel-body .form-control").each(function(){
-           $(this).val(''); 
-        });
-        $("form").submit();
-    });    
+    
 });
 

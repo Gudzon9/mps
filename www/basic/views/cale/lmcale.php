@@ -21,6 +21,7 @@ $fltstatus = [
 ];
 
 ?>
+<div id="calestatedp"></div>
 <? if(Yii::$app->user->identity->isDirector) { ?>
 <div class="panel panel-primary">
     <div class="panel-heading">Сотрудники

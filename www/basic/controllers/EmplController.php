@@ -7,6 +7,7 @@ use app\models\User;
 use app\models\Addatr;
 use app\models\UserSearch;
 use app\models\Spratr;
+use app\models\Kagent;
 use yii\filters\AccessControl;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -63,11 +64,18 @@ class EmplController extends Controller
     }
     public function actionAspr($atrid=1)
     {
-        //$dataregion = [];
-        //if($atrid==8) $dataregion = Spratr::find()->Where(['atrId'=>7])->all();
-        //, 'dataregion'=>$dataregion
+        if(Yii::$app->params['satr'][$atrid]['atrType']=='one') {
+            $cond = 'kagent.'.Yii::$app->params['satr'][$atrid]['atrName'].' = spratr.id';
+            $query = Spratr::find()
+                ->Select(['spratr.*','sum(kagent.id IS NOT NULL) as cnt'])
+                ->leftJoin('kagent', $cond )
+                ->Where(['atrId'=>$atrid])
+                ->groupBy(['spratr.id']);
+        } else {
+            $query = Spratr::find()->Where(['atrId'=>$atrid]);
+        }
         $dataProvider = new ActiveDataProvider([
-            'query' => Spratr::find()->Where(['atrId'=>$atrid]),
+            'query' => $query,
         ]);
         return $this->render('lstspr', [
             'dataProvider' => $dataProvider, 'atrid'=>$atrid,
@@ -88,6 +96,29 @@ class EmplController extends Controller
                'model' => $model, 'regions' => $regions,
             ]);
         }    
+    }
+    public function actionDelespr($id)
+    {
+        $model = Spratr::findOne($id);
+        $fld = \Yii::$app->params['satr'][$model->atrId]['atrName'];
+        
+        if (Yii::$app->params['satr'][$model->atrId]['atrType']=='one') {
+            Kagent::updateAll([ $fld => 0], $fld.'='.$model->id);
+        } else {
+            foreach (Kagent::find()->Where(['like',$fld,'['.$model->id.']'])->all() as $kag) {
+                $modelkag = Kagent::findOne($kag['id']);
+                $tmparr = explode(',', $modelkag->$fld);
+                $key = array_search('['.$model->id.']', $tmparr);
+                if ($key !== false) {
+                    unset($tmparr[$key]);
+                }
+                $tmpval = implode(',', $tmparr);
+                $modelkag->$fld = $tmpval;
+                $modelkag->update();
+            }
+        }
+        $model->delete();
+        return $this->redirect(['aspr', 'atrid' => $model->atrId]);
     }
     public function actionNewspr($atrid=1)
     {

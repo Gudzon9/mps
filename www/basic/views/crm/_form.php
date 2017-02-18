@@ -19,6 +19,15 @@ use app\models\Kagent;
         ->dropDownList(Yii::$app->params['atypeKag'])
         <input type="hidden" class="aPerson" value='<?= json_encode($model->getKagents()->asArray()->all())?>'> 
 'fieldClass' => 'app\components\ActiveField',
+ * 
+<td><span style="margin-left: 30px; cursor: pointer" id="toedit" class="glyphicon glyphicon-pencil" title="Редактировать"></span> </td>
+<td><span style="margin-left: 30px; cursor: pointer" id="todele" class="glyphicon glyphicon-trash" title="Удалить"></span></td>
+            <h3><span class="glyphicon glyphicon-time"></span> Дела</h3>
+                <tr>
+                    <td class="col-md-3"><h4><?= $model->isNewRecord ? 'Новый клиент  '.(($model->kindKagent == 1) ? '(Человек)':'(Компания)') : 'Редактирование клиента ' ?></h4></td>
+                    <td class="col-md-3"><?php if(!$model->isNewRecord) echo Html::Button('<span class="glyphicon glyphicon-time"></span> Дела', ['class' => 'btn-xs','id' => 'toshowev']); ?></td>
+                </tr>
+ 
  *  */
 $this->title = 'CRM';
 $this->params['curmenu'] = 4;
@@ -29,7 +38,9 @@ function getarrsaratr($param) {
 $ajstowns = ArrayHelper::map(Spratr::find()->Where(['atrId'=>$param])->all(),'id','lvlId');
 
 ?>
-
+<style>
+    .inp-error {color: red;}
+</style>
 <div class="kagent-form">
     <?php 
         $id = uniqid();
@@ -46,17 +57,33 @@ $ajstowns = ArrayHelper::map(Spratr::find()->Where(['atrId'=>$param])->all(),'id
 
     <div style="display: none">
         <?= $form->field($model, 'kindKagent')->hiddenInput()->label(false)->widget(MaskedInput::className(),['mask'=>'9']) ?>
+        <?= $form->field($model, 'enterdate')->hiddenInput() ?>
     </div>
     <div class='row'>
         <div class="col-md-6">
+            <div id="showevents">
+            <?php if(!$model->isNewRecord) { ?>
+            <h4><?= $model->name.'    ' ?></h4>
+            <hr>    
+            <div id="evcontent">
+                <?= $this->render('tblevkag',['model' => $model,]) ?>
+            </div>
+            <table width="100%">
+                <tr>
+                    <td><br><button type="button" id="addev" class="btn-xs">+ Добавить дело</button> </td>                    
+                </tr>
+            </table>
+            <hr>    
+            <?php } ?>   
+            </div>
             <div id="newandedit">
+                <?php if($model->isNewRecord) {?>
+                <h4>Новый клиент  <?= ($model->kindKagent == 1) ? '(Человек)':'(Компания)' ?></h4>
+                <?php } ?>
             <table>
                 <tr>
-                    <td class="col-md-3"><h4><?= $model->isNewRecord ? 'Новый клиент  '.(($model->kindKagent == 1) ? '(Человек)':'(Компания)') : 'Редактирование клиента ' ?></h4></td>
-                    <td class="col-md-3"><?php if(!$model->isNewRecord) echo Html::Button('<span class="glyphicon glyphicon-time"></span> Дела', ['class' => 'btn-xs','id' => 'toshowev']); ?></td>
-                </tr>
-                <tr>
-                    <td class="col-md-6" colspan="2"><?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?></td>
+                    <td class="col-md-3"><?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?></td>
+                    <td class="col-md-3"><?= $form->field($model, 'typeKag')->widget(Select2::classname(),['data'=>getarrsaratr(1), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
                 </tr>
                 <?php if($model->kindKagent == 1) {?>
                 <tr>
@@ -73,19 +100,8 @@ $ajstowns = ArrayHelper::map(Spratr::find()->Where(['atrId'=>$param])->all(),'id
                     <td class="col-md-3"><?= $form->field($model, 'townKag')->widget(Select2::classname(),['data'=>getarrsaratr(8),'pluginEvents' => ['change' => 'function(event) { $("#kagent-regikag").val(arraytowns[$(this).val()]); $("#kagent-regikag").trigger("change");}'], 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
                 </tr>
                 <tr>
-                    <td class="col-md-3"><?= $form->field($model, 'typeKag')->widget(Select2::classname(),['data'=>getarrsaratr(1), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
-                    <td class="col-md-3"><?= $form->field($model, 'statKag')->widget(Select2::classname(),['data'=>getarrsaratr(2), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
-                </tr>
-                <tr>
                     <td class="col-md-3"><?= $form->field($model, 'actiKag')->widget(Select2::classname(),['data'=>getarrsaratr(3), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
-                    <td class="col-md-3"><?= $form->field($model, 'chanKag')->widget(Select2::classname(),['data'=>getarrsaratr(4), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
-                </tr>
-                <tr>
-                    <td class="col-md-3"><?= $form->field($model, 'deliKag')->widget(Select2::classname(),['data'=>getarrsaratr(11), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
-                    <td class="col-md-3"></td>
-                </tr>
-                <tr>
-                    <td class="col-md-6" colspan="2">
+                    <td class="col-md-3" >
                         <?= $form->field($model, 'prodKag')->hiddenInput()->label(false) ?>
                         <?= Html::activeLabel($model, 'prodKag') ?>
                         <?= Select2::widget([
@@ -105,7 +121,14 @@ $ajstowns = ArrayHelper::map(Spratr::find()->Where(['atrId'=>$param])->all(),'id
                     </td>
                 </tr>
                 <tr>
-                    <td class="col-md-6" colspan="2">
+                    <td class="col-md-3"><?= $form->field($model, 'statKag')->widget(Select2::classname(),['data'=>getarrsaratr(2), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
+                    <td class="col-md-3"><?= $form->field($model, 'refuKag')->widget(Select2::classname(),['data'=>getarrsaratr(6), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                    <td class="col-md-3"><?= $form->field($model, 'chanKag')->widget(Select2::classname(),['data'=>getarrsaratr(4), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
+                    <td class="col-md-3" >
                         <?= $form->field($model, 'tpayKag')->hiddenInput()->label(false) ?>
                         <?= Html::activeLabel($model, 'tpayKag') ?>
                         <?= Select2::widget([
@@ -119,14 +142,21 @@ $ajstowns = ArrayHelper::map(Spratr::find()->Where(['atrId'=>$param])->all(),'id
                                 'maximumInputLength' => 2
                             ],
                             'pluginEvents' => [
-                                'change' => 'function(event) { var selections = $(this).select2("data"); var forfld; $.each(selections, function (idx, obj) { forfld = forfld + ((idx==0) ? ",[" : "[") + obj.id +"]" ; }); $("#kagent-tpaykag").val(forfld); }'
+                                'change' => 'function(event) { var selections = $(this).select2("data"); var forfld=""; $.each(selections, function (idx, obj) { forfld = forfld + ((idx!=0) ? ",[" : "[") + obj.id +"]" ; }); $("#kagent-tpaykag").val(forfld); }'
                             ],
                         ]); ?>                        
                         
                     </td>
                 </tr>                                
                 <tr>
-                    <td class="col-md-6" colspan="2">
+                    <td class="col-md-3">
+                    <?php
+                        if(Yii::$app->user->identity->isDirector) {
+                             echo $form->field($model, 'userId')->widget(Select2::classname(),['data'=>ArrayHelper::map(User::find()->orderBy(['fio'=>SORT_ASC])->all(),'id','fio'), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ; 
+                        }
+                    ?>
+                    </td>
+                    <td class="col-md-3">
                         <?= $form->field($model, 'grouKag')->hiddenInput()->label(false) ?>
                         <?= Html::activeLabel($model, 'grouKag') ?>
                         <?= Select2::widget([
@@ -140,50 +170,33 @@ $ajstowns = ArrayHelper::map(Spratr::find()->Where(['atrId'=>$param])->all(),'id
                                 'maximumInputLength' => 2
                             ],
                             'pluginEvents' => [
-                                'change' => 'function(event) { var selections = $(this).select2("data"); var forfld; $.each(selections, function (idx, obj) { forfld = forfld + ((idx==0) ? ",[" : "[") + obj.id +"]" ; }); $("#kagent-groukag").val(forfld); }'
+                                'change' => 'function(event) { var selections = $(this).select2("data"); var forfld=""; $.each(selections, function (idx, obj) { forfld = forfld + ((idx!=0) ? ",[" : "[") + obj.id +"]" ; }); $("#kagent-groukag").val(forfld); }'
                             ],
                         ]); ?>                        
                         
                     </td>
                 </tr>                                
-                <tr>
-                    <td class="col-md-3"><?= $form->field($model, 'refuKag')->widget(Select2::classname(),['data'=>getarrsaratr(6), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
-                    <td class="col-md-3">
-                    <?php
-                        if(Yii::$app->user->identity->isDirector) {
-                             echo $form->field($model, 'userId')->widget(Select2::classname(),['data'=>ArrayHelper::map(User::find()->orderBy(['fio'=>SORT_ASC])->all(),'id','fio'), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ; 
-                        }
-                    ?>
-                    </td>
-                </tr>
             </table>
-            </div>
-            <div id="showevents">
-            <?php if(!$model->isNewRecord) { ?>
-            <table>
-                <tr>
-                    <td><h3><?= $model->name.'    ' ?></h3></td>
-                    <td><span style="margin-left: 30px; cursor: pointer" id="toedit" class="glyphicon glyphicon-pencil" title="Редактировать"></span> </td>
-                    <td><span style="margin-left: 30px; cursor: pointer" id="todele" class="glyphicon glyphicon-trash" title="Удалить"></span></td>
-                </tr>
-            </table>
-            <hr>    
-            <h3><span class="glyphicon glyphicon-time"></span> Дела</h3>
-            
-            <div id="evcontent">
-                <?= $this->render('tblevkag',['model' => $model,]) ?>
-            </div>
-            <table width="100%">
-                <tr>
-                    <td><br><button type="button" id="addev" class="btn-xs">+ Добавить дело</button> </td>                    
-                </tr>
-            </table>
-            <?php } ?>   
             </div>
         </div>
         <div class="col-md-6 col-centered">
             <div class="AddAtr">
             </div>
+            <hr>
+            <table width="100%">
+                <tr>
+                    <td class="col-md-3"><?= $form->field($model, 'deliKag')->widget(Select2::classname(),['data'=>getarrsaratr(11), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
+                    <td class="col-md-3"><?= $form->field($model, 'delitown')->textInput(['maxlength' => true]) ?></td>
+                </tr>
+                <tr>
+                    <td class="col-md-3"><?= $form->field($model, 'delinotd')->textInput(['maxlength' => true]) ?></td>
+                    <td class="col-md-3"><?= $form->field($model, 'delipers')->textInput(['maxlength' => true]) ?></td>
+                </tr>
+                <tr>
+                    <td class="col-md-3"><?= $form->field($model, 'deliprim')->textInput(['maxlength' => true]) ?></td>
+                    <td class="col-md-3"><?= $form->field($model, 'deliphon')->textInput(['maxlength' => true]) ?></td>
+                </tr>
+            </table>
             <hr>
             <div class="AddComent">
             </div>
@@ -225,31 +238,36 @@ $script = <<< JS
         $("#savebtn").show();
         $("#showevents").hide();
     } else {
-        $("#newandedit").hide();
-        $("#savebtn").hide();
+        $("#newandedit").show();
+        $("#savebtn").show();
         $("#showevents").show();
     }
     $("#toedit").on('click', function(){    
-        $("#newandedit").show();
-        $("#savebtn").show();
-        $("#showevents").hide();
+        //$("#newandedit").show();
+        //$("#savebtn").show();
+        //$("#showevents").hide();
     });   
     $("#toshowev").on('click', function(){    
-        $("#newandedit").hide();
-        $("#savebtn").hide();
-        $("#showevents").show();
+        //$("#newandedit").hide();
+        //$("#savebtn").hide();
+        //$("#showevents").show();
     });   
         
         
     $( "#sidebar-left" ).remove();
     $( "#content" ).css('width','100%');
-        
+    //$.extend($.inputmask.defaults, {
+    //    "autoUnmask": true, "clearIncomplete": true
+    //});    
     $(document).off('click','.btnAddAtr').on('click','.btnAddAtr', function(){
         RenderAddAtr(-1,$(this).attr('indKey'));
     });
     $(document).off('click','.btnDelAddAtr').on('click','.btnDelAddAtr', function(){
-        aAddAtr[$(this).attr('indKey')].status = (aAddAtr[$(this).attr('indKey')].status==1) ? 3 : 2;
-        RenderAddAtr($(this).attr('indKey'));
+        var cObj = $(this).parent().next().children().val();
+        if(confirm('Удалить '+cObj+' ?')) {
+            aAddAtr[$(this).attr('indKey')].status = (aAddAtr[$(this).attr('indKey')].status==1) ? 3 : 2;
+            RenderAddAtr($(this).attr('indKey'));
+        }
     });        
         
     var maxId=0;
@@ -282,12 +300,35 @@ $script = <<< JS
                 $('[name="inf_'+cInputName+'"]').attr('value','del');
             }
         }else{
+            //var inptype = (aAtr[aAddAtr[Ind].atrKod].atrId == '1') ? 'text': ((aAtr[aAddAtr[Ind].atrKod].atrId == '2') ? 'email' : 'url' ) ;
             var strObj = '<tr id="rr"><td><a href="#" class="btn-xs btn-default btnDelAddAtr" indKey='+Ind+'>x</a></td>';
             strObj = strObj + '<td><input name='+cInputName+' class="form-control kagaddpar"  type="text" value="'+aAddAtr[Ind].content+'"></td>';
             strObj = strObj + '<td><input name=note_'+cInputName+' class="form-control"  type="text" placeholder="примечание" value="'+aAddAtr[Ind].note+'"></td>';
             strObj = strObj + '</tr><input name=inf_'+cInputName+' type="hidden" value='+((aAddAtr[Ind].status==1) ? 'new' : '_')+'>';
             $('.tblAddAtr'+aAddAtr[Ind].atrKod).append(strObj);
-            $('[name="'+aAtr[aAddAtr[Ind].atrKod].atrName+'['+aAddAtr[Ind].id+']"]').inputmask(aAtr[aAddAtr[Ind].atrKod].atrMask);
+            
+            if(aAtr[aAddAtr[Ind].atrKod].atrId == '1') {
+                $('[name="'+aAtr[aAddAtr[Ind].atrKod].atrName+'['+aAddAtr[Ind].id+']"]').inputmask(aAtr[aAddAtr[Ind].atrKod].atrMask, {'onincomplete': function(){ $(this).addClass('inp-error'); }, 'oncomplete': function(){ $(this).removeClass('inp-error'); } });
+            } else {
+                if(aAtr[aAddAtr[Ind].atrKod].atrId == '2') {
+                    $('[name="'+aAtr[aAddAtr[Ind].atrKod].atrName+'['+aAddAtr[Ind].id+']"]').on('blur',function(e){ 
+                        if($(this).val().match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/)) {
+                            $(this).removeClass('inp-error');
+                        } else {
+                            $(this).addClass('inp-error');
+                        } 
+                    });
+                } else {
+                    $('[name="'+aAtr[aAddAtr[Ind].atrKod].atrName+'['+aAddAtr[Ind].id+']"]').on('blur',function(e){ 
+                        if($(this).val().match(/(^https?:\/\/)?[a-z0-9~_\-\.]+\.[a-z]{2,9}(\/|:|\?[!-~]*)?$/i)) {
+                            $(this).removeClass('inp-error');
+                        } else {
+                            $(this).addClass('inp-error');
+                        } 
+                    });
+        
+                }    
+            }   
         }
     }
     
@@ -295,8 +336,11 @@ $script = <<< JS
         RenderAddComent(-1,$(this).attr('indKey'));
     });
     $(document).off('click','.btnDelAddComent').on('click','.btnDelAddComent', function(){
-        aAddComent[$(this).attr('indKey')].status = (aAddComent[$(this).attr('indKey')].status==1) ? 3 : 2;
-        RenderAddComent($(this).attr('indKey'));
+        var cObj = $(this).parent().next().children().val();
+        if(confirm('Удалить коментарий от '+cObj+' ?')) {
+            aAddComent[$(this).attr('indKey')].status = (aAddComent[$(this).attr('indKey')].status==1) ? 3 : 2;
+            RenderAddComent($(this).attr('indKey'));
+        }
     });        
     var maxCId=0;    
     var amonths = {'01':'янв','02':'фев','03':'мар','04':'апр','05':'май','06':'июн','07':'июл','08':'авг','09':'сен','10':'окт','11':'ноя','12':'дек'};
@@ -379,19 +423,38 @@ $script = <<< JS
             incl = incl + '<tr><td colspan=2 style="text-align: right;"><span style="cursor: pointer" class="glyphicon glyphicon-remove"></span></td></tr>';
             incl = incl + '<tr><td style="padding: 5px" width=30%>'+cboev+'</td> <td style="padding: 5px" width=70%><textarea id="tmpprim" class="form-control" >' + tmpdata.prim + '</textarea></td></tr>' ;
             incl = incl + '<tr><td colspan=2><br></td></tr>';
-            incl = incl + '<tr><td style="padding: 5px"><b>Когда :</b></td><td style="padding: 5px"><input type="text" id="tmpstart" class="form-control" value="' + tmpdata.start + '" /></td>';
-            incl = incl + '<tr><td colspan=2><br></td></tr>';
-            incl = incl + '<tr style="background: #EEE"><td colspan=2><br></td></tr>';
-            incl = incl + '<tr style="background: #EEE"><td style="padding-left: 10px" ><button id="saveevkag" class="btn btn-success" type="button">Сохранить</button></td>' ;
+            incl = incl + '<tr><td style="padding: 5px"><b>Когда :</b></td><td style="padding: 5px"><input type="text" id="tmpstart" class="form-control" value="' + tmpdata.start + '" /></td></tr>';
+            incl = incl + '<tr class="blksave"><td colspan=2><br></td></tr>';
+            incl = incl + '<tr class="blksave" style="background: #EEE"><td colspan=2><br></td></tr>';
+            incl = incl + '<tr class="blksave" style="background: #EEE"><td style="padding-left: 10px" ><button id="saveevkag" class="btn btn-success" type="button">Сохранить</button></td>' ;
             incl = incl + '<td style="text-align: left; padding-left: 10px">'+((newrec) ? '' :'<a href="#" id="closevkag" >Закрыть</a>')+'</td></tr>' ;
-            incl = incl + '<tr style="background: #EEE"><td colspan=2><br></td></tr>';
+            incl = incl + '<tr class="blksave" style="background: #EEE"><td colspan=2><br></td></tr>';
+            var infclblk = '<b>Результат :</b>';
+            infclblk = infclblk + '<div class="radio" style="margin: 1px"><label><input type="radio" name="endstat" value="1" checked><span style="color: green">Завершено успешно</span></label></div>';
+            infclblk = infclblk + '<div class="radio" style="margin: 1px"><label><input type="radio" name="endstat" value="2" ><span >Завершено </span></label></div>';
+            infclblk = infclblk + '<div class="radio" style="margin: 1px"><label><input type="radio" name="endstat" value="3" ><span style="color: red">Завершено неудачно</span></label></div>';
+            incl = incl + '<tr class="blkclos"><td  colspan=2 style="padding-left: 5px">'+infclblk+'</td></tr>';
+            //incl = incl + '<tr><td  colspan=2 style="padding: 5px"><b>Результат :</b></td></tr>';
+            //incl = incl + '<tr><td  colspan=2 style="padding: 5px"><input type="radio" name="endstat" class="form-control" value="1"><span style="color: green">Завершено успешно</span></td></tr>';
+            //incl = incl + '<tr><td  colspan=2 style="padding: 5px"><input type="radio" name="endstat" class="form-control" value="2" ><span>Завершено</span></td></tr>';
+            //incl = incl + '<tr><td  colspan=2 style="padding: 5px"><input type="radio" name="endstat" class="form-control" value="3" ><span style="color: red">Завершено неудачно</span></td></tr>';
+            
+            incl = incl + '<tr class="blkclos" style="background: #EEE"><td colspan=2><br></td></tr>';
+            incl = incl + '<tr class="blkclos" style="background: #EEE"><td style="padding-left: 10px" ><button id="closbuajax" class="btn btn-success" type="button">Завершить</button></td>' ;
+            incl = incl + '<td style="text-align: left; padding-left: 10px"> или <a href="#" class="con-remove" style="color: red">  х Не завершать</a></td></tr>' ;
+            incl = incl + '<tr class="blkclos" style="background: #EEE"><td colspan=2><br></td></tr>';
             incl = incl + '</table><br></td></tr>';
             
             curtr.after(incl);
-            //curtr.next().slideDown(2000);
-            $('#tmpstart').datetimepicker({hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'dd M yy',monthNamesShort: ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'],monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'] , dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
-            $('#saveevkag, #closevkag').on('click',function(){
-                if($(this).attr('id')=='closevkag') tmpdata.status = 1 ;
+            $('.blkclos').hide();
+            //curtr.next().slideDown(2000);  ,
+            $('#tmpstart').datetimepicker({firstDay: 1, hourGrid: 4, minuteGrid: 30, stepMinute: 30, dateFormat: 'dd M yy',monthNamesShort: ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'],monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'] , dayNamesMin: [ "Вс","Пн","Вт","Ср","Чт","Пт","Сб" ]});
+            $('#closevkag').on('click',function(){
+                $('.blksave').hide();
+                $('.blkclos').show();
+            });
+            $('#saveevkag, #closbuajax').on('click',function(){
+                if($(this).attr('id')=='closbuajax') tmpdata.status = $('input:radio[name=endstat]:checked').val() ;
                 if(tmpdata.id == 0) {
                     tmpdata.id_type = $('#idtype').val();
                     for (var key in typesev) {
@@ -411,7 +474,7 @@ $script = <<< JS
                 tmpdata.end = tdate.format("YYYY-MM-DD HH:mm");
                 goajev(tmpdata);
             });
-            $('.glyphicon-remove').on('click',function(){ 
+            $('.glyphicon-remove, .con-remove').on('click',function(){ 
                 $('#tmptr').remove() ;
             });
     }
@@ -458,15 +521,54 @@ $script = <<< JS
             rendevwind($(this).parent().parent(),true);
         }
     });  
-    sethandl();    
-    $("form").submit(function(){ 
+    function kagaddparchange(obj) {
+        var currinp = obj;
+        //console.log('currinp.val = '+currinp.val());
+        //console.log(currinp.hasClass('inp-error'));
+        if(currinp.val() == '' || currinp.hasClass('inp-error')) return;
+        var catr = currinp.attr('name').substr(0,4);
+        //console.log('catr = '+catr);
+        //console.log('isnew = '+currinp.parent().parent().next().val());
+        if(catr == 'note') return;
+        if (currinp.parent().parent().next().val() == 'new') {
+            var atrnum = ((catr == 'phon') ? '1': ((catr == 'emai') ? '2':'3'));
+            var atrval = currinp.val();
+            $.ajax({
+                type: "POST",
+                url: "searchaddatr",
+                data: "pnum="+atrnum+"&pval="+atrval ,    
+                success: function(data){
+                    if(data.length > 1) {
+                        alert(data);   
+                    }    
+                }
+            });
+            
+        }
+
+    }    
+    $(document).on("change",".kagaddpar",function(){ 
+        var currobj = $(this);
+        setTimeout(function() {kagaddparchange(currobj);  }, 0);        
+    });  
+    sethandl();  
+    $('form').keydown(function(event){
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+      }
+    });        
+    $(document).on('submit',function(e){ 
+        var nobreak = true;
         $(".kagaddpar").each(function(){ 
-            if($(this).val()=="") {
+            if($(this).val()=="" || $(this).hasClass('inp-error')) {
+                e.preventDefault();
                 $(this).focus(); 
-                return false;
+                nobreak = false;
+                return nobreak;
             }
         });
-        
+        return nobreak;
     });  
         
 JS;
@@ -477,4 +579,5 @@ if (Yii::$app->request->isAjax){
         });";
 }
 $this->registerJs($script,yii\web\View::POS_END); 
+
 ?>

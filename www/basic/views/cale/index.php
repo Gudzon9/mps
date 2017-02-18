@@ -10,6 +10,19 @@ use yii\helpers\Html;
 $this->params['curmenu'] = 3;
 $this->params['leftmenu'] = $this->render('lmcale');
 ?>
+<style>
+    .topbtn {color: blue; padding-right: 10px; padding-left: 10px;}
+</style>
+<div id="evctrl" >
+    <a href="#" class="topbtn btn-xs btn-warning" id="allevents" >Все дела</a>
+    <a href="#" class="topbtn" id="dayevents" >День</a>
+    <a href="#" class="topbtn" id="weekevents" >Неделя</a>
+</div>
+<br>
+<div id="evbody" >
+    <?= $this->renderFile(Yii::getAlias('@app/views/main/tblevent.php'),['events' => $events,'top' => $top]); ?>
+</div>
+
 <div id="calendar" class="container" style="max-width:100%"></div>
 <div id="dialog-form" title="Дело" style="overflow: hidden; ">
     <p class="validateTips"></p>

@@ -33,13 +33,14 @@ class Kagent extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'kindKagent', 'userId'], 'required'],
+            [['name','kindKagent','enterdate','userId'], 'required'],
             [['id', 'kindKagent', 'typeKag', 'statKag', 'actiKag', 'chanKag', 'refuKag', 'regiKag', 'townKag', 'deliKag', 'userId'], 'integer'],
             [['id','companyId','posada'],'safe'],
             [['prodKag','grouKag'], 'string', 'max' => 100],
             [['posada'], 'string', 'max' => 20],
-            [['birthday'], 'string', 'max' => 10],
-            [['adr','coment','tpayKag','name'], 'string', 'max' => 60],
+            [['birthday','enterdate'], 'string', 'max' => 10],
+            [['adr','coment','tpayKag','name','deliprim'], 'string', 'max' => 60],
+            [['delitown','delinotd','delipers','deliphon'], 'string', 'max' => 30],
             [['typeKag', 'statKag', 'actiKag', 'chanKag', 'refuKag', 'regiKag', 'townKag', 'deliKag'], 'default', 'value' => 0],
         ];
     }
@@ -67,6 +68,11 @@ class Kagent extends \yii\db\ActiveRecord
             'tpayKag' => 'Формы расчета',
             'grouKag' => 'Группы',
             'deliKag' => 'Служба доставки',
+            'delitown' => 'Город доставки',
+            'delinotd' => '№ отделения доставки',
+            'delipers' => 'Получатель',
+            'deliprim' => 'Примечание',
+            'deliphon' => 'Телефон',
             'adr' => 'Адрес',
             'coment' => 'Примечание',
             'userId' => 'Ответственный',
@@ -105,6 +111,10 @@ class Kagent extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Spratr::className(),['id'=>'townKag']);
     } 
+    public function getComent()
+    {
+        return $this->hasMany(Coment::className(),['kagentId'=>'id']);
+    }
     /*
     public function save($runValidation = true, $attributeNames = null)
     {
@@ -126,6 +136,16 @@ class Kagent extends \yii\db\ActiveRecord
             $relAddAtr->andOnCondition(['atrKod'=>$atrKod]);
         }
         return $relAddAtr;
+    }
+    public function getAddatrphone()
+    {
+        return $this->hasMany(Addatr::className(),['tableId'=>'id'])
+                ->andOnCondition(['tableKod'=>2,'atrKod'=>1]);
+    }
+    public function getAddcoment()
+    {
+        return $this->hasMany(Coment::className(),['kagentId'=>'id']);
+               // ->orderBy(['comentDate'=>SORT_DESC]);
     }
     
 }

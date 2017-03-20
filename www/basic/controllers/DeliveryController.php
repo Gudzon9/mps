@@ -94,7 +94,7 @@ class DeliveryController extends Controller
             $messages = [];
             foreach ($delicont as $cont) {
                 $message = Yii::$app->mailer->compose()
-                ->setFrom($model->fromadr)
+                ->setFrom([$model->fromadr => $model->name])
                 ->setSubject($model->subject)
                 ->setHtmlBody($model->msgcont)        
                 ->setTo($cont->email);
@@ -204,8 +204,8 @@ class DeliveryController extends Controller
             ->all();
     }   
     public function saveDeliveryResult($model){
-        $emlist = explode(', ', $model->toadrs);
-        
+        $input = explode(', ', $model->toadrs);
+        $emlist = array_unique($input);
         $dataprov = Addatr::find()
                 ->Where(['tableKod'=>2, 'atrKod'=>2,'content'=>$emlist])->all();
                 //->andWhere('in','content',$emlist)

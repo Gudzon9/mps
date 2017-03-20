@@ -173,6 +173,7 @@ $this->params['curmenu'] = 1;
             [
                 'label'=>'Город',
                 'attribute' => 'townKag',
+                'filter' => ArrayHelper::map(Spratr::find()->Where(['atrId'=>8])->all(),'id','descr'),
                 'value'=>function($model){
                     return $model->getTown()->one()->descr;
                 }               

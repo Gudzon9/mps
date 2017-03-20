@@ -1,14 +1,17 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use app\components\GridView;
 use app\models\Ui;
+use app\models\Spratr;
 use yii\widgets\Pjax;
 
 $this->title = 'CRM';
 $this->params['curmenu'] = 4;
 $this->params['cursubmenu'] = 1;
 $this->params['leftmenu'] = $this->render('lmcrm',['searchModel' => $searchModel]);
+
 ?>
 
 <div class="kagent-index">
@@ -25,10 +28,16 @@ $this->params['leftmenu'] = $this->render('lmcrm',['searchModel' => $searchModel
         'ui'=>new Ui(),   
         'formatter' => ['class' => 'yii\i18n\Formatter','nullDisplay' => ''],
         'columns' => [
-            'name',
-            [
+             [
+             'attribute' => 'name',    
+             'format' => 'raw',
+             'value'=>function ($model) {
+                        return Html::a($model->name, ['crm/update','id'=>$model->id],['class'=>'fnewtab']);
+                      },
+             ],            [
                 'label'=>'Город',
                 'attribute' => 'townKag',
+                'filter' => ArrayHelper::map(Spratr::find()->Where(['atrId'=>8])->all(),'id','descr'),
                 'value'=>function($model){
                     return $model->getTown()->one()->descr;
                 }               
@@ -84,6 +93,5 @@ $this->params['leftmenu'] = $this->render('lmcrm',['searchModel' => $searchModel
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
-
 
 

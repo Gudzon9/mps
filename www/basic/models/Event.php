@@ -42,6 +42,7 @@ class Event extends \yii\db\ActiveRecord
     }
     public function save($runValidation = true, $attributeNames = null){
         $this->title = $this->klient.' '.$this->prim;
+        $this->color = ($this->status == 0) ? $this->color : "#C4C4C4" ;
         return parent::save($runValidation,$attributeNames);
     }
     

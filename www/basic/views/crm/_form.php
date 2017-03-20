@@ -27,6 +27,11 @@ use app\models\Kagent;
                     <td class="col-md-3"><h4><?= $model->isNewRecord ? 'Новый клиент  '.(($model->kindKagent == 1) ? '(Человек)':'(Компания)') : 'Редактирование клиента ' ?></h4></td>
                     <td class="col-md-3"><?php if(!$model->isNewRecord) echo Html::Button('<span class="glyphicon glyphicon-time"></span> Дела', ['class' => 'btn-xs','id' => 'toshowev']); ?></td>
                 </tr>
+<button type="button" class="btn btn-primary" id="btnsave" style="display: none" >Save</button>
+                <tr>
+                    <td class="col-md-3"><?= $form->field($model, 'birthday')->widget(MaskedInput::className(),['mask'=>'9{4}-9{2}-9{2}']) ?></td>
+                    <td class="col-md-3"></td>
+                </tr>
  
  *  */
 $this->title = 'CRM';
@@ -63,7 +68,15 @@ $ajstowns = ArrayHelper::map(Spratr::find()->Where(['atrId'=>$param])->all(),'id
         <div class="col-md-6">
             <div id="showevents">
             <?php if(!$model->isNewRecord) { ?>
-            <h4><?= $model->name.'    ' ?></h4>
+                <table width="100%"><tr>
+                <td>        
+                    <h4><?= $model->name.' ' ?></h4>
+                </td>  
+                <td style="text-align: right">
+                    <?= Html::Button('Сохранить', ['id'=>'btnsave', 'class' => 'btn btn-primary', 'style' => 'display: none']) ?>
+                </td>
+                </tr>
+                </table>
             <hr>    
             <div id="evcontent">
                 <?= $this->render('tblevkag',['model' => $model,]) ?>
@@ -86,10 +99,6 @@ $ajstowns = ArrayHelper::map(Spratr::find()->Where(['atrId'=>$param])->all(),'id
                     <td class="col-md-3"><?= $form->field($model, 'typeKag')->widget(Select2::classname(),['data'=>getarrsaratr(1), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
                 </tr>
                 <?php if($model->kindKagent == 1) {?>
-                <tr>
-                    <td class="col-md-3"><?= $form->field($model, 'birthday')->widget(MaskedInput::className(),['mask'=>'9{4}-9{2}-9{2}']) ?></td>
-                    <td class="col-md-3"></td>
-                </tr>
                 <tr>
                     <td class="col-md-3"><?= $form->field($model, 'companyId')->widget(Select2::classname(),['data'=>ArrayHelper::map(Kagent::find()->Where(['kindKagent'=>2])->orderBy(['name'=>SORT_ASC])->all(),'id','name'), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ?></td>
                     <td class="col-md-3"><?= $form->field($model, 'posada')->textInput(['maxlength' => true])?></td>
@@ -152,7 +161,11 @@ $ajstowns = ArrayHelper::map(Spratr::find()->Where(['atrId'=>$param])->all(),'id
                     <td class="col-md-3">
                     <?php
                         if(Yii::$app->user->identity->isDirector) {
-                             echo $form->field($model, 'userId')->widget(Select2::classname(),['data'=>ArrayHelper::map(User::find()->orderBy(['fio'=>SORT_ASC])->all(),'id','fio'), 'options' => ['placeholder' => '...'], 'pluginOptions' => ['allowClear' => true]]) ; 
+                            echo $form->field($model, 'userId')->widget(Select2::classname(),['data'=>ArrayHelper::map(User::find()->orderBy(['fio'=>SORT_ASC])->all(),'id','fio'), 'options' => ['placeholder' => '...' ], 'pluginOptions' => ['allowClear' => true]]) ; 
+                        } else {
+                            echo $form->field($model, 'userId')->textInput(['type' => 'hidden']);
+                            echo Select2::widget(['name' => 'userid', 'data'=>ArrayHelper::map(User::find()->all(),'id','fio'), 'value' =>$model->userId ,'options' => ['disabled'=>true ]]) ; 
+//echo $form->field($model, 'userId')->widget(Select2::classname(),['data'=>ArrayHelper::map(User::find()->orderBy(['fio'=>SORT_ASC])->all(),'id','fio'), 'value' =>$model->userId ,'options' => ['placeholder' => '...','disabled'=>true ], 'pluginOptions' => ['allowClear' => true]]) ; 
                         }
                     ?>
                     </td>
@@ -204,18 +217,24 @@ $ajstowns = ArrayHelper::map(Spratr::find()->Where(['atrId'=>$param])->all(),'id
     </div>
     <div id="savebtn" class="form-group">
         <br>
-    
+        <table width="45%">
+           <tr>
         <?php
         if (!Yii::$app->request->isAjax){
-            echo Html::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['id'=>'save_form', 'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);
-            echo ' ';
+            echo '<td width="10%">'.Html::Button($model->isNewRecord ? 'Создать' : 'Сохранить', ['id'=>'save_form', 'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']).'</td>';
+            //echo ' ';
             if($model->isNewRecord) {
-                echo Html::Button('Отказ', ['class' => 'btn','onclick' => 'document.location.href="'.Url::to(['crm/index']).'"']);
+                echo '<td width="10%">'.Html::Button('Отказ', ['class' => 'btn','onclick' => 'document.location.href="'.Url::to(['crm/index']).'"']).'</td>';
             } else {
-                
-            }    
+                if(Yii::$app->user->identity->isDirector) {
+                    echo '<td width="10%">'.Html::Button('Отмена', ['class' => 'btn','onclick' => 'document.location.reload()']).'</td>';
+                    echo '<td width="25%" style="text-align: right">'.Html::a('Удалить',['delete','id'=>$model->id], ['id'=>'btndele', 'class' => 'btn btn-warning']).'</td>' ;
+                }
+            }
         }
         ?>
+            </tr>
+        </table>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -242,17 +261,31 @@ $script = <<< JS
         $("#savebtn").show();
         $("#showevents").show();
     }
-    $("#toedit").on('click', function(){    
-        //$("#newandedit").show();
-        //$("#savebtn").show();
-        //$("#showevents").hide();
-    });   
-    $("#toshowev").on('click', function(){    
-        //$("#newandedit").hide();
-        //$("#savebtn").hide();
-        //$("#showevents").show();
-    });   
-        
+    $(document).on('change','.form-control',function(){    
+        $("#btnsave").show();
+    });
+    /*    
+    var vctrldel = false;    
+    $("form").on("keyup",function(e){ 
+        if(Number(e.keyCode) == 46) {
+            if(vctrldel) {
+                vctrldel = false;
+                $("#btndele").hide();
+                $("#save_form").show();
+            } else {
+                vctrldel = true;
+                $("#btndele").show();
+                $("#save_form").hide();
+            }
+        }	
+    });
+    */    
+    $("#btnsave, #save_form").on('click',function(){
+        $("form").submit();
+    });    
+    $("#btndele").on('click',function(){
+        if(!confirm('Удалить клиента ?')) return false;
+    });    
         
     $( "#sidebar-left" ).remove();
     $( "#content" ).css('width','100%');
@@ -375,14 +408,17 @@ $script = <<< JS
             var vDate = aAddComent[Ind].comentDate.substr(8,2)+'-'+ amonths[aAddComent[Ind].comentDate.substr(5,2)]+'-'+ aAddComent[Ind].comentDate.substr(0,4);
             var strComent = '<tr id="rr"><td width="5%"><a href="#" class="btn-xs btn-default btnDelAddComent" indKey='+Ind+'>x</a></td>';
             strComent = strComent + '<td width="20%"><input name='+cInputName+' class="form-control"  type="text" value="'+aAddComent[Ind].comentDate+'" style="display: none;">'+vDate+'</td>';
-            strComent = strComent + '<td width="75%"><textarea name=note_'+cInputName+' class="form-control kagaddpar"  type="text" placeholder="коментарий" >'+aAddComent[Ind].descr+'</textarea></td>';
+            strComent = strComent + '<td width="75%"><textarea name=note_'+cInputName+'  class="form-control kagaddpar"   placeholder="коментарий" cols="100" rows="4" >' +aAddComent[Ind].descr+'</textarea></td>';
             strComent = strComent + '</tr><input name=inf_'+cInputName+' type="hidden" value='+((aAddComent[Ind].status==1) ? 'new' : '_')+'>';
             $('.tblAddComent').append(strComent);
             //$('[name="coment['+aAddComent[Ind].id+']"]').inputmask("9999-99-99");
         }
     }
     if($('.Data-Key').val()=='') {
-        $('.btnAddAtr').click();
+        $('.btnAddAtr').each(function(){
+            if($(this).attr("indKey")=="1") $(this).click();
+        });
+            
         $('.btnAddComent').click();
     } 
     var typesev = JSON.parse($("#typesev").val());
@@ -482,9 +518,11 @@ $script = <<< JS
          if(data.id_type == 0) {
              $("#idtype").focus(); return false;
          }
-         if(data.prim == '') {
+        /* 
+        if(data.prim == '') {
              $("#tmpprim").focus(); return false;
          }
+        */
          if(data.start == '') {
              $("#tmpstart").focus(); return false;
          }
@@ -552,12 +590,14 @@ $script = <<< JS
         setTimeout(function() {kagaddparchange(currobj);  }, 0);        
     });  
     sethandl();  
-    $('form').keydown(function(event){
+   /* 
+   $('form').keydown(function(event){
         if(event.keyCode == 13) {
           event.preventDefault();
           return false;
       }
-    });        
+    });
+    */
     $(document).on('submit',function(e){ 
         var nobreak = true;
         $(".kagaddpar").each(function(){ 

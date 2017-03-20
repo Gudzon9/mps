@@ -58,6 +58,7 @@ use kartik\depdrop\DepDrop;
         <div class="col-xs-6">
             <?php if($model->isNewRecord) { ?>
             <?= Html::Button(Html::activeLabel($model, 'toadrs') , ['class' => 'btn btn-sm btn-primary' ,'id'=>'goseladr']) ?>
+            <?= Html::Button('Очистить список' , ['class' => 'btn btn-sm' ,'id'=>'goclradr']) ?>
             <?php } ?>
             
         </div>
@@ -230,6 +231,10 @@ $script = <<< JS
     $("#goseladr").on("click",function(){ 
         $("#dialog-toadr").dialog('open');
     });
+    $("#goclradr").on("click",function(){ 
+        $("#delivery-toadrs").val('');
+    });
+        
     function getRows()
     {
         var strvalue = "";
@@ -267,7 +272,7 @@ $script = <<< JS
                 text: 'Добавить',
                 click: function() {
                     getRows();
-                    //$(this).dialog('close');
+                    $(this).dialog('close');
                 }
             },
             {   

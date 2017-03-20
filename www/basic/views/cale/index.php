@@ -13,6 +13,7 @@ $this->params['leftmenu'] = $this->render('lmcale');
 <style>
     .topbtn {color: blue; padding-right: 10px; padding-left: 10px;}
 </style>
+
 <div id="evctrl" >
     <a href="#" class="topbtn btn-xs btn-warning" id="allevents" >Все дела</a>
     <a href="#" class="topbtn" id="dayevents" >День</a>

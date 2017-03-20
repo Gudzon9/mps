@@ -24,11 +24,28 @@ $this->params['cursubmenu'] = 3;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'name',
-            'date',
+            [
+                'label'=>'Дата',
+                'value'=>function($model){
+                    return substr($model->date,8,2).'-'.substr($model->date,5,2).'-'.substr($model->date,0,4);
+                }
+            ],
             'subject',
             'fromadr',
-            'toadrs:ntext',
-            'msgcont:ntext',
+            [
+                'label'=>'Кому',
+                'value'=>function($model){
+                    return substr($model->toadrs,0,20).' ...';
+                }
+            ],        
+            [
+                'label'=>'Содержимое',
+                'value'=>function($model){
+                    return substr($model->msgcont,0,40).' ...';
+                }
+            ],        
+            //'toadrs:ntext',
+            //'msgcont:ntext',
             'msgatt:ntext',
             'msgerr',
             ['class' => 'yii\grid\ActionColumn','template'=>'{update}{delete}'],

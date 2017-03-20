@@ -95,6 +95,7 @@ $(document).ready(function() {
  */
     calendar.fullCalendar({
         firstDay: 1,
+        slotDuration: {minutes:10},
         header: {left: 'prev,next today', center: 'title', right: 'agendaDay,agendaWeek,month'},
         monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
         monthNamesShort: ['Янв.','Фев.','Март','Апр.','Май','Июнь','Июль','Авг.','Сент.','Окт.','Ноя.','Дек.'],
@@ -236,9 +237,15 @@ $(document).ready(function() {
                 alert('Ошибка соединения с источником данных!');
             }
         }],
-        eventAfterAllRender: function() { $('.fc-title').css('font-size', '1.3em'); }
-
+        eventAfterAllRender: function() { $('.fc-title').css('font-size', '1.3em'); },
+        eventRender: function(event, element) {
+            element.qtip({
+                content: event.title
+            });
+        }
     });
+    //style: { classes: 'myCustomClass' },  style: {'font-size': '28px' }
+    $('.myCustomClass .qtip-content').css('font-size','18px');
     $('.fc-title').css('font-size', '2em');
     form.dialog({ 
         autoOpen: false,
@@ -434,6 +441,6 @@ $(document).ready(function() {
         */
     });
     refeventseth(); 
-
+   
 });
 

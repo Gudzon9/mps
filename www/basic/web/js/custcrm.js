@@ -5,6 +5,13 @@ $(document).ready(function () {
         });
         $("form").submit();
     });   
+    $('.fnewtab').on('click',function(e){
+        e.preventDefault();
+        var href = $(this).attr('href');
+        window.open(href) ;
+        return false;
+    });
+    
     /*
     $('[name="KagentSearch[addatr.tel]"]').inputmask('+999 99 999 9999');
     

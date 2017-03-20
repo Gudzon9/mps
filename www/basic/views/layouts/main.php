@@ -10,6 +10,7 @@ use app\assets\CaleAsset;
 use app\assets\CrmAsset;
 use app\assets\EmplAsset;
 use app\assets\DocsAsset;
+use yii\bootstrap\Alert;
 
 AppAsset::register($this);
 if($this->params['curmenu']===1) MainAsset::register($this);
@@ -39,7 +40,7 @@ if($this->params['curmenu']===5) DocsAsset::register($this);
                 <table><tr>
                         <td><h4> <?=Html::a(Yii::$app->user->identity->fio,['main/index']);?></h4></td>      
                 </tr>
-            <?php if(Yii::$app->user->identity->isDirector && ($this->params['curmenu']===1 || $this->params['curmenu']===4)) { ?>
+            <?php if(Yii::$app->user->identity->isDirector && ($this->params['curmenu']===1 || $this->params['curmenu']===3 || $this->params['curmenu']===4)) { ?>
                 <tr>
                 <td>Клиенты : <input type="checkbox" id="allkag" data-url="<?= Url::to(['empl/setallkag'])?>" data-size="mini" data-on-text="Мои" data-off-text="Все" toglemenu data-label-text="<span class='glyphicon glyphicon-ok'></span>" class="form-control" <?= (Yii::$app->session->get('allkag')==1) ? 'checked' : ''?>> </td>
                 </tr>
@@ -121,10 +122,12 @@ if($this->params['curmenu']===5) DocsAsset::register($this);
                     <?=Html::a(Html::tag('i','',['class'=>'i-emp k-menu']).'Сотрудники',['empl/index'],['class'=>'k-href']);?>
 		</li>
                 <li>
-                    <?=Html::a(Html::tag('i','',['class'=>'i-sal k-menu']).'Зарплата',['empl/sal'],['class'=>'k-href']);?>
+                    <?=Html::a(Html::tag('i','',['class'=>'i-sal k-menu']).'Табель',['empl/sal'],['class'=>'k-href']);?>
 		</li>
                 <li>
-                    <?=Html::a(Html::tag('i','',['class'=>'i-moff k-menu']).'Отпуска',['empl/moff'],['class'=>'k-href']);?>
+                    <?php 
+                    //Html::a(Html::tag('i','',['class'=>'i-moff k-menu']).'Отпуска',['empl/moff'],['class'=>'k-href']);
+                    ?>
 		</li>
             </ul>
             <?php }?> 
@@ -160,7 +163,7 @@ if($this->params['curmenu']===5) DocsAsset::register($this);
         <div id="sidebar-left" class="col-xs-3">
             <?php echo isset($this->params['leftmenu']) ? $this->params['leftmenu'] : '';?>
         </div>
-        <div  id="content" class="col-xs-12">
+        <div  id="content" class="col-xs-12"> 
             <?php echo $content ;?>
         </div>
     </div>

@@ -22,11 +22,13 @@ class CaleAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/jquery-ui-timepicker-addon.css',
+        'css/jquery.qtip.min.css',
         'css/fullcalendar.css'
     ];
     public $js = [
         'js/jquery-ui-timepicker-addon.js',
         'js/jquery-ui-timepicker-ru.js',
+        'js/jquery.qtip.min.js',
         'js/moment.min.js',
         'js/fullcalendar.min.js',
         'js/custcale.js'

@@ -56,7 +56,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['fio1', 'fio2', 'fio3', 'fio', 'emailLogin', 'password', 'createdDs', 'birthday', 'dateEmp', 'address', 'statusEmp','region','town'], 'required'],
+            [['fio1', 'fio', 'emailLogin', 'password', 'createdDs', 'birthday', 'dateEmp', 'address', 'statusEmp','region','town'], 'required'],
             [['status', 'posada', 'statusEmp','region','town'], 'integer'],
             [['createdDs', 'updatedDs','id', 'tin', 'passport'], 'safe'],
             [['fio1', 'fio2', 'fio3', 'emailLogin'], 'string', 'max' => 40],

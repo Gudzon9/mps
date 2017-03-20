@@ -8,10 +8,13 @@ use app\models\Addatr;
 use app\models\UserSearch;
 use app\models\Spratr;
 use app\models\Kagent;
+use app\models\Tabl;
 use yii\filters\AccessControl;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\helpers\ArrayHelper;
+
 //use yii\filters\VerbFilter;
 
 class EmplController extends Controller
@@ -56,7 +59,65 @@ class EmplController extends Controller
     }
     public function actionSal()
     {
-        return $this->render('sal');
+       $curym = date("Ym");
+        if (\Yii::$app->request->post('skt')) {
+            $skt = \Yii::$app->request->post('skt');
+        } else {
+            $skt = $curym;
+        }
+        $amonts = Tabl::find()->select(['yearmont'])->groupBy(['yearmont'])->orderBy(['yearmont'=>SORT_DESC])->asArray()->all();
+        $flag = true ;
+        foreach ($amonts as $ym) {
+            if($ym['yearmont']==$curym) {$flag = false;}
+        }
+        if($flag) {
+            array_unshift($amonts,['yearmont'=>$curym]);
+        }
+        $query = Tabl::find()->Where(['yearmont'=>$skt])->all();
+        $actabl = ArrayHelper::map($query,'ls','ls');
+        $newemp = User::find()->Where(['not in','id',$actabl])->all();
+        return $this->render('sal',['qmonts'=>$amonts, 'query'=>$query, 'skt'=>$skt, 'newemp'=>$newemp]);
+    }
+    public function actionActitabl()
+    {
+        $act = Yii::$app->request->post('act');
+        $ym = Yii::$app->request->post('ym');
+        $data = Yii::$app->request->post('data');
+        switch ($act) {
+            case 1 :
+                $query = Tabl::find()->Where('yearmont < :curym',[':curym'=>$ym])
+                    ->orderBy(['yearmont'=>SORT_DESC])->limit(1)->all(); 
+                if(count($query)) {
+                    $oldym = $query[0]->yearmont;
+                    \Yii::$app->db->createCommand('INSERT INTO `tabl` (`name`,`yearmont`,`ls`) SELECT name,:curym as yearmont, ls FROM tabl WHERE yearmont = :oldym ', [':curym' => $ym,':oldym' => $oldym])->execute();
+                }
+                break;
+            case 2 :
+		$alines = explode(";",$data);
+		foreach($alines as $line){
+			$als = explode(",",$line);
+			$id = $als[0];
+			$adays = explode("_",$als[1]);
+			$mcl="UPDATE tabl SET "; $i=0;
+			foreach($adays as $day){
+				$dv = explode("-",$day); $i++;
+				$mcl.= (($i>1) ? ",":"").(($dv[0]<10) ? "d0":"d" ).$dv[0]."=".$dv[1] ;
+			}
+			$mcl.= " WHERE id='$id' ";
+                        \Yii::$app->db->createCommand($mcl)->execute();
+		}
+                break;
+            case 3 :
+                $query = User::findOne($data); 
+                if($query) {
+                    \Yii::$app->db->createCommand('INSERT INTO `tabl` (`name`,`yearmont`,`ls`) VALUES (:name,:curym,:ls)', [':curym' => $ym,':name' => $query->fio,':ls' => $query->id])->execute();
+                }
+                break;
+            case 4 :
+                \Yii::$app->db->createCommand('DELETE FROM `tabl` WHERE id = :ls ', [':ls' => $data])->execute();                
+                break;
+        }
+        return 'ok';
     }
     public function actionMoff()
     {

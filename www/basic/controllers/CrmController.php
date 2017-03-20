@@ -113,12 +113,7 @@ class CrmController extends Controller
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 $this->saveAddAtr($model);
                 $this->saveAddComent($model);
-                //echo 'id '.$model->id;
-                //var_dump($model->getErrors());
-                return $this->render('_form', [
-                    'model' => $model,
-                ]);
-//                return $this->redirect(['index']);
+                return $this->redirect(['update','id'=>$model->id]);
             } else {
                 $model->kindKagent = $mode;
                 $model->enterdate = date('Y-m-d');
@@ -138,12 +133,6 @@ class CrmController extends Controller
         }
     }
 
-    /**
-     * Updates an existing Kagent model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionGetRel(){
         $aPost = Yii::$app->request->post();
 
@@ -205,7 +194,6 @@ class CrmController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
         return $this->redirect(['index']);
     }
 

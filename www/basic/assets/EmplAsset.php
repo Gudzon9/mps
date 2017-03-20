@@ -13,9 +13,12 @@ class EmplAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
-    public $css = [];
+    public $css = [
+        'css/contextMenu.min.css',
+    ];
     public $js = [
         'js/custempl.js',
+        'js/contextMenu.min.js',
     ];
     public $depends = [
     ];

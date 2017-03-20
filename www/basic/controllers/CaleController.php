@@ -80,12 +80,17 @@ class CaleController extends Controller
         $aTypes = explode(',', $post['flttypes']);
         $event->andWhere(['id_type'=>$aTypes]);
         if (intval($post['fltklient'])==0){
-            $isDirector = Yii::$app->user->identity->isDirector;
-            $idEmpl = ($isDirector && intval($post['fltempl'])!=0) ? intval($post['fltempl']) : ((!$isDirector) ? Yii::$app->user->id : 0);
+            $isDirector = \Yii::$app->user->identity->isDirector;
+            $idEmpl = ($isDirector && intval($post['fltempl'])!=0) ? intval($post['fltempl']) : ((!$isDirector || Yii::$app->session->get('allkag')==1) ? \Yii::$app->user->identity->id : 0);
+            
             if ($idEmpl!=0){
+                
                 $event->leftJoin('kagent','kagent.id=event.id_klient')
-                    ->andFilterWhere(['kagent.userId'=>$idEmpl])
-                    ->with('kagent');
+                    ->andFilterWhere(['kagent.userId'=>$idEmpl]);
+                    //->with('kagent');
+                
+                //var_dump($event->prepare(Yii::$app->db->queryBuilder)->createCommand()->rawSql);
+                //return ;
             }
         }else{
             $event->andWhere(['id_klient'=>$post['fltklient']]);
